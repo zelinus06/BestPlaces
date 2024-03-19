@@ -25,6 +25,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private boolean isAuthenticated = false;
+
     public User() {
     }
 
@@ -56,5 +58,15 @@ public class User {
 
     public Role getRole() {
         return role;
+    }
+
+    public void setId(long l) {
+    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setAuthenticated(boolean authenticated) {
+        isAuthenticated = authenticated;
     }
 }

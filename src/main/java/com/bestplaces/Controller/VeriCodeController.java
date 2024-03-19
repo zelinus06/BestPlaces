@@ -24,9 +24,8 @@ public class VeriCodeController {
 
     @PostMapping("/generate-code")
     public String generateCode(@ModelAttribute("user") UserRegistrationDto userRegistrationDto, Model model) {
-//        String username = userRegistrationDto.getUsername(); // Lấy username từ userRegistrationDto
+// Lấy username hiện tại
         String username = verificationCodeService.UserNameAtPresent();
-//        String generatedCode = verificationCodeService. generateVerificationCode();
         String generatedCode = verificationCodeService.generateVerificationCode(username); // Gửi username cho service
         model.addAttribute("generatedCode", generatedCode);
         model.addAttribute("usernameWithCode", username);

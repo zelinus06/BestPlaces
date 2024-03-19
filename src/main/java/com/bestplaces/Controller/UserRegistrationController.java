@@ -47,13 +47,13 @@ public class UserRegistrationController {
             return "register";
         }
         Optional<User> existingUser = userRepository.findByUsername(registrationDto.getUsername());
-        Optional<User> existingEmail = userRepository.findByEmail(registrationDto.getEmail());
+        User existingEmail = userRepository.findByEmail(registrationDto.getEmail());
         if (existingUser.isPresent()) {
             result.rejectValue("username", null, "Username đã tồn tại. Vui lòng chọn một username khác.");
             model.addAttribute("error", "Username đã tồn tại. Vui lòng chọn một username khác.");
             return "registration";
         }else {
-            if (existingEmail.isPresent()) {
+            if (existingEmail != null) {
                 result.rejectValue("email", null, "Email đã tồn tại. Vui lòng chọn một email khác.");
                 model.addAttribute("error", "Email đã tồn tại. Vui lòng chọn một email khác.");
                 return "registration";

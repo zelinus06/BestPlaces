@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.bestplaces.Entity.User;
 import com.bestplaces.Repository.UserRepository;
+import com.bestplaces.Service.Impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class VerificationCodeService {
+    private UserServiceImpl userService;
+
+    private User user;
     private final Map<String, VerificationCode> verificationCodes = new ConcurrentHashMap<>();
     public String generateVerificationCode(String username) {
             String code = String.format("%05d", new Random().nextInt(100000));
@@ -28,6 +32,8 @@ public class VerificationCodeService {
         if (verificationCode != null && verificationCode.getCode().equals(code) && System.currentTimeMillis() < verificationCode.getExpirationTime()) {
             // Loại bỏ mã xác minh sau khi xác minh thành công
             verificationCodes.remove(username);
+            // user đang null................................
+            user.setAuthenticated(true);
             return true;
         }
         return false;
@@ -56,6 +62,9 @@ public class VerificationCodeService {
             username = ((UserDetails) principal).getUsername(); // Gán giá trị cho biến username
         }
         return username;
+//        UserServiceImpl user = new UserServiceImpl();
+//        user.getCurrentUserEmail();
+//        return user.toString();
     }
 }
 

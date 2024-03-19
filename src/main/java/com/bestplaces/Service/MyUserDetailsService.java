@@ -29,7 +29,6 @@ public class MyUserDetailsService implements UserDetailsService {
            throw new UsernameNotFoundException(username);
        }
     }
-
     private String getRole(User user) {
         if (user.getRole() == null) {
             return "USER";
