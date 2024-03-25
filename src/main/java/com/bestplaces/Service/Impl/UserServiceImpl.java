@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(UserRegistrationDto userRegistrationDto) {
-        User user = new User(userRegistrationDto.getUsername(), userRegistrationDto.getEmail(), userRegistrationDto.getPassword(), Role.USER );
+        User user = new User(userRegistrationDto.getUsername(), userRegistrationDto.getEmail(), userRegistrationDto.getPassword(), Role.NONUSER);
         return userRepository.save(user);
     }
 
@@ -36,7 +36,6 @@ public class UserServiceImpl implements UserService {
     public String getEmailByUsername(String username) {
         // Thực hiện truy vấn cơ sở dữ liệu để lấy thông tin người dùng dựa trên username
         Optional<User> user = userRepository.findByUsername(username);
-
         // Kiểm tra xem user có tồn tại không
         if (user != null) {
             return user.get().getEmail();

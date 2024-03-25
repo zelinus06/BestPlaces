@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Template</title>
+</head>
+<body>
+<h1>Send Email</h1>
+<form th:action="@{/sendEmail}" method="post">
+    <button type="submit">Send Email</button>
+</form>
+
+<hr>
+
+<form action="#" th:action="@{/verify-code}" method="post">
+    <label for="verificationCode">Verification Code:</label>
+    <input type="text" id="verificationCode" name="verificationCode" required><br><br>
+    <button type="submit">Verify Code</button>
+</form>
+</body>
+</html>

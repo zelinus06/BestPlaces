@@ -17,7 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class VerificationCodeService {
     private UserServiceImpl userService;
-
+    @Autowired
+    private UserRepository userRepository;
     private User user;
     private final Map<String, VerificationCode> verificationCodes = new ConcurrentHashMap<>();
     public String generateVerificationCode(String username) {
@@ -33,7 +34,8 @@ public class VerificationCodeService {
             // Loại bỏ mã xác minh sau khi xác minh thành công
             verificationCodes.remove(username);
             // user đang null................................
-            user.setAuthenticated(true);
+//            userRepository.setAuthenticatedByUsername(UserNameAtPresent());
+            userRepository.setUser(UserNameAtPresent());
             return true;
         }
         return false;

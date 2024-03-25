@@ -2,7 +2,8 @@ package com.bestplaces.Enums;
 
 public enum Role {
     ADMIN("ROLE_ADMIN"),
-    USER("ROLE_USER"),;
+    USER("ROLE_USER"),
+    NONUSER("ROLE_NUSER"),;
 
 
     private final String value;

@@ -25,7 +25,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private boolean isAuthenticated = false;
+    private boolean authenticated = false;
 
     public User() {
     }
@@ -67,6 +67,6 @@ public class User {
     }
 
     public void setAuthenticated(boolean authenticated) {
-        isAuthenticated = authenticated;
+        this.authenticated = authenticated;
     }
 }

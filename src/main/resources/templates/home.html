@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar with Search Filters</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom CSS for search filters */
+        .search-filters {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+        }
+
+        .search-filters .form-group {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Logo</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Thuê</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Cho thuê</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Tin tức</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Thông báo</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="user-logo.png" alt="User Logo" width="30" height="30">
+                    Tên User
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Logout</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="search-filters">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <select class="form-control">
+                        <option selected>Loại hình</option>
+                        <option>Nhà ở</option>
+                        <option>Chung cư</option>
+                        <option>Biệt thự</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <select class="form-control">
+                        <option selected>Giá cả</option>
+                        <option>Dưới 1 tỷ</option>
+                        <option>Từ 1 tỷ đến 3 tỷ</option>
+                        <option>Trên 3 tỷ</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <select class="form-control">
+                        <option selected>Diện tích</option>
+                        <option>Dưới 50m²</option>
+                        <option>Từ 50m² đến 100m²</option>
+                        <option>Trên 100m²</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <select class="form-control" id="provinceDropdown">
+                        <option selected>Tỉnh/Thành</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <select class="form-control" id="districtDropdown">
+                        <option selected>Quận huyện</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <select class="form-control" id="communeDropdown">
+                        <option selected>Thị xã</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mt-3">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // Lấy tên tỉnh/thành phố
+    fetch('https://api.mysupership.vn/v1/partner/areas/province', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'Success') {
+                // Xử lý dữ liệu từ phản hồi
+                data.results.forEach(province => {
+                    // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
+                    const option = document.createElement('option');
+                    option.value = province.code; // Mã tỉnh/thành phố
+                    option.textContent = province.name; // Tên tỉnh/thành phố
+                    provinceDropdown.appendChild(option);
+                });
+            } else {
+                // Xử lý lỗi nếu có
+                console.error('Lỗi:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi gọi API:', error);
+        });
+
+    // Lắng nghe việc chọn Quận/huyện
+    provinceDropdown.addEventListener('change', function() {
+        const selectedProvinceCode = this.value;
+        getDistrictsByProvince(selectedProvinceCode);
+    });
+
+    // Lắng nghe việc chọn phường/thị xã
+    districtDropdown.addEventListener('change', function() {
+        const selectedDistrictCode = this.value;
+        getCommuneByDistrict(selectedDistrictCode);
+    });
+
+    // In ra danh sách các quận/huyện
+    function getDistrictsByProvince(selectedProvinceCode) {
+        const url = `https://api.mysupership.vn/v1/partner/areas/district?province=${selectedProvinceCode}`;
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'Success') {
+                    // Xử lý dữ liệu từ phản hồi
+                    const districts = data.results;
+                    districts.forEach(district => {
+                        // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
+                        const option = document.createElement('option');
+                        option.value = district.code; // Mã tỉnh/thành phố
+                        option.textContent = district.name; // Tên tỉnh/thành phố
+                        districtDropdown.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    }
+
+    // In ra danh sách các phường/thị xã
+    function getCommuneByDistrict(selectedDistrictCode) {
+        const url = `https://api.mysupership.vn/v1/partner/areas/commune?district=${selectedDistrictCode}`;
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'Success') {
+                    // Xử lý dữ liệu từ phản hồi
+                    const communes = data.results;
+                    communes.forEach(commune => {
+                        // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
+                        const option = document.createElement('option');
+                        option.value = commune.code; // Mã tỉnh/thành phố
+                        option.textContent = commune.name; // Tên tỉnh/thành phố
+                        communeDropdown.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    }
+</script>
+</body>
+</html>

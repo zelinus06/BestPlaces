@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location API Example</title>
+</head>
+<body>
+
+<h1>Danh sách tỉnh/thành phố</h1>
+
+<ul id="locationList">
+    <!-- Danh sách sẽ được hiển thị ở đây -->
+</ul>
+
+<script>
+    fetch('https://api.mysupership.vn/v1/partner/areas/province', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'Success') {
+                // Xử lý dữ liệu từ phản hồi
+                data.results.forEach(province => {
+                    console.log('Mã tỉnh/thành phố:', province.code);
+                    console.log('Tên tỉnh/thành phố:', province.name);
+                });
+            } else {
+                // Xử lý lỗi nếu có
+                console.error('Lỗi:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi:', error);
+        });
+
+</script>
+
+</body>
+</html>

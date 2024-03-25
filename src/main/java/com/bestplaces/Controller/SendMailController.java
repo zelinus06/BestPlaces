@@ -31,6 +31,17 @@ public class SendMailController {
     }
     @PostMapping("/sendEmail")
     public String sendMail(@RequestParam(value = "file", required = false)MultipartFile file, String to, @RequestParam(value = "cc", required = false) String[] cc, String subject, String body) {
-        return emailService.sendMail(file, to, cc, subject, body);
+        emailService.sendMail(file, to, cc, subject, body);
+        return "mail";
+    }
+    @PostMapping("/verify-code")
+    public String VerifyCode(@RequestParam("verificationCode") String verificationCode) {
+        String username = verificationCodeService.UserNameAtPresent();
+        boolean code = verificationCodeService.verifyVerificationCode(username, verificationCode);
+        if (code) {
+            return "testSucess.html";
+        }
+        return "testFail.html";
+
     }
 }

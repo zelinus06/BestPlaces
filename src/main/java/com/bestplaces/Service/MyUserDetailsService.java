@@ -31,7 +31,7 @@ public class MyUserDetailsService implements UserDetailsService {
     }
     private String getRole(User user) {
         if (user.getRole() == null) {
-            return "USER";
+            return "NONUSER";
         }
         return user.getRole().toString();
     }
