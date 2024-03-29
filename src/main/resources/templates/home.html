@@ -42,7 +42,7 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="user-logo.png" alt="User Logo" width="30" height="30">
+                    <img src="../static/1.png" alt="User Logo" width="30" height="30">
                     Tên User
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -99,14 +99,14 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <select class="form-control" id="districtDropdown">
-                        <option selected>Quận huyện</option>
+                        <option selected>Quận/Huyện</option>
                     </select>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
                     <select class="form-control" id="communeDropdown">
-                        <option selected>Thị xã</option>
+                        <option selected>Phường/Thị xã</option>
                     </select>
                 </div>
             </div>
@@ -154,16 +154,16 @@
             console.error('Lỗi khi gọi API:', error);
         });
 
-    // Lắng nghe việc chọn Quận/huyện
+    // Lắng nghe việc chọn thành phố
     provinceDropdown.addEventListener('change', function() {
         const selectedProvinceCode = this.value;
         getDistrictsByProvince(selectedProvinceCode);
     });
 
-    // Lắng nghe việc chọn phường/thị xã
+    // Lắng nghe việc chọn quận huyện
     districtDropdown.addEventListener('change', function() {
-        const selectedDistrictCode = this.value;
-        getCommuneByDistrict(selectedDistrictCode);
+            const selectedDistrictCode = this.value;
+            getCommuneByDistrict(selectedDistrictCode);
     });
 
     // In ra danh sách các quận/huyện
@@ -186,6 +186,12 @@
                 if (data.status === 'Success') {
                     // Xử lý dữ liệu từ phản hồi
                     const districts = data.results;
+                    districtDropdown.innerHTML = '';
+                    const defaultOption = document.createElement('option');
+                    defaultOption.text = "Quận/Huyện";
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    districtDropdown.appendChild(defaultOption);
                     districts.forEach(district => {
                         // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
                         const option = document.createElement('option');
@@ -222,6 +228,12 @@
                 if (data.status === 'Success') {
                     // Xử lý dữ liệu từ phản hồi
                     const communes = data.results;
+                    communeDropdown.innerHTML = '';
+                    const defaultOption = document.createElement('option');
+                    defaultOption.text = "Phường/Thị xã";
+                    // defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    communeDropdown.appendChild(defaultOption);
                     communes.forEach(commune => {
                         // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
                         const option = document.createElement('option');

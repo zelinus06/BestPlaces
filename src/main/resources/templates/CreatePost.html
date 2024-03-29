@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Bài Đăng</title>
+    <style>
+        #image-preview {
+            max-width: 50px; /* Độ rộng tối đa */
+            max-height: 50px; /* Độ cao tối đa */
+            margin-top: 5px;
+        }
+        #image-preview-container {
+            width: 50px; /* Chiều rộng cố định của khung bao */
+            height: 50px; /* Chiều cao cố định của khung bao */
+            overflow: hidden; /* Ẩn phần nội dung vượt quá khung bao */
+            border: 1px solid #ccc; /* Viền khung bao */
+            margin-top: 5px;
+            display: flex; /* Sử dụng flexbox */
+            justify-content: center; /* Căn giữa theo chiều ngang */
+            align-items: center; /* Căn giữa theo chiều dọc */
+        }
+    </style>
+</head>
+<body>
+<h2>Thêm Bài Đăng</h2>
+<form th:action="@{/posts/create}" method="post" th:object="${rentalPost}" enctype="multipart/form-data">
+    <label>ID Người Dùng:</label><br>
+    <input type="text" th:field="*{id_user}" required><br>
+
+
+    <label>Giá:</label><br>
+    <input type="number" th:field="*{price}" required><br>
+
+    <label>Diện Tích:</label><br>
+    <input type="number" th:field="*{area}" required><br>
+
+    <label>Loại:</label><br>
+    <select th:field="*{type}">
+        <option value="APARTMENT">Căn hộ</option>
+        <option value="HOUSE">Nhà riêng</option>
+        <option value="ROOM">Phòng trọ</option>
+    </select><br>
+
+    <label >Mô Tả:</label><br>
+    <textarea th:field="*{description}" required></textarea><br>
+
+    <label>Số Điện Thoại:</label><br>
+    <input type="text" th:field="*{phoneNumber}" required><br>
+
+    <label for="image">Đường dẫn Ảnh:</label><br>
+    <input type="file" id="image" name="image" accept="image/*" required onchange="previewImage(event)"><br>
+    <div id="image-preview-container">
+        <img id="image-preview" src="#" alt="Preview">
+    </div>
+
+
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    function previewImage(event) {
+        var input = event.target;
+        var reader = new FileReader();
+        reader.onload = function(){
+            var img = document.getElementById('image-preview');
+            img.src = reader.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+</script>
+</body>
+</html>

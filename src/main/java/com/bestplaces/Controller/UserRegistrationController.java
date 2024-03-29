@@ -2,7 +2,6 @@ package com.bestplaces.Controller;
 
 import com.bestplaces.Dto.UserRegistrationDto;
 import com.bestplaces.Entity.User;
-import com.bestplaces.Enums.Role;
 import com.bestplaces.Repository.UserRepository;
 import com.bestplaces.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
 
 @Controller
@@ -20,6 +17,7 @@ import java.util.Optional;
 public class UserRegistrationController {
 
     private UserService userService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -27,7 +25,6 @@ public class UserRegistrationController {
     private UserRepository userRepository;
 
     public UserRegistrationController(UserService userService) {
-        super();
         this.userService = userService;
     }
 
@@ -36,15 +33,15 @@ public class UserRegistrationController {
         return new UserRegistrationDto();
     }
 
-    @GetMapping
+    @GetMapping()
     public String showRegistrationForm() {
         return "registration";
     }
 
-    @PostMapping
+    @PostMapping()
     public String registerUserAccount(@ModelAttribute("user") UserRegistrationDto registrationDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "register";
+            return "registration";
         }
         Optional<User> existingUser = userRepository.findByUsername(registrationDto.getUsername());
         User existingEmail = userRepository.findByEmail(registrationDto.getEmail());

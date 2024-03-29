@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "bestplaces-418608",
+  "private_key_id": "bbcbdbf8e162b0619eaf27ab8f03f6a52f4282ff",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDjoTLvrk46kZvT\nnQ0Bhl1hREEUoPYRE3XIqB6jzFMuij1CZKWg3ZMVY9+xm88/sNElC5WDhNUe04nH\nqjgSsIMSyAwQbLU3B39fGQCIGsZJznl55swI+qR2bcSM+8tFgUEjw4WExj1jpIUu\n8noz8AYVfaiqda6nUURPOhKdvfu8hreeELAwostfjInZnXRlQ3/e1sppwfXZkVME\npfDIJlsYMmfmZd5xayQ6t5IyWSUUOpYO4wktypj4S8UppF8IgdPDBUGgHCPugIeY\n/BcC2gy5e5muqAmlHMOW4vBkc83jeDeg8s92gr8vweqZqP2g1qT7NxrVPkQYC8Ea\no1eTOwctAgMBAAECggEACZWAltrYlwVecZB2kGPfNqMwYkqh/Ey8yXqv9ObmHFrc\nWBlIvUyBpDA/pjNl4cvzYliUg6RqHLwnXELBzaJPl9DYa9tH3fibgkjZNDcnC3XS\nuNvg0gKg6LjtF5/aX84gt1LEzQxTtV2jReYWWG14tBrwU7eqEjK3v5DgYR0zUNf+\n4EmABfXxkIC+dhSKUubRCK9U4W8yXfA7AJePYlJ46Yc47mKpcpbrIE/Mum2j5+q+\nHyIoPNhDZ4qDQh7JFRNI/PEO3A9aF9aLOEn9c8+0oxok+y2itmiOZRgKaQ3Pnujh\n/O1R/ASvUCdb/nlwpMzB2qG5QRYSYdrmZB1KHqRt+QKBgQD85ZtV6yeA79UxzV3Z\nsv65Q74ic8Fhc1Mb/sm7YOXw36UQj7Me6/hZ/ZgvTtgiW7VDxlb4JZ6lOdrl1QcK\niRpkxi+NCF/ZV/hKVxKoJ4prZY/ARerTRNlkMz20VAAsFpthX4X42axBOVT4sTnV\nCUV4NU+7JIuuVE2mQQv5C2bLcwKBgQDmbDk0eARFsb59s0at+9O3/lUvtsifjQej\nH5mJKPs2k1YgsvSSoBJz93Rldxt7jmby+6QPo92AmJiRdrCzkzlZUaC3xF9A894d\nFGa0ZTFIIEPqunLQ79MZ1vTh6HnBJ02xaQMNCm/hxg7LY/DRTGmHoGZNTqo4/tCT\nTYdzsJl63wKBgHoCRDjlZH+eNZr7W2XmJ2I2PorckdV0EAqXl7fg/c6B917QFTi7\n22t/H2bjgP7Cg+cYz2iUrb9E9Eihx+3bS3KG8vX1rlhrSoyDCas6uFsr+nhmwu3+\nb2saFZDkXdjnZztJHJd8XNBy2n3I8v/Go09lWPwOm50VawjkpOQYDhXlAoGAYJxD\np+IiOG575gxCuDP74ws6AFVs7Kie6SAYqc+K9Kj11aPys391/TVlkh1MYpOkSoCD\nmyMjfgV9ApB3KfOyeealsicdoQgeuqaRIVXEQe91Snd+KGhFZHIiHo3wbrHh+16C\nLvePTWRTU6fFkputK3ZvLj6rVFZScVByWGlVEJUCgYBWq3n1O1I/xgOS7ImzPjsm\n4TuLn1V7lsnUlAD05/sMDmKMMdjhItSjiAmJ6OIDWgzbYc+N3Q0Ajv9sLcaIYEEG\nbgckdgoJrPFjPHhZjLvdcwDupyDToCK4Pj+lRTDVdsGBnibjn5ZK34R9OYAyV9ac\nBNQj2D/fq51BOwuCECRe8A==\n-----END PRIVATE KEY-----\n",
+  "client_email": "bestplaces@bestplaces-418608.iam.gserviceaccount.com",
+  "client_id": "110019872796603746121",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bestplaces%40bestplaces-418608.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
