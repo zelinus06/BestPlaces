@@ -3,17 +3,17 @@ package com.bestplaces.Controller;
 import com.bestplaces.Dto.RentalPostDto;
 import com.bestplaces.Dto.Res;
 import com.bestplaces.Entity.RentalPost;
+import com.bestplaces.Entity.User;
+import com.bestplaces.Enums.Type;
 import com.bestplaces.Repository.PostRepository;
 import com.bestplaces.Repository.UserRepository;
+import com.bestplaces.Service.Impl.UserServiceImpl;
 import com.bestplaces.Service.RentalPostService;
 import com.bestplaces.Service.TestUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -23,11 +23,16 @@ import java.security.GeneralSecurityException;
 @Controller
 @RequestMapping("/post")
 public class RentalPostController {
-
+    @Autowired
     private RentalPostService rentalPostService;
 
     @Autowired
-    private PostRepository postRepository;
+    private TestUploadService service;
+
+    @Autowired
+    private UserServiceImpl userService;
+
+    @Autowired UserRepository userRepository;
 
     @GetMapping()
     public String showAddRentalPostForm(Model model) {
@@ -35,10 +40,23 @@ public class RentalPostController {
         return "CreatePost";
     }
 
-    @PostMapping("/posts/create")
-    public String createRentalPost(RentalPost rentalPost) {
-        // Gọi Service để lưu rentalPost vào cơ sở dữ liệu
-        return "redirect:/";
+    @PostMapping
+    public String createRentalPost(@ModelAttribute("rentalpost") RentalPostDto rentalPostDto) {
+        rentalPostService.saveRentalPost(rentalPostDto);
+        return "redirect:/save?success";
+    }
+
+    @ResponseBody
+    @PostMapping("/post")
+    public Object handleFileUpload(@RequestParam("image") MultipartFile file) throws IOException, GeneralSecurityException {
+        if (file.isEmpty()) {
+            return "File is empty";
+        }
+        File tempFile = File.createTempFile("temp", null);
+        file.transferTo(tempFile);
+        Res res = service.uploadImageToDrive(tempFile);
+        System.out.println(res);
+        return res;
     }
 }
 

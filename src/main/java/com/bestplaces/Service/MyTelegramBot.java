@@ -14,42 +14,32 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class MyTelegramBot extends TelegramLongPollingBot {
+    public static ConcurrentHashMap<String, String> phoneNumberMap = new ConcurrentHashMap<>();
     @Autowired
     private VerificationCodeService verificationCodeService;
 
     @Override
     public void onUpdateReceived(Update update) {
-//      if (update.hasMessage() && update.getMessage().hasText()) {
-//            String messageText = update.getMessage().getText();
-//            String chatId = String.valueOf(update.getMessage().getChatId());
-//            // Kiểm tra nếu tin nhắn là lệnh /chatid
-//            if ("/start".equals(messageText)) {
-//                // Trả lời với chatId của trò chuyện
-//                sendChatId(chatId);
-//            }
-//        }
+        String chatId = String.valueOf(update.getMessage().getChatId());
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
-            String chatId = String.valueOf(update.getMessage().getChatId());
-
-            // Kiểm tra nếu tin nhắn là lệnh /phonenumber
             if ("/phonenumber".equals(messageText)) {
-                // Gửi yêu cầu chia sẻ số điện thoại
                 sendRequestPhoneNumber(chatId);
             } else {
                 // Xử lý các lệnh khác ở đây
             }
         }
+
         Message message = update.getMessage();
         // Lấy thông tin về số điện thoại từ đối tượng Contact
         Contact contact = message.getContact();
         String phoneNumber = contact.getPhoneNumber();
-
-        // In ra số điện thoại để kiểm tra
-        System.out.println("Số điện thoại của người dùng: " + phoneNumber);
+        phoneNumberMap.put(phoneNumber, chatId);
     }
 
     private void sendRequestPhoneNumber(String chatId) {
@@ -83,7 +73,6 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         sendMessage.setReplyMarkup(keyboardMarkup);
 
         try {
-            // Gửi tin nhắn yêu cầu chia sẻ số điện thoại đến người dùng
             execute(sendMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
@@ -101,10 +90,10 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         return "6397106089:AAHxr8VWtNrIBiPY9dNNQ4_iEW1OzWDwaaw";
     }
 
-    public void sendVerificationCode(String phoneNumber) {
+    public void sendVerificationCode(String chatId) {
         SendMessage message = new SendMessage();
         String verificationCodes = verificationCodeService.generateVerificationCode(verificationCodeService.UserNameAtPresent());
-        message.setChatId(phoneNumber); // Số điện thoại của người dùng
+        message.setChatId(chatId);
         message.setText("Your verification code is: " + verificationCodes);
         try {
             execute(message);

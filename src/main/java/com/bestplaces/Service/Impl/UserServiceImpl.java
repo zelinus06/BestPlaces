@@ -7,11 +7,10 @@ import com.bestplaces.Repository.UserRepository;
 import com.bestplaces.Service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -34,7 +33,6 @@ public class UserServiceImpl implements UserService {
 
     @Transactional()
     public String getEmailByUsername(String username) {
-        // Thực hiện truy vấn cơ sở dữ liệu để lấy thông tin người dùng dựa trên username
         Optional<User> user = userRepository.findByUsername(username);
         // Kiểm tra xem user có tồn tại không
         if (user != null) {
@@ -42,5 +40,39 @@ public class UserServiceImpl implements UserService {
         } else {
             return null;
         }
+    }
+    @Transactional()
+    public Long getUserIdByUsername(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user != null) {
+            return user.get().getId();
+        } else {
+            return null;
+        }
+    }
+
+    @Transactional()
+    public Long getUserIdByUsernames() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = null;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername(); // Gán giá trị cho biến username
+        }
+
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user != null) {
+           return user.get().getId();
+        } else {
+            return null;
+        }
+    }
+
+    public String UserNameAtPresent() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = null; // Khởi tạo biến username với giá trị mặc định là null
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername(); // Gán giá trị cho biến username
+        }
+        return username;
     }
 }

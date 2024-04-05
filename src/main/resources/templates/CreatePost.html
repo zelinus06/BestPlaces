@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thêm Bài Đăng</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         #image-preview {
             max-width: 50px; /* Độ rộng tối đa */
@@ -24,10 +25,42 @@
 </head>
 <body>
 <h2>Thêm Bài Đăng</h2>
-<form th:action="@{/posts/create}" method="post" th:object="${rentalPost}" enctype="multipart/form-data">
-    <label>ID Người Dùng:</label><br>
-    <input type="text" th:field="*{id_user}" required><br>
+<form id ="myForm" th:action="@{/post}" method="post" th:object="${rentalPost}" enctype="multipart/form-data">
 
+    <label>Loại:</label><br>
+    <select name="Type">
+        <option th:field="*{type}"  th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
+                th:value="${type}" th:text="${type}" th:required="${type}"></option>
+    </select>
+
+    <div class="col-md-3">
+        <div class="form-group">
+            <select class="form-control" id="provinceDropdown">
+                <option selected>Tỉnh/Thành</option>
+            </select>
+            <input name="city" type="text" th:field="*{city}" required style=""><br>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <select class="form-control" id="districtDropdown">
+                <option selected>Quận/Huyện</option>
+            </select>
+            <input name="district" type="text" th:field="*{district}" required style=""><br>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <select class="form-control" id="communeDropdown">
+                <option selected>Phường/Thị xã</option>
+            </select>
+            <input name="commune" type="text" th:field="*{commune}" required style=""><br>
+        </div>
+    </div>
+    </div>
+
+    <label>Số nhà, tên đường</label><br>
+    <input type="text" th:field="*{exactAddress}" required><br>
 
     <label>Giá:</label><br>
     <input type="number" th:field="*{price}" required><br>
@@ -35,27 +68,17 @@
     <label>Diện Tích:</label><br>
     <input type="number" th:field="*{area}" required><br>
 
-    <label>Loại:</label><br>
-    <select th:field="*{type}">
-        <option value="APARTMENT">Căn hộ</option>
-        <option value="HOUSE">Nhà riêng</option>
-        <option value="ROOM">Phòng trọ</option>
-    </select><br>
-
     <label >Mô Tả:</label><br>
     <textarea th:field="*{description}" required></textarea><br>
 
-    <label>Số Điện Thoại:</label><br>
-    <input type="text" th:field="*{phoneNumber}" required><br>
-
-    <label for="image">Đường dẫn Ảnh:</label><br>
-    <input type="file" id="image" name="image" accept="image/*" required onchange="previewImage(event)"><br>
+    <label for="imageInput">Đường dẫn Ảnh:</label><br>
+    <input type="file" id="imageInput" name="image" required accept="image/*" onchange="previewImage(event)"><br>
     <div id="image-preview-container">
         <img id="image-preview" src="#" alt="Preview">
     </div>
 
 
-    <button type="submit">Submit</button>
+    <button type="submit" onclick="handleUpload()">Submit</button>
 </form>
 
 <script>
@@ -69,5 +92,212 @@
         reader.readAsDataURL(input.files[0]);
     }
 </script>
+<script>
+    // Lấy tên tỉnh/thành phố
+    fetch('https://api.mysupership.vn/v1/partner/areas/province', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'Success') {
+                // Xử lý dữ liệu từ phản hồi
+                data.results.forEach(province => {
+                    // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
+                    const option = document.createElement('option');
+                    option.value = province.code; // Mã tỉnh/thành phố
+                    option.textContent = province.name; // Tên tỉnh/thành phố
+                    provinceDropdown.appendChild(option);
+                });
+            } else {
+                // Xử lý lỗi nếu có
+                console.error('Lỗi:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi gọi API:', error);
+        });
+
+    // Lắng nghe việc chọn thành phố
+    provinceDropdown.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedProvinceCode = selectedOption.value;
+        const selectedProvinceName = selectedOption.textContent;
+        getDistrictsByProvince(selectedProvinceCode);
+        var cityInput = document.querySelector('input[name="city"]');
+        cityInput.value = selectedProvinceName;
+    });
+
+    // Lắng nghe việc chọn quận huyện
+    districtDropdown.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedDistrictCode = selectedOption.value;
+        const selectedDistrictName = selectedOption.textContent;
+        getCommuneByDistrict(selectedDistrictCode);
+        var cityInput = document.querySelector('input[name="district"]');
+        cityInput.value = selectedDistrictName;
+    });
+
+    communeDropdown.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedCommuneName = selectedOption.textContent;
+        const communeInput = document.querySelector('input[name="commune"]');
+        communeInput.value = selectedCommuneName;
+    });
+
+    // In ra danh sách các quận/huyện
+    function getDistrictsByProvince(selectedProvinceCode) {
+        const url = `https://api.mysupership.vn/v1/partner/areas/district?province=${selectedProvinceCode}`;
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'Success') {
+                    // Xử lý dữ liệu từ phản hồi
+                    const districts = data.results;
+                    districtDropdown.innerHTML = '';
+                    const defaultOption = document.createElement('option');
+                    defaultOption.text = "Quận/Huyện";
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    districtDropdown.appendChild(defaultOption);
+                    districts.forEach(district => {
+                        // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
+                        const option = document.createElement('option');
+                        option.value = district.code; // Mã tỉnh/thành phố
+                        option.textContent = district.name; // Tên tỉnh/thành phố
+                        districtDropdown.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    }
+
+    // In ra danh sách các phường/thị xã
+    function getCommuneByDistrict(selectedDistrictCode) {
+        const url = `https://api.mysupership.vn/v1/partner/areas/commune?district=${selectedDistrictCode}`;
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'Success') {
+                    // Xử lý dữ liệu từ phản hồi
+                    const communes = data.results;
+                    communeDropdown.innerHTML = '';
+                    const defaultOption = document.createElement('option');
+                    defaultOption.text = "Phường/Thị xã";
+                    // defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    communeDropdown.appendChild(defaultOption);
+                    communes.forEach(commune => {
+                        // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
+                        const option = document.createElement('option');
+                        option.value = commune.code; // Mã tỉnh/thành phố
+                        option.textContent = commune.name; // Tên tỉnh/thành phố
+                        communeDropdown.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    }
+</script>
+<script>
+    document.getElementById('imageInput').addEventListener('change', function(event) {
+        const selectedFile = event.target.files[0];
+        const uploadButton = document.querySelector('button');
+        uploadButton.disabled = !selectedFile;
+    });
+
+    async function handleUpload() {
+
+        // Kiểm tra xem tất cả các trường thông tin đã được điền đầy đủ hay không
+        const type = document.querySelector('select[name="Type"]').value;
+        const city = document.querySelector('input[name="city"]').value;
+        const district = document.querySelector('input[name="district"]').value;
+        const exactAddress = document.querySelector('input[name="exactAddress"]').value;
+        const price = document.querySelector('input[name="price"]').value;
+        const area = document.querySelector('input[name="area"]').value;
+        const description = document.querySelector('textarea[name="description"]').value;
+
+        if (type.trim() === '' || city.trim() === '' || district.trim() === '' || exactAddress.trim() === '' || price.trim() === '' || area.trim() === '' || description.trim() === '') {
+            // Nếu một trong các trường thông tin còn trống, hiển thị thông báo cảnh báo và ngăn chặn việc tiếp tục
+            alert("Vui lòng nhập đầy đủ thông tin trước khi tải lên ảnh!");
+            return;
+        }
+        else {
+            console.log("da thuc hien")
+        const selectedFile = document.getElementById('imageInput').files[0];
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+        try {
+            const response = await fetch('http://localhost:8080/uploadToGoogleDrive', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            const resultMessage = document.getElementById('resultMessage');
+
+            if (response.status === 200) {
+                resultMessage.innerText = `Success: ${result.message}`;
+            } else {
+                resultMessage.innerText = `Error: ${result.message}`;
+            }
+
+            setTimeout(() => {
+                resultMessage.innerText = '';
+                document.getElementById('imageInput').value = '';
+            }, 5000);
+        } catch (error) {
+            console.error('Error uploading image:', error.message);
+        }
+
+        var imagePath = document.getElementById("imagePath").value;
+        if (imagePath.trim() !== '') {
+            // Nếu imagePath đã được thiết lập, thực hiện submit form sau 500ms
+            setTimeout(function() {
+                document.getElementById("myForm").submit();
+            }, 1000); // Đợi 500ms trước khi submit
+        } else {
+            // Nếu imagePath chưa được thiết lập, thông báo cho người dùng hoặc thực hiện các hành động khác
+            alert("Vui lòng chọn hình ảnh trước khi submit!");
+        }
+    }
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

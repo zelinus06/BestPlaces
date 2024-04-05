@@ -42,6 +42,5 @@ public class SendMailController {
             return "testSucess.html";
         }
         return "testFail.html";
-
     }
 }

@@ -4,10 +4,14 @@ import com.bestplaces.Dto.UserRegistrationDto;
 import com.bestplaces.Entity.User;
 import com.bestplaces.Service.MyTelegramBot;
 import com.bestplaces.Service.VerificationCodeService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 public class VeriCodeController {
@@ -17,26 +21,48 @@ public class VeriCodeController {
     private VerificationCodeService verificationCodeService;
 
     @GetMapping("/testVeriCode")
-    public String showVerifyCodeForm(Model model) {
-        model.addAttribute("user", new User());
+    public String showVerifyCodeForm(User user) {
         return "testVeriCode";
     }
 
     @PostMapping("/generate-code")
-    public String generateCode(@ModelAttribute("user") UserRegistrationDto userRegistrationDto, Model model) {
-        myTelegramBot.sendVerificationCode("6196949391");
-        return "testVeriCode";
-
+    public String generateCode(@RequestParam(value = "phoneNumber") String phoneNumber, HttpServletResponse response) {
+            Cookie cookie = new Cookie("phoneNumber", phoneNumber);
+            cookie.setMaxAge(3600);
+            response.addCookie(cookie);
+        String phoneNumbers = formatPhoneNumber(phoneNumber);
+        String number = myTelegramBot.phoneNumberMap.get(phoneNumbers);
+        if (number != null)
+            myTelegramBot.sendVerificationCode(number);
+        else {
+            return "testFail";
+        }
+            return "testVeriCode";
     }
-//    @PostMapping("/verify-code")
-//    public String VerifyCode(@RequestParam("verificationCode") String verificationCode) {
-//        String username = verificationCodeService.UserNameAtPresent();
-//        boolean code = verificationCodeService.verifyVerificationCode(username, verificationCode);
-//        if (code) {
-//            return "testSucess.html";
-//        }
-//        return "testFail.html";
-//
-//    }
+    @PostMapping("/verify-code-phone")
+    public String VerifyCode(@RequestParam("verificationCode") String verificationCode, HttpServletRequest request) {
+        Cookie[] cookie = request.getCookies();
+        String phoneNumber = null;
+        if (cookie != null) {
+            for (Cookie name : cookie) {
+                if (name.getName().equals("phoneNumber")) {
+                    phoneNumber = name.getValue();
+                    break;
+                }
+            }
+        }
+        String username = verificationCodeService.UserNameAtPresent();
+        boolean code = verificationCodeService.verifyVerificationCode(username, verificationCode, phoneNumber);
+        if (code) {
+            return "testSucess.html";
+        }
+        return "testFail.html";
+    }
+    public String formatPhoneNumber(String phoneNumber) {
+        if (phoneNumber.startsWith("0")) {
+            return "+84" + phoneNumber.substring(1);
+        }
+        return phoneNumber;
+    }
 }
 

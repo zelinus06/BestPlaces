@@ -21,17 +21,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class EmailServiceImpl implements  EmailService{
-
     @Value("${spring.mail.username}")
     private String fromEmail;
-
     @Autowired
     private JavaMailSender javaMailSender;
     @Autowired
     private UserServiceImpl userService;
     @Autowired
     private VerificationCodeService verificationCodeService;
-
     @Override
     public String sendMail(MultipartFile file, String to , String[] cc, String subject, String body) {
         try {

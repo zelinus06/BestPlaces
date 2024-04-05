@@ -2,6 +2,7 @@ package com.bestplaces.Entity;
 
 import com.bestplaces.Enums.Role;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.Collection;
 
@@ -11,17 +12,25 @@ import java.util.Collection;
         @UniqueConstraint(columnNames = {"username"})
 })
 public class User {
+    @Getter
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
+    @Getter
     @Column(name = "username")
     private String username;
 
+    @Getter
     private String email;
 
+    @Getter
     private String password;
 
+    @Getter
+    private String phoneNumber;
+
+    @Getter
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -37,31 +46,20 @@ public class User {
         this.role = role;
     }
 
-    public String getUsername() {
-        return username;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
-    public String getEmail() {
-        return email;
-    }
+
     public void setEmail(String email) {
         this.email = email;
     }
-    public String getPassword() {
-        return password;
-    }
+
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public void setAuthenticated(boolean authenticated) {

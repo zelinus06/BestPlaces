@@ -28,7 +28,7 @@ public class TestUploadImgController {
     @PostMapping("/uploadToGoogleDrive")
     public Object handleFileUpload(@RequestParam("image") MultipartFile file) throws IOException, GeneralSecurityException {
         if (file.isEmpty()) {
-            return "FIle is empty";
+            return "File is empty";
         }
         File tempFile = File.createTempFile("temp", null);
         file.transferTo(tempFile);

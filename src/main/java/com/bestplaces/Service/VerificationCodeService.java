@@ -28,14 +28,19 @@ public class VerificationCodeService {
             return code;
     }
     public boolean verifyVerificationCode(String username, String code) {
-        // Tìm username có trong list verification code
         VerificationCode verificationCode = verificationCodes.get(username);
         if (verificationCode != null && verificationCode.getCode().equals(code) && System.currentTimeMillis() < verificationCode.getExpirationTime()) {
-            // Loại bỏ mã xác minh sau khi xác minh thành công
             verificationCodes.remove(username);
-            // user đang null................................
-//            userRepository.setAuthenticatedByUsername(UserNameAtPresent());
             userRepository.setUser(UserNameAtPresent());
+            return true;
+        }
+        return false;
+    }
+    public boolean verifyVerificationCode(String username, String code, String phoneNumber) {
+        VerificationCode verificationCode = verificationCodes.get(username);
+        if (verificationCode != null && verificationCode.getCode().equals(code) && System.currentTimeMillis() < verificationCode.getExpirationTime()) {
+            verificationCodes.remove(username);
+            userRepository.setPhoneNumber(username, phoneNumber);
             return true;
         }
         return false;
@@ -64,9 +69,6 @@ public class VerificationCodeService {
             username = ((UserDetails) principal).getUsername(); // Gán giá trị cho biến username
         }
         return username;
-//        UserServiceImpl user = new UserServiceImpl();
-//        user.getCurrentUserEmail();
-//        return user.toString();
     }
 }
 
