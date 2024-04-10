@@ -3,6 +3,7 @@ package com.bestplaces.Entity;
 import com.bestplaces.Enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Collection;
 
@@ -33,6 +34,10 @@ public class User {
     @Getter
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Getter
+    @Setter
+    private String avatar;
 
     private boolean authenticated = false;
 

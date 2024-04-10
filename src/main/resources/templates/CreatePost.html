@@ -27,18 +27,27 @@
 <h2>Thêm Bài Đăng</h2>
 <form id ="myForm" th:action="@{/post}" method="post" th:object="${rentalPost}" enctype="multipart/form-data">
 
-    <label>Loại:</label><br>
-    <select name="Type">
-        <option th:field="*{type}"  th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
-                th:value="${type}" th:text="${type}" th:required="${type}"></option>
-    </select>
-
+    <div class="col-md-3">
+        <div class="form-group">
+            <label>Title</label><br>
+            <input type="text" th:field="*{title}" required><br>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label>Loại:</label><br>
+            <select name="Type">
+                <option th:field="*{type}"  th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
+                        th:value="${type}" th:text="${type.getValue()}" th:required="${type}"></option>
+            </select>
+        </div>
+    </div>
     <div class="col-md-3">
         <div class="form-group">
             <select class="form-control" id="provinceDropdown">
                 <option selected>Tỉnh/Thành</option>
             </select>
-            <input name="city" type="text" th:field="*{city}" required style=""><br>
+            <input name="city" type="hidden" th:field="*{city}" required style=""><br>
         </div>
     </div>
     <div class="col-md-3">
@@ -46,7 +55,7 @@
             <select class="form-control" id="districtDropdown">
                 <option selected>Quận/Huyện</option>
             </select>
-            <input name="district" type="text" th:field="*{district}" required style=""><br>
+            <input name="district" type="hidden" th:field="*{district}" required style=""><br>
         </div>
     </div>
     <div class="col-md-3">
@@ -54,7 +63,7 @@
             <select class="form-control" id="communeDropdown">
                 <option selected>Phường/Thị xã</option>
             </select>
-            <input name="commune" type="text" th:field="*{commune}" required style=""><br>
+            <input name="commune" type="hidden" th:field="*{commune}" required style=""><br>
         </div>
     </div>
     </div>

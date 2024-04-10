@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,8 +42,8 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="../static/1.png" alt="User Logo" width="30" height="30">
-                    Tên User
+                    <img th:src="${avatarUrl}" alt="User Logo" width="30" height="30">
+                    <span th:text="${username}"></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="#">Action</a>
@@ -58,65 +58,154 @@
 
 <div class="search-filters">
     <div class="container">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="form-group">
-                    <select class="form-control">
-                        <option selected>Loại hình</option>
-                        <option>Nhà ở</option>
-                        <option>Chung cư</option>
-                        <option>Biệt thự</option>
-                    </select>
+        <form th:action="@{/home}" method="post">
+            <div class="row">
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select name="Type" class="form-control">
+                            <option th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
+                                    th:value="${type}" th:text="${type.getValue()}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select name="priceRange" class="form-control">
+                            <option selected th:value="${0}">Giá cả</option>
+                            <option th:value="${700 + '-' + 1500}">Từ 700 nghìn - 1,5 triệu đồng</option>
+                            <option th:value="${1500 + '-' +2500}">Từ 1,5 - 2,5 triệu đồng</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select name="areaRange" class="form-control">
+                            <option selected th:value="${0}">Diện tích</option>
+                            <option th:attr="value=${0 + '-' + 20}">Dưới 20m²</option>
+                            <option th:attr="value=${21 + '-' + 30}">Từ 20m² đến 30m²</option>
+                            <!-- Thêm các option khác nếu cần -->
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select class="form-control" id="provinceDropdown">
+                            <option selected>Tỉnh/Thành</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select class="form-control" id="districtDropdown">
+                            <option selected>Quận/Huyện</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select class="form-control" id="communeDropdown">
+                            <option selected>Phường/Thị xã</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <select class="form-control">
-                        <option selected>Giá cả</option>
-                        <option>Dưới 1 tỷ</option>
-                        <option>Từ 1 tỷ đến 3 tỷ</option>
-                        <option>Trên 3 tỷ</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <select class="form-control">
-                        <option selected>Diện tích</option>
-                        <option>Dưới 50m²</option>
-                        <option>Từ 50m² đến 100m²</option>
-                        <option>Trên 100m²</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <select class="form-control" id="provinceDropdown">
-                        <option selected>Tỉnh/Thành</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <select class="form-control" id="districtDropdown">
-                        <option selected>Quận/Huyện</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <select class="form-control" id="communeDropdown">
-                        <option selected>Phường/Thị xã</option>
-                    </select>
-                </div>
-            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="container" th:if="${not showSearchResults}">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Danh sách cho thuê</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="post : ${posts}">
+                    <td class="post-title" th:text="${post.title}"></td>
+                    <td>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img class="img-fluid" th:src="${post.imagePath}" alt="Hình ảnh">
+                            </div>
+                            <div class="col-md-8">
+                                <h5>Type:</h5>
+                                <p th:text="${post.type.getValue()}"></p>
+
+                                <h5>Price:</h5>
+                                <p>
+                                    <span th:text="${post.price}"></span> VNĐ
+                                </p>
+
+                                <h5>Area:</h5>
+                                <p>
+                                    <span th:text="${post.area}"></span> m<sup>2</sup>
+                                </p>
+
+                                <h5>Location:</h5>
+                                <p th:text="${post.city + ', ' + post.district + ', ' + post.commune}"></p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="row">
-            <div class="col-md-12 mt-3">
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-                </div>
-            </div>
+    </div>
+</div>
+
+
+
+<div class="container" th:if="${showSearchResults}">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Danh sách tìm kiếm</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="search : ${rentalPosts}">
+                    <td class="post-title" th:text="${search.title}"></td>
+                    <td>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img class="img-fluid" th:src="${search.imagePath}" alt="Hình ảnh">
+                            </div>
+                            <div class="col-md-8">
+                                <h5>Type:</h5>
+                                <p th:text="${search.type.getValue()}"></p>
+
+                                <h5>Price:</h5>
+                                <p>
+                                    <span th:text="${search.price}"></span> VNĐ
+                                </p>
+
+                                <h5>Area:</h5>
+                                <p>
+                                    <span th:text="${search.area}"></span> m<sup>2</sup>
+                                </p>
+
+                                <h5>Location:</h5>
+                                <p th:text="${search.city + ', ' + search.district + ', ' + search.commune}"></p>
+                            </div>
+                        </div>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

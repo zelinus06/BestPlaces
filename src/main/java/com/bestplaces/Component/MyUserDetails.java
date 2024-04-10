@@ -1,13 +1,15 @@
 package com.bestplaces.Component;
 
+import com.bestplaces.Entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
 public class MyUserDetails implements UserDetails {
-    private User user;
+
+    private com.bestplaces.Entity.User user;
 
     public MyUserDetails(User user) {
         this.user = user;
@@ -25,7 +27,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return user.getUsername();
     }
 
     @Override
@@ -46,5 +48,9 @@ public class MyUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return false;
+    }
+
+    public String getAvatarUrl() {
+        return user.getAvatar();
     }
 }

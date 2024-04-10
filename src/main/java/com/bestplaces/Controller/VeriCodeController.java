@@ -3,6 +3,7 @@ package com.bestplaces.Controller;
 import com.bestplaces.Dto.UserRegistrationDto;
 import com.bestplaces.Entity.User;
 import com.bestplaces.Service.MyTelegramBot;
+import com.bestplaces.Service.MyUserDetailsService;
 import com.bestplaces.Service.VerificationCodeService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +20,8 @@ public class VeriCodeController {
     private MyTelegramBot myTelegramBot;
     @Autowired
     private VerificationCodeService verificationCodeService;
+    @Autowired
+    private MyUserDetailsService userDetailsService;
 
     @GetMapping("/testVeriCode")
     public String showVerifyCodeForm(User user) {
@@ -51,7 +54,7 @@ public class VeriCodeController {
                 }
             }
         }
-        String username = verificationCodeService.UserNameAtPresent();
+        String username = userDetailsService.UserNameAtPresent();
         boolean code = verificationCodeService.verifyVerificationCode(username, verificationCode, phoneNumber);
         if (code) {
             return "testSucess.html";

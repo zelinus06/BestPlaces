@@ -2,6 +2,7 @@ package com.bestplaces.Controller;
 
 import com.bestplaces.Entity.User;
 import com.bestplaces.Service.EmailService;
+import com.bestplaces.Service.MyUserDetailsService;
 import com.bestplaces.Service.VerificationCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,8 @@ public class SendMailController {
     private EmailService emailService;
     @Autowired
     private VerificationCodeService verificationCodeService;
+    @Autowired
+    private MyUserDetailsService userDetailsService;
 
     public SendMailController(EmailService emailService) {
         this.emailService = emailService;
@@ -26,7 +29,7 @@ public class SendMailController {
     @GetMapping("/mail")
     public String showMailForm(Model model) {
         model.addAttribute("user", new User());
-        String username = verificationCodeService.UserNameAtPresent();
+        String username = userDetailsService.UserNameAtPresent();
         return "mail";
     }
     @PostMapping("/sendEmail")
@@ -36,7 +39,7 @@ public class SendMailController {
     }
     @PostMapping("/verify-code")
     public String VerifyCode(@RequestParam("verificationCode") String verificationCode) {
-        String username = verificationCodeService.UserNameAtPresent();
+        String username = userDetailsService.UserNameAtPresent();
         boolean code = verificationCodeService.verifyVerificationCode(username, verificationCode);
         if (code) {
             return "testSucess.html";

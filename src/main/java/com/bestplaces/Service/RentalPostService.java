@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,17 +21,18 @@ public class RentalPostService {
     private PostRepository postRepository;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private UserServiceImpl userService;
+
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private MyUserDetailsService myUserDetailsService;
 
     public RentalPost saveRentalPost(RentalPostDto rentalPostDto) {
-        Optional<User> userOptional = userRepository.findByUsername(userService.UserNameAtPresent());
+        Optional<User> userOptional = userRepository.findByUsername(myUserDetailsService.UserNameAtPresent());
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             String phoneNumber = user.getPhoneNumber();
-            RentalPost rentalPost = new RentalPost(rentalPostDto.getId(), rentalPostDto.getCity(), rentalPostDto.getDistrict(), rentalPostDto.getCommune(), rentalPostDto.getExactAddress(), rentalPostDto.getImagePath(), rentalPostDto.getPrice(), rentalPostDto.getArea(), rentalPostDto.getType(), rentalPostDto.getDescription(), rentalPostDto.getPhoneNumber());
+            RentalPost rentalPost = new RentalPost(rentalPostDto.getId(), rentalPostDto.getTitle() ,rentalPostDto.getCity(), rentalPostDto.getDistrict(), rentalPostDto.getCommune(), rentalPostDto.getExactAddress(), rentalPostDto.getImagePath(), rentalPostDto.getPrice(), rentalPostDto.getArea(), rentalPostDto.getType(), rentalPostDto.getDescription(), rentalPostDto.getPhoneNumber());
             rentalPost.setUser(user);
             rentalPost.setPhoneNumber(phoneNumber);
             String address = rentalPostDto.getExactAddress() + "," + rentalPostDto.getCommune() + "," + rentalPostDto.getDistrict()  + "," + rentalPostDto.getCity();
@@ -52,6 +55,10 @@ public class RentalPostService {
         } else {
             return null;
         }
+    }
+
+    public List<RentalPost> getAllPosts() {
+        return postRepository.findAll();
     }
 }
 

@@ -29,9 +29,6 @@ public class RentalPostController {
     @Autowired
     private TestUploadService service;
 
-    @Autowired
-    private UserServiceImpl userService;
-
     @Autowired UserRepository userRepository;
 
     @GetMapping()

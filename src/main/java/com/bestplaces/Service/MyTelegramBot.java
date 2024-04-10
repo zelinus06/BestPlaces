@@ -22,6 +22,8 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     public static ConcurrentHashMap<String, String> phoneNumberMap = new ConcurrentHashMap<>();
     @Autowired
     private VerificationCodeService verificationCodeService;
+    @Autowired
+    private MyUserDetailsService userDetailsService;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -92,7 +94,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
     public void sendVerificationCode(String chatId) {
         SendMessage message = new SendMessage();
-        String verificationCodes = verificationCodeService.generateVerificationCode(verificationCodeService.UserNameAtPresent());
+        String verificationCodes = verificationCodeService.generateVerificationCode(userDetailsService.UserNameAtPresent());
         message.setChatId(chatId);
         message.setText("Your verification code is: " + verificationCodes);
         try {

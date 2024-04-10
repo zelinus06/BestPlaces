@@ -34,7 +34,7 @@ public class RentalPost {
     private String imagepath;
     @Getter
     @Column(nullable = false)
-    private int price;
+    private double price;
     @Getter
     @Column(nullable = false)
     private int area;
@@ -48,11 +48,14 @@ public class RentalPost {
     @Getter
     @Setter
     private double longtitude;
+    @Getter
+    @Setter
+    private String title;
 
     public RentalPost(){
     }
 
-    public RentalPost(User userId, String city, String district, String commune, String exactAddress, String imagepath, int price, int area, Type type, String description, String phoneNumber) {
+    public RentalPost(User userId, String title, String city, String district, String commune, String exactAddress, String imagepath, int price, int area, Type type, String description, String phoneNumber) {
         this.city = city;
         this.district = district;
         this.commune = commune;
@@ -64,6 +67,7 @@ public class RentalPost {
         this.type = type;
         this.description = description;
         this.phoneNumber = phoneNumber;
+        this.title = title;
     }
 
     public void setId(User userId) {
@@ -90,7 +94,7 @@ public class RentalPost {
         this.imagepath = imagePath;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

@@ -1,6 +1,7 @@
 package com.bestplaces.Config;
 
 //import com.bestplaces.Service.MyUserDetailsService;
+import com.bestplaces.Component.CustomAuthenticationSuccessHandler;
 import com.bestplaces.Service.MyUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,8 @@ public class SecurityConfig {
                 })
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .formLogin(form -> form
-                        .defaultSuccessUrl("/mail")
+                        .successHandler(customAuthenticationSuccessHandler())
+//                        .defaultSuccessUrl("/mail")
                         .failureUrl("/testFail"))
                 .build();
     }
@@ -65,5 +67,10 @@ public class SecurityConfig {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        return new CustomAuthenticationSuccessHandler(userDetailsService);
     }
 }

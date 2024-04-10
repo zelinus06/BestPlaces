@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(UserRegistrationDto userRegistrationDto) {
         User user = new User(userRegistrationDto.getUsername(), userRegistrationDto.getEmail(), userRegistrationDto.getPassword(), Role.NONUSER);
+        user.setAvatar("http://drive.google.com/thumbnail?id=15-wqnyhbS9Pp3hRudqoQw1swnFsKyzDM");
         return userRepository.save(user);
     }
 
@@ -41,15 +42,15 @@ public class UserServiceImpl implements UserService {
             return null;
         }
     }
-    @Transactional()
-    public Long getUserIdByUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user != null) {
-            return user.get().getId();
-        } else {
-            return null;
-        }
-    }
+//    @Transactional()
+//    public Long getUserIdByUsername(String username) {
+//        Optional<User> user = userRepository.findByUsername(username);
+//        if (user != null) {
+//            return user.get().getId();
+//        } else {
+//            return null;
+//        }
+//    }
 
     @Transactional()
     public Long getUserIdByUsernames() {
@@ -58,7 +59,6 @@ public class UserServiceImpl implements UserService {
         if (principal instanceof UserDetails) {
             username = ((UserDetails) principal).getUsername(); // Gán giá trị cho biến username
         }
-
         Optional<User> user = userRepository.findByUsername(username);
         if (user != null) {
            return user.get().getId();
@@ -67,12 +67,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public String UserNameAtPresent() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = null; // Khởi tạo biến username với giá trị mặc định là null
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername(); // Gán giá trị cho biến username
-        }
-        return username;
-    }
+//    public String UserNameAtPresent() {
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String username = null; // Khởi tạo biến username với giá trị mặc định là null
+//        if (principal instanceof UserDetails) {
+//            username = ((UserDetails) principal).getUsername(); // Gán giá trị cho biến username
+//        }
+//        return username;
+//    }
 }

@@ -16,10 +16,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class VerificationCodeService {
-    private UserServiceImpl userService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private MyUserDetailsService userDetailsService;
     private User user;
+
     private final Map<String, VerificationCode> verificationCodes = new ConcurrentHashMap<>();
     public String generateVerificationCode(String username) {
             String code = String.format("%05d", new Random().nextInt(100000));
@@ -31,7 +33,7 @@ public class VerificationCodeService {
         VerificationCode verificationCode = verificationCodes.get(username);
         if (verificationCode != null && verificationCode.getCode().equals(code) && System.currentTimeMillis() < verificationCode.getExpirationTime()) {
             verificationCodes.remove(username);
-            userRepository.setUser(UserNameAtPresent());
+            userRepository.setUser(userDetailsService.UserNameAtPresent());
             return true;
         }
         return false;
@@ -62,14 +64,14 @@ public class VerificationCodeService {
             return expirationTime;
         }
     }
-    public String UserNameAtPresent() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = null; // Khởi tạo biến username với giá trị mặc định là null
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername(); // Gán giá trị cho biến username
-        }
-        return username;
-    }
+//    public String UserNameAtPresent() {
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String username = null; // Khởi tạo biến username với giá trị mặc định là null
+//        if (principal instanceof UserDetails) {
+//            username = ((UserDetails) principal).getUsername(); // Gán giá trị cho biến username
+//        }
+//        return username;
+//    }
 }
 
 

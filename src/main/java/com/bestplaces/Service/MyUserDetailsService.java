@@ -3,6 +3,7 @@ package com.bestplaces.Service;
 import com.bestplaces.Entity.User;
 import com.bestplaces.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,5 +35,13 @@ public class MyUserDetailsService implements UserDetailsService {
             return "NONUSER";
         }
         return user.getRole().toString();
+    }
+    public String UserNameAtPresent() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = null;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        }
+        return username;
     }
 }

@@ -29,11 +29,13 @@ public class EmailServiceImpl implements  EmailService{
     private UserServiceImpl userService;
     @Autowired
     private VerificationCodeService verificationCodeService;
+    @Autowired
+    private MyUserDetailsService myUserDetailsService;
     @Override
     public String sendMail(MultipartFile file, String to , String[] cc, String subject, String body) {
         try {
-            body = verificationCodeService.generateVerificationCode(this.verificationCodeService.UserNameAtPresent());
-            to = userService.getEmailByUsername(this.verificationCodeService.UserNameAtPresent());
+            body = verificationCodeService.generateVerificationCode(myUserDetailsService.UserNameAtPresent());
+            to = userService.getEmailByUsername(myUserDetailsService.UserNameAtPresent());
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false);
             mimeMessageHelper.setFrom(fromEmail);

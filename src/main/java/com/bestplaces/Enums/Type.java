@@ -1,10 +1,10 @@
 package com.bestplaces.Enums;
 
 public enum Type {
-    BEDSIT("BEDSIT"),
-    APARTMENT("APARTMENT"),
-    STORE("STORE"),
-    HOUSE("HOUSE");
+    BEDSIT("Nhà trọ"),
+    APARTMENT("Căn hộ"),
+    STORE("Cửa hàng"),
+    HOUSE("Nhà ở");
 
 
     private final String value;
