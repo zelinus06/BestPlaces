@@ -60,10 +60,10 @@
     <div class="container">
         <form th:action="@{/home}" method="post">
             <div class="row">
-
                 <div class="col-md-3">
                     <div class="form-group">
                         <select name="Type" class="form-control">
+                            <option selected  th:value="${null}">Loại hình</option>
                             <option th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
                                     th:value="${type}" th:text="${type.getValue()}"></option>
                         </select>
@@ -83,8 +83,8 @@
                     <div class="form-group">
                         <select name="areaRange" class="form-control">
                             <option selected th:value="${0}">Diện tích</option>
-                            <option th:attr="value=${0 + '-' + 20}">Dưới 20m²</option>
-                            <option th:attr="value=${21 + '-' + 30}">Từ 20m² đến 30m²</option>
+                            <option th:value="${0 + '-' + 20}">Dưới 20m²</option>
+                            <option th:value="${21 + '-' + 30}">Từ 20m² đến 30m²</option>
                             <!-- Thêm các option khác nếu cần -->
                         </select>
                     </div>
@@ -92,22 +92,25 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <select class="form-control" id="provinceDropdown">
-                            <option selected>Tỉnh/Thành</option>
+                            <option selected th:value="${null}">Tỉnh/Thành</option>
                         </select>
+                        <input name="city" type="text" th:value="${city}"><br>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <select class="form-control" id="districtDropdown">
-                            <option selected>Quận/Huyện</option>
+                            <option selected th:value="${null}">Quận/Huyện</option>
                         </select>
+                        <input name="district" type="text" th:value="${district}"><br>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <select class="form-control" id="communeDropdown">
-                            <option selected>Phường/Thị xã</option>
+                            <option selected th:value="${null}">Phường/Thị xã</option>
                         </select>
+                        <input name="commune" type="text" th:value="${commune}"><br>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -245,16 +248,29 @@
 
     // Lắng nghe việc chọn thành phố
     provinceDropdown.addEventListener('change', function() {
-        const selectedProvinceCode = this.value;
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedProvinceCode = selectedOption.value;
+        const selectedProvinceName = selectedOption.textContent;
         getDistrictsByProvince(selectedProvinceCode);
+        var cityInput = document.querySelector('input[name="city"]');
+        cityInput.value = selectedProvinceName;
     });
-
     // Lắng nghe việc chọn quận huyện
     districtDropdown.addEventListener('change', function() {
-            const selectedDistrictCode = this.value;
-            getCommuneByDistrict(selectedDistrictCode);
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedDistrictCode = selectedOption.value;
+        const selectedDistrictName = selectedOption.textContent;
+        getCommuneByDistrict(selectedDistrictCode);
+        var cityInput = document.querySelector('input[name="district"]');
+        cityInput.value = selectedDistrictName;
     });
-
+    // Lắng nghe việc chọn thị x
+    communeDropdown.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedCommuneName = selectedOption.textContent;
+        const communeInput = document.querySelector('input[name="commune"]');
+        communeInput.value = selectedCommuneName;
+    });
     // In ra danh sách các quận/huyện
     function getDistrictsByProvince(selectedProvinceCode) {
         const url = `https://api.mysupership.vn/v1/partner/areas/district?province=${selectedProvinceCode}`;

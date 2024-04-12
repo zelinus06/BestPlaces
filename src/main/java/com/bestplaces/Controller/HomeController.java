@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class HomeController {
@@ -58,13 +59,26 @@ public class HomeController {
 public String filterSearch(@RequestParam(required = false, value = "priceRange") String priceRange,
                            @RequestParam(required = false, value = "areaRange") String areaRange,
                            @RequestParam(required = false, value = "Type") String type,
+                           @RequestParam(required = false, value = "city") String city,
+                           @RequestParam(required = false, value = "district") String district,
+                           @RequestParam(required = false, value = "commune") String commune,
                            Model model) {
     Double minPrice = null;
     Double maxPrice = null;
     Integer minArea = null;
     Integer maxArea = null;
-//    String type = null;
-
+    if (Objects.equals(type, "")) {
+        type = null;
+    }
+    if (Objects.equals(city, "")) {
+        city = null;
+    }
+    if (Objects.equals(district, "")) {
+        district = null;
+    }
+    if (Objects.equals(commune, "")) {
+        commune = null;
+    }
     if (!"0".equals(priceRange)) {
         String[] priceParts = priceRange.split("-");
         minPrice = Double.parseDouble(priceParts[0]);
@@ -77,7 +91,7 @@ public String filterSearch(@RequestParam(required = false, value = "priceRange")
         maxArea = Integer.parseInt(areaParts[1]);
     }
 
-    List<RentalPost> rentalPosts = filterSearch.searchPost(minPrice, maxPrice, minArea, maxArea, type);
+    List<RentalPost> rentalPosts = filterSearch.searchPost(minPrice, maxPrice, minArea, maxArea, type, city, district, commune);
     model.addAttribute("rentalPosts", rentalPosts);
     model.addAttribute("showSearchResults", true);
     return "home";
