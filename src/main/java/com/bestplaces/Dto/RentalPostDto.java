@@ -3,6 +3,7 @@ package com.bestplaces.Dto;
 import com.bestplaces.Entity.User;
 import com.bestplaces.Enums.Type;
 import lombok.Getter;
+import lombok.Setter;
 
 public class RentalPostDto {
     @Getter
@@ -26,12 +27,18 @@ public class RentalPostDto {
     @Getter
     private String phoneNumber;
     @Getter
-    private String exactAddress;
+    @Setter
+    private String street;
+
+    @Getter
+    @Setter
+    private String numberHouse;
+
     private String title;
 
     public RentalPostDto() {};
 
-    public RentalPostDto(User id, String title, String city, String district, String commune, String imagePath, int price, int area, Type type, String description, String phoneNumber, String exactAddress) {
+    public RentalPostDto(User id, String title, String city, String district, String commune, String imagePath, int price, int area, Type type, String description, String phoneNumber, String street, String numberHouse) {
         this.id = id;
         this.city = city;
         this.district = district;
@@ -42,8 +49,9 @@ public class RentalPostDto {
         this.type = type;
         this.description = description;
         this.phoneNumber = phoneNumber;
-        this.exactAddress = exactAddress;
+        this.street = street;
         this.title = title;
+        this.numberHouse = numberHouse;
     }
 
     public void setId(User id) {
@@ -84,10 +92,6 @@ public class RentalPostDto {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public void setExactAddress(String exactAddress) {
-        this.exactAddress = exactAddress;
     }
 
     public void setUser(User user) {

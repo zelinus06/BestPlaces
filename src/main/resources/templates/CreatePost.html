@@ -6,27 +6,26 @@
     <title>Thêm Bài Đăng</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        #image-preview {
-            max-width: 50px; /* Độ rộng tối đa */
-            max-height: 50px; /* Độ cao tối đa */
-            margin-top: 5px;
+        .preview-image {
+            height: 50px;
+            width: 50px;
+            object-fit: contain;
         }
-        #image-preview-container {
-            width: 50px; /* Chiều rộng cố định của khung bao */
+        .image-preview-container {
+            border: 1px solid #ccc;
+        }
+        #preview-box {
             height: 50px; /* Chiều cao cố định của khung bao */
             overflow: hidden; /* Ẩn phần nội dung vượt quá khung bao */
-            border: 1px solid #ccc; /* Viền khung bao */
             margin-top: 5px;
             display: flex; /* Sử dụng flexbox */
-            justify-content: center; /* Căn giữa theo chiều ngang */
-            align-items: center; /* Căn giữa theo chiều dọc */
+            justify-content: left;
         }
     </style>
 </head>
 <body>
 <h2>Thêm Bài Đăng</h2>
 <form id ="myForm" th:action="@{/post}" method="post" th:object="${rentalPost}" enctype="multipart/form-data">
-
     <div class="col-md-3">
         <div class="form-group">
             <label>Title</label><br>
@@ -66,13 +65,15 @@
             <input name="commune" type="hidden" th:field="*{commune}" required style=""><br>
         </div>
     </div>
-    </div>
 
-    <label>Số nhà, tên đường</label><br>
-    <input type="text" th:field="*{exactAddress}" required><br>
+    <label>Tên đường</label><br>
+    <input type="text" th:field="*{street}"><br>
+
+    <label>Số nhà</label><br>
+    <input type="text" th:field="*{numberHouse}"><br>
 
     <label>Giá:</label><br>
-    <input type="number" th:field="*{price}" required><br>
+    <input type="number" th:field="*{price}" value="0" required><br>
 
     <label>Diện Tích:</label><br>
     <input type="number" th:field="*{area}" required><br>
@@ -81,24 +82,41 @@
     <textarea th:field="*{description}" required></textarea><br>
 
     <label for="imageInput">Đường dẫn Ảnh:</label><br>
-    <input type="file" id="imageInput" name="image" required accept="image/*" onchange="previewImage(event)"><br>
-    <div id="image-preview-container">
-        <img id="image-preview" src="#" alt="Preview">
-    </div>
+    <input type="file" id="imageInput" name="image" required accept="image/*" multiple onchange="previewImage(event)"><br>
 
+    <div id="preview-box"></div>
 
     <button type="submit" onclick="handleUpload()">Submit</button>
 </form>
+<div id="resultMessage"></div>
 
 <script>
     function previewImage(event) {
         var input = event.target;
-        var reader = new FileReader();
-        reader.onload = function(){
-            var img = document.getElementById('image-preview');
-            img.src = reader.result;
-        };
-        reader.readAsDataURL(input.files[0]);
+        var previewContainer = document.getElementById('preview-box');
+        for (const file of input.files) {
+            var reader = new FileReader();
+            reader.onload = function(){
+                var div = document.createElement('div');
+                div.classList.add('image-preview-container');
+                var img = document.createElement('img');
+                img.src = reader.result;
+                img.classList.add('preview-image');
+                div.appendChild(img);
+
+                // Tạo nút "Hủy" và đặt sự kiện click
+                var cancelButton = document.createElement('button');
+                cancelButton.textContent = 'x';
+                cancelButton.addEventListener('click', function() {
+                    div.remove();
+                });
+
+                div.appendChild(cancelButton);
+
+                previewContainer.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        }
     }
 </script>
 <script>
@@ -242,68 +260,69 @@
     }
 </script>
 <script>
+    const fileList = [];
+
     document.getElementById('imageInput').addEventListener('change', function(event) {
-        const selectedFile = event.target.files[0];
+        const selectedFiles = event.target.files;
         const uploadButton = document.querySelector('button');
-        uploadButton.disabled = !selectedFile;
+        // uploadButton.disabled = !selectedFiles;
+        uploadButton.disabled = selectedFiles.length === 0;
+
+        for (const file of selectedFiles) {
+            const formData = new FormData();
+            formData.append('image', file);
+            fileList.push(formData);
+        }
     });
 
     async function handleUpload() {
-
         // Kiểm tra xem tất cả các trường thông tin đã được điền đầy đủ hay không
         const type = document.querySelector('select[name="Type"]').value;
         const city = document.querySelector('input[name="city"]').value;
         const district = document.querySelector('input[name="district"]').value;
-        const exactAddress = document.querySelector('input[name="exactAddress"]').value;
         const price = document.querySelector('input[name="price"]').value;
         const area = document.querySelector('input[name="area"]').value;
         const description = document.querySelector('textarea[name="description"]').value;
 
-        if (type.trim() === '' || city.trim() === '' || district.trim() === '' || exactAddress.trim() === '' || price.trim() === '' || area.trim() === '' || description.trim() === '') {
-            // Nếu một trong các trường thông tin còn trống, hiển thị thông báo cảnh báo và ngăn chặn việc tiếp tục
+        if (type.trim() === '' || city.trim() === '' || district.trim() === '' ||
+            price.trim() === '' || area.trim() === '' || description.trim() === '') {
             alert("Vui lòng nhập đầy đủ thông tin trước khi tải lên ảnh!");
             return;
         }
-        else {
-            console.log("da thuc hien")
-        const selectedFile = document.getElementById('imageInput').files[0];
-        const formData = new FormData();
-        formData.append('image', selectedFile);
         try {
-            const response = await fetch('http://localhost:8080/uploadToGoogleDrive', {
-                method: 'POST',
-                body: formData
+            // Sử dụng Promise.all để gửi tất cả các request fetch cùng một lúc
+            const responses = await Promise.all(fileList.map(async formData => {
+                const response = await fetch('http://localhost:8080/uploadToGoogleDrive', {
+                    method: 'POST',
+                    body: formData
+                });
+                return response.json();
+            }));
+
+            responses.forEach((response, index) => {
+                const resultMessage = document.getElementById('resultMessage');
+                const urlInput = document.getElementById('imageUrlInput');
+
+                if (response.status === 200) {
+                    resultMessage.innerText += `Success (${index}): ${response.message}\n`;
+
+                    const urlInput = document.createElement('input');
+                    urlInput.setAttribute('type', 'text');
+                    urlInput.setAttribute('value', response.url);
+                    // Thêm thẻ input vào DOM
+                    document.body.appendChild(urlInput);
+                } else {
+                    resultMessage.innerText += `Error (${index}): ${response.message}\n`;
+                }
             });
-
-            const result = await response.json();
-            const resultMessage = document.getElementById('resultMessage');
-
-            if (response.status === 200) {
-                resultMessage.innerText = `Success: ${result.message}`;
-            } else {
-                resultMessage.innerText = `Error: ${result.message}`;
-            }
-
-            setTimeout(() => {
-                resultMessage.innerText = '';
-                document.getElementById('imageInput').value = '';
-            }, 5000);
+            // Xóa fileList sau khi đã xử lý xong
+            fileList.length = 0;
         } catch (error) {
-            console.error('Error uploading image:', error.message);
+            console.error('Error uploading images:', error.message);
         }
+    }
 
-        var imagePath = document.getElementById("imagePath").value;
-        if (imagePath.trim() !== '') {
-            // Nếu imagePath đã được thiết lập, thực hiện submit form sau 500ms
-            setTimeout(function() {
-                document.getElementById("myForm").submit();
-            }, 1000); // Đợi 500ms trước khi submit
-        } else {
-            // Nếu imagePath chưa được thiết lập, thông báo cho người dùng hoặc thực hiện các hành động khác
-            alert("Vui lòng chọn hình ảnh trước khi submit!");
-        }
-    }
-    }
+
 </script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

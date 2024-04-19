@@ -30,7 +30,13 @@ public class RentalPost {
     @Column(nullable = false)
     private String commune;
     @Getter
-    private String exactAddress;
+    @Setter
+    private String street;
+    @Getter
+    @Setter
+    private String numberHouse;
+    @Getter
+    @Setter
     private String imagepath;
     @Getter
     @Column(nullable = false)
@@ -55,11 +61,12 @@ public class RentalPost {
     public RentalPost(){
     }
 
-    public RentalPost(User userId, String title, String city, String district, String commune, String exactAddress, String imagepath, int price, int area, Type type, String description, String phoneNumber) {
+    public RentalPost(User userId, String title, String city, String district, String commune, String street, String numberhouse, String imagepath, int price, int area, Type type, String description, String phoneNumber) {
         this.city = city;
         this.district = district;
         this.commune = commune;
-        this.exactAddress = exactAddress;
+        this.street = street;
+        this.numberHouse = numberhouse;
         this.userId = userId;
         this.imagepath = imagepath;
         this.price = price;
@@ -114,9 +121,6 @@ public class RentalPost {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setExactAddress(String exactAddress) {
-        this.exactAddress = exactAddress;
-    }
 
     public void setUser(User user) {
         this.userId = user;

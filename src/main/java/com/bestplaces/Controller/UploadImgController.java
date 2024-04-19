@@ -1,9 +1,8 @@
 package com.bestplaces.Controller;
 
 import com.bestplaces.Dto.Res;
-import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Entity.User;
-import com.bestplaces.Service.TestUploadService;
+import com.bestplaces.Service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,11 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
-public class TestUploadImgController {
+public class UploadImgController {
     @Autowired
-    private TestUploadService service;
+    private UploadService service;
 
     @GetMapping("/TestUploadImg")
     public String showVerifyCodeForm(Model model) {
@@ -33,7 +34,6 @@ public class TestUploadImgController {
         File tempFile = File.createTempFile("temp", null);
         file.transferTo(tempFile);
         Res res = service.uploadImageToDrive(tempFile);
-        System.out.println(res);
         return res;
     }
 }

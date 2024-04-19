@@ -16,10 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
     @Transactional
     @Modifying
-    @Query("UPDATE User u SET u.authenticated = true WHERE u.username = ?1")
-    void setAuthenticatedByUsername(String username);
-    @Transactional
-    @Modifying
     @Query("UPDATE User u SET u.role = 'USER' WHERE u.username = ?1")
     void setUser(String username);
     @Modifying

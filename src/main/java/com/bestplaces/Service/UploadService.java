@@ -1,8 +1,9 @@
 package com.bestplaces.Service;
 
 import com.bestplaces.Dto.Res;
+import com.bestplaces.Entity.ImageUrl;
 import com.bestplaces.Entity.RentalPost;
-import com.bestplaces.Entity.User;
+import com.bestplaces.Repository.ImageUrlRepository;
 import com.bestplaces.Repository.PostRepository;
 import com.bestplaces.Service.Impl.UserServiceImpl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -12,9 +13,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import org.hibernate.query.spi.Limit;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,10 +22,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
-import java.util.Optional;
+
 
 @Service
-public class TestUploadService {
+public class UploadService {
 
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String SERVICE_ACOUNT_KEY_PATH = getPathToGoodleCredentials();
@@ -35,6 +34,8 @@ public class TestUploadService {
     private UserServiceImpl userService;
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private ImageUrlRepository imageUrlRepository;
 
     private static String getPathToGoodleCredentials() {
         String currentDirectory = System.getProperty("user.dir");
@@ -44,7 +45,6 @@ public class TestUploadService {
 
     public Res uploadImageToDrive(File file) throws GeneralSecurityException, IOException {
         Res res = new Res();
-
         try{
             String folderId = "1mithqebMP1qEoDg7cE_sU1rpKS7_TcRv";
             Drive drive = createDriveService();
@@ -60,12 +60,10 @@ public class TestUploadService {
                     .setFields("id").execute();
             String imageUrl = "https://drive.google.com/thumbnail?id="+uploadedFile.getId();
             saveImagePathForUser(imageUrl);
-            System.out.println("IMAGE URL: " + imageUrl);
             file.delete();
             res.setStatus(200);
-            res.setMessage("Image Successfully Uploaded To Drive");
+            res.setMessage("Image successfully Uploaded To Drive");
             res.setUrl(imageUrl);
-//            saveImagePathForUser(imageUrl,userId);
         }catch (Exception e){
             System.out.println(e.getMessage());
             res.setStatus(501);
@@ -85,12 +83,22 @@ public class TestUploadService {
     }
 
     public void saveImagePathForUser(String imagePath) {
-        RentalPost rentalPostOptional = postRepository.findByUserId(userService.getUserIdByUsernames());
-        if (rentalPostOptional != null) {
-            rentalPostOptional.setImagePath(imagePath);
-            postRepository.save(rentalPostOptional);
+        //Kiểm tra xem bài post nào có imagepath = false;
+        RentalPost rentalPost = postRepository.findByUserId(userService.getUserIdByUsernames());
+//        ImageUrl imageUrl = postRepository.findByUserId();
+
+        if (rentalPost != null) {
+            ImageUrl imageUrl = new ImageUrl();
+            imageUrl.setImageUrl(imagePath);
+            imageUrl.setId_post(rentalPost);
         } else {
-            // Xử lý khi không tìm thấy bài đăng thuê tương ứng với người dùng
+            System.out.println("Khong tim thay");
+        }
+
+        if (rentalPost != null) {
+            rentalPost.setImagePath(imagePath);
+            postRepository.save(rentalPost);
+        } else {
             System.out.println("Không tìm thấy bài đăng thuê tương ứng với người dùng");
         }
     }

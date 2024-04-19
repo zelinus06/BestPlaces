@@ -43,13 +43,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/home", " /register", "mail", "registration").permitAll();
                     registry.requestMatchers("/admin/**", "/test").hasRole("ADMIN");
-                    registry.requestMatchers("/user/**").hasRole("USER");
+                    registry.requestMatchers("/user/**").hasAnyRole("USER", "NONUSER", "ADMIN");
                     registry.anyRequest().authenticated();
                 })
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .formLogin(form -> form
                         .successHandler(customAuthenticationSuccessHandler())
-//                        .defaultSuccessUrl("/mail")
                         .failureUrl("/testFail"))
                 .build();
     }

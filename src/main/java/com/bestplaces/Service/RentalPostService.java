@@ -1,8 +1,10 @@
 package com.bestplaces.Service;
 
 import com.bestplaces.Dto.RentalPostDto;
+import com.bestplaces.Entity.ImageUrl;
 import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Entity.User;
+import com.bestplaces.Repository.ImageUrlRepository;
 import com.bestplaces.Repository.PostRepository;
 import com.bestplaces.Repository.UserRepository;
 import com.bestplaces.Service.Impl.UserServiceImpl;
@@ -21,21 +23,22 @@ public class RentalPostService {
     private PostRepository postRepository;
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
     private MyUserDetailsService myUserDetailsService;
+    @Autowired
+    private ImageUrlRepository imageUrlRepository;
 
     public RentalPost saveRentalPost(RentalPostDto rentalPostDto) {
         Optional<User> userOptional = userRepository.findByUsername(myUserDetailsService.UserNameAtPresent());
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             String phoneNumber = user.getPhoneNumber();
-            RentalPost rentalPost = new RentalPost(rentalPostDto.getId(), rentalPostDto.getTitle() ,rentalPostDto.getCity(), rentalPostDto.getDistrict(), rentalPostDto.getCommune(), rentalPostDto.getExactAddress(), rentalPostDto.getImagePath(), rentalPostDto.getPrice(), rentalPostDto.getArea(), rentalPostDto.getType(), rentalPostDto.getDescription(), rentalPostDto.getPhoneNumber());
+            RentalPost rentalPost = new RentalPost(rentalPostDto.getId(), rentalPostDto.getTitle() ,rentalPostDto.getCity(), rentalPostDto.getDistrict(), rentalPostDto.getCommune(), rentalPostDto.getStreet(), rentalPostDto.getNumberHouse(), rentalPostDto.getImagePath(), rentalPostDto.getPrice(), rentalPostDto.getArea(), rentalPostDto.getType(), rentalPostDto.getDescription(), rentalPostDto.getPhoneNumber());
             rentalPost.setUser(user);
             rentalPost.setPhoneNumber(phoneNumber);
-            String address = rentalPostDto.getExactAddress() + "," + rentalPostDto.getCommune() + "," + rentalPostDto.getDistrict()  + "," + rentalPostDto.getCity();
+            String address = rentalPostDto.getNumberHouse() + "," + rentalPostDto.getStreet() + "," + rentalPostDto.getCommune() + "," + rentalPostDto.getDistrict()  + "," + rentalPostDto.getCity();
             String apiUrl = String.format("https://nominatim.openstreetmap.org/search?q=%s&format=json", address);
             String result = restTemplate.getForObject(apiUrl, String.class);
             try {
@@ -56,7 +59,6 @@ public class RentalPostService {
             return null;
         }
     }
-
     public List<RentalPost> getAllPosts() {
         return postRepository.findAll();
     }

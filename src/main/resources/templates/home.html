@@ -49,7 +49,7 @@
                     <a class="dropdown-item" href="#">Action</a>
                     <a class="dropdown-item" href="#">Another action</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Logout</a>
+                    <a class="dropdown-item" href="http://localhost:8080/logout">Logout</a>
                 </div>
             </li>
         </ul>
@@ -94,7 +94,7 @@
                         <select class="form-control" id="provinceDropdown">
                             <option selected th:value="${null}">Tỉnh/Thành</option>
                         </select>
-                        <input name="city" type="text" th:value="${city}"><br>
+                        <input name="city" type="hidden" th:value="${city}"><br>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -102,7 +102,7 @@
                         <select class="form-control" id="districtDropdown">
                             <option selected th:value="${null}">Quận/Huyện</option>
                         </select>
-                        <input name="district" type="text" th:value="${district}"><br>
+                        <input name="district" type="hidden" th:value="${district}"><br>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -110,7 +110,7 @@
                         <select class="form-control" id="communeDropdown">
                             <option selected th:value="${null}">Phường/Thị xã</option>
                         </select>
-                        <input name="commune" type="text" th:value="${commune}"><br>
+                        <input name="commune" type="hidden" th:value="${commune}"><br>
                     </div>
                 </div>
                 <div class="col-md-3">
