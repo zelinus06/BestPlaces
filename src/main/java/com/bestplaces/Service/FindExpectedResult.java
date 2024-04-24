@@ -1,22 +1,46 @@
 package com.bestplaces.Service;
 
+import com.bestplaces.Entity.User;
+import com.bestplaces.Repository.ListLocationRepository;
+import com.bestplaces.Repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
 public class FindExpectedResult {
-    public static void main(String[] args) {
-        // Ví dụ điểm tọa độ trái đất
-        double[][] earthPoints = {
-                {21.0058553, 105.9373266},
-                {20.9796101, 105.9160221},
-                {20.9830954, 105.9310738},
-                {21.0072277, 105.9576432},
-                {21.0272254, 105.923409},
-                {21.0242233, 105.9306881}
-        };
+    @Autowired
+    private ListLocationRepository listLocationRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    public String FindExResult() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        User user = userOptional.get();
+
+        List<Double> list = listLocationRepository.findAllByUserId(user.getId());
+
+        double[][] earthPoints = new double[list.size()][2];
+
+        for (int i = 0; i < list.size(); i++) {
+            earthPoints[i][0] = list.get(i * 2);         // Kinh độ
+            earthPoints[i][1] = list.get(i * 2 + 1);     // Vĩ độ
+        }
+
         double[] circle = findCircle(earthPoints);
         System.out.println("Tâm của đường tròn: (" + circle[0] + ", " + circle[1] + ")");
         System.out.println("Bán kính của đường tròn: " + circle[2]);
+        String result = circle[0] + ", " + circle[1];
+        return result;
     }
 
-    public static double[] findCircle(double[][] points) {
+    public double[] findCircle(double[][] points) {
         int n = points.length;
         double[] center = {0, 0};
         double radius = 0;
@@ -36,7 +60,7 @@ public class FindExpectedResult {
         return new double[] {center[0], center[1], radius};
     }
     // Haversine formula
-    public static double haversine(double lat1, double lon1, double lat2, double lon2) {
+    public double haversine(double lat1, double lon1, double lat2, double lon2) {
         double R = 6371;
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);

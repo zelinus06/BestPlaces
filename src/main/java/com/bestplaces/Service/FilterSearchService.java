@@ -17,6 +17,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,17 +29,14 @@ public class FilterSearchService {
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
-    private MyUserDetailsService myUserDetailsService;
-    @Autowired
-    private UserRepository userRepository;
+    private GetExpectedResult getExpectedResult;
+    @Async
+    public void saveSearchResultAsync(String location) {
+        getExpectedResult.saveSearchResult(location);
+    }
 
     public List<RentalPost> searchPost(Double minPrice, Double maxPrice, Integer minArea, Integer maxArea, String type, String city, String district, String commune) {
         String location = null;
-        ListLocation listLocation = new ListLocation();
-
-
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<RentalPost> criteriaQuery = criteriaBuilder.createQuery(RentalPost.class);
         Root<RentalPost> rentalPost = criteriaQuery.from(RentalPost.class);
@@ -61,7 +59,6 @@ public class FilterSearchService {
         if (type != null) {
             predicates.add(criteriaBuilder.equal(rentalPost.get("type"), type));
         }
-
         if ( city != null) {
             predicates.add(criteriaBuilder.equal(rentalPost.get("city"), city));
             location = city;
@@ -74,38 +71,7 @@ public class FilterSearchService {
                 }
             }
         }
-
-        ArrayList<String> list = new ArrayList<>();
-        list.add(location);
-
-        List<String> duplicates = new ArrayList<>();
-        Set<String> uniqueNumbers = new HashSet<>();
-
-        for (String number : list) {
-            if (!uniqueNumbers.add(number)) {
-                duplicates.add(number);
-            }
-        }
-        for (String duplicate : duplicates) {
-            String apiUrl = String.format("https://nominatim.openstreetmap.org/search?q=%s&format=json", location);
-            String result = restTemplate.getForObject(apiUrl, String.class);
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(result);
-                double latitude = jsonNode.get(0).get("lat").asDouble();
-                double longitude = jsonNode.get(0).get("lon").asDouble();
-                Optional<User> userOptional = userRepository.findByUsername(myUserDetailsService.UserNameAtPresent());
-                if (userOptional.isPresent()) {
-                    User user = userOptional.get();
-                    listLocation.setUser(user);
-                    listLocation.setLatitude(latitude);
-                    listLocation.setLongtitude(longitude);
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        saveSearchResultAsync(location);
         // Kết hợp tất cả các điều kiện với AND
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(criteriaQuery).getResultList();

@@ -74,7 +74,6 @@ public String filterSearch(@RequestParam(required = false, value = "priceRange")
         minArea = Integer.parseInt(areaParts[0]);
         maxArea = Integer.parseInt(areaParts[1]);
     }
-//    List<PostDto> posts = rentalPostService.getAllPosts();
     List<RentalPost> rentalPosts = filterSearch.searchPost(minPrice, maxPrice, minArea, maxArea, type, city, district, commune);
     List<PostDto> postDTOs = rentalPostService.getPosts(rentalPosts);
     model.addAttribute("rentalPosts", postDTOs);

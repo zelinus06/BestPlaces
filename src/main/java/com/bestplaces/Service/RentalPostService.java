@@ -35,9 +35,7 @@ public class RentalPostService {
             User user = userOptional.get();
             String phoneNumber = user.getPhoneNumber();
             long postId = generateUniqueId();
-//            RentalPost rentalPost = new RentalPost(rentalPostDto.getId(), rentalPostDto.getTitle() ,rentalPostDto.getCity(), rentalPostDto.getDistrict(), rentalPostDto.getCommune(), rentalPostDto.getStreet(), rentalPostDto.getNumberHouse(), rentalPostDto.getPrice(), rentalPostDto.getArea(), rentalPostDto.getType(), rentalPostDto.getDescription(), rentalPostDto.getPhoneNumber());
             RentalPost rentalPost = new RentalPost(rentalPostDto.getId() ,rentalPostDto.getCity(), rentalPostDto.getDistrict(), rentalPostDto.getCommune(), rentalPostDto.getStreet(), rentalPostDto.getNumberHouse(), rentalPostDto.getType(), rentalPostDto.getPhoneNumber());
-
             rentalPost.setId_post(postId);
             rentalPost.setUser(user);
             rentalPost.setPhoneNumber(phoneNumber);
