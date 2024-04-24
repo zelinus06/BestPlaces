@@ -3,6 +3,8 @@ package com.bestplaces.Controller;
 import com.bestplaces.Dto.RentalPostDto;
 import com.bestplaces.Dto.Res;
 import com.bestplaces.Entity.RentalPost;
+import com.bestplaces.Entity.User;
+import com.bestplaces.Repository.PostRepository;
 import com.bestplaces.Repository.UserRepository;
 import com.bestplaces.Service.RentalPostService;
 import com.bestplaces.Service.UploadService;
@@ -26,10 +28,14 @@ public class RentalPostController {
     @Autowired
     private RentalPostService rentalPostService;
 
-    @Autowired UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
-    private UploadService uploadService;
+    private UploadService service;
+
+    @Autowired
+    private PostRepository postRepository;
 
     @GetMapping()
     public String showAddRentalPostForm(Model model) {
@@ -37,10 +43,34 @@ public class RentalPostController {
         return "CreatePost";
     }
 
-    @PostMapping()
-    public String createRentalPost(@ModelAttribute("rentalpost") RentalPostDto rentalPostDto){
-        rentalPostService.saveRentalPost(rentalPostDto);
+    @PostMapping("")
+    public String createRentalPost(@ModelAttribute("rentalpost") RentalPostDto rentalPostDto, @RequestParam("files")  MultipartFile[] files)throws IOException, GeneralSecurityException {
+        RentalPost rentalPost = rentalPostService.saveRentalPost(rentalPostDto);
+        for (MultipartFile file : files) {
+            try {
+                File tempFile = File.createTempFile("temp", null);
+                file.transferTo(tempFile);
+                Res res = service.uploadImageToDrive(tempFile);
+                service.saveImagePathForUser(res.getUrl(), rentalPost);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "Error occurred while processing file: " + e.getMessage();
+
+            }
+        }
         return "CreatePost";
+    }
+
+    @ResponseBody
+    @PostMapping("/uploadToGoogleDrive")
+    public Object handleFileUpload(@RequestParam("image") MultipartFile file,  @RequestParam("postId") RentalPost postId) throws IOException, GeneralSecurityException {
+        if (file.isEmpty()) {
+            return "File is empty";
+        }
+        File tempFile = File.createTempFile("temp", null);
+        file.transferTo(tempFile);
+        Res res = service.uploadImageToDrive(tempFile);
+        return res;
     }
 }
 

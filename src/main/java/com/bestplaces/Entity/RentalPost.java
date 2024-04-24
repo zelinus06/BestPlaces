@@ -9,8 +9,8 @@ import lombok.Setter;
 @Table(name = "RentalPost")
 public class RentalPost {
     @Getter
+    @Setter
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id_post;
     @Getter
     @ManyToOne
@@ -36,13 +36,10 @@ public class RentalPost {
     @Setter
     private String numberHouse;
     @Getter
-    @Setter
-    private String imagepath;
+//    @Column(nullable = false)
+    private int price;
     @Getter
-    @Column(nullable = false)
-    private double price;
-    @Getter
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private int area;
     @Getter
     private String description;
@@ -61,20 +58,31 @@ public class RentalPost {
     public RentalPost(){
     }
 
-    public RentalPost(User userId, String title, String city, String district, String commune, String street, String numberhouse, String imagepath, int price, int area, Type type, String description, String phoneNumber) {
+//    public RentalPost(User userId, String title, String city, String district, String commune, String street, String numberhouse, int price, int area, Type type, String description, String phoneNumber) {
+//        this.city = city;
+//        this.district = district;
+//        this.commune = commune;
+//        this.street = street;
+//        this.numberHouse = numberhouse;
+//        this.userId = userId;
+//        this.price = price;
+//        this.area = area;
+//        this.type = type;
+//        this.description = description;
+//        this.phoneNumber = phoneNumber;
+//        this.title = title;
+//    }
+
+    public RentalPost(User id, String city, String district, String commune, String street, String numberHouse, Type type, String phoneNumber) {
         this.city = city;
         this.district = district;
         this.commune = commune;
         this.street = street;
-        this.numberHouse = numberhouse;
+        this.numberHouse = numberHouse;
         this.userId = userId;
-        this.imagepath = imagepath;
-        this.price = price;
-        this.area = area;
         this.type = type;
-        this.description = description;
         this.phoneNumber = phoneNumber;
-        this.title = title;
+
     }
 
     public void setId(User userId) {
@@ -93,15 +101,7 @@ public class RentalPost {
         this.commune = commune;
     }
 
-    public String getImagePath() {
-        return imagepath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagepath = imagePath;
-    }
-
-    public void setPrice(double price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 

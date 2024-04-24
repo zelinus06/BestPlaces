@@ -11,7 +11,6 @@
             background-color: #f8f9fa;
             padding: 10px 0;
         }
-
         .search-filters .form-group {
             margin-bottom: 0;
         }
@@ -42,8 +41,8 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img th:src="${avatarUrl}" alt="User Logo" width="30" height="30">
-                    <span th:text="${username}"></span>
+                    <img id="avatarUrl" src="" alt="User Logo" width="30" height="30">
+                    <span id="username" ></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="#">Action</a>
@@ -129,38 +128,39 @@
         <div class="col-md-12">
             <table class="table">
                 <thead>
-                <tr>
-                    <th>Danh sách cho thuê</th>
-                </tr>
+                    <tr>
+                        <th>Danh sách cho thuê</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr th:each="post : ${posts}">
-                    <td class="post-title" th:text="${post.title}"></td>
-                    <td>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <img class="img-fluid" th:src="${post.imagePath}" alt="Hình ảnh">
+                    <tr th:each="postDto : ${posts}">
+                        <td class="post-title" th:text="${postDto.post.title}" >
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <img class="img-fluid" th:src="${postDto.images[0]}" alt="Image" />
+                                </div>
+                                <div class="col-md-8">
+                                    <h5>Type:</h5>
+                                    <p th:text="${postDto.post.type.getValue()}"></p>
+
+                                    <h5>Price:</h5>
+                                    <p>
+                                        <span th:text="${postDto.post.price}"></span> VNĐ
+                                    </p>
+
+                                    <h5>Area:</h5>
+                                    <p>
+                                        <span th:text="${postDto.post.area}"></span> m<sup>2</sup>
+                                    </p>
+
+                                    <h5>Location:</h5>
+                                    <p th:text="${postDto.post.city + ', ' + postDto.post.district + ', ' + postDto.post.commune}"></p>
+                                </div>
                             </div>
-                            <div class="col-md-8">
-                                <h5>Type:</h5>
-                                <p th:text="${post.type.getValue()}"></p>
-
-                                <h5>Price:</h5>
-                                <p>
-                                    <span th:text="${post.price}"></span> VNĐ
-                                </p>
-
-                                <h5>Area:</h5>
-                                <p>
-                                    <span th:text="${post.area}"></span> m<sup>2</sup>
-                                </p>
-
-                                <h5>Location:</h5>
-                                <p th:text="${post.city + ', ' + post.district + ', ' + post.commune}"></p>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -180,35 +180,36 @@
                 </thead>
                 <tbody>
                 <tr th:each="search : ${rentalPosts}">
-                    <td class="post-title" th:text="${search.title}"></td>
+                    <td class="post-title" th:text="${search.post.title}" >
+                    </td>
                     <td>
                         <div class="row">
                             <div class="col-md-4">
-                                <img class="img-fluid" th:src="${search.imagePath}" alt="Hình ảnh">
+                                <img class="img-fluid" th:src="${search.images[0]}" alt="Hình ảnh">
                             </div>
                             <div class="col-md-8">
                                 <h5>Type:</h5>
-                                <p th:text="${search.type.getValue()}"></p>
+                                <p th:text="${search.post.type.getValue()}"></p>
 
                                 <h5>Price:</h5>
                                 <p>
-                                    <span th:text="${search.price}"></span> VNĐ
+                                    <span th:text="${search.post.price}"></span> VNĐ
                                 </p>
 
                                 <h5>Area:</h5>
                                 <p>
-                                    <span th:text="${search.area}"></span> m<sup>2</sup>
+                                    <span th:text="${search.post.area}"></span> m<sup>2</sup>
                                 </p>
 
                                 <h5>Location:</h5>
-                                <p th:text="${search.city + ', ' + search.district + ', ' + search.commune}"></p>
+                                <p th:text="${search.post.city + ', ' + search.post.district + ', ' + search.post.commune}"></p>
                             </div>
                         </div>
                     </td>
-
                 </tr>
                 </tbody>
             </table>
+
         </div>
     </div>
 </div>
@@ -354,6 +355,33 @@
                 console.error('There was a problem with your fetch operation:', error);
             });
     }
+
+
+    // Function to get the value of a specific cookie
+    function getCookieValue(cookieName) {
+        const cookieString = document.cookie; // Lấy toàn bộ chuỗi cookie
+        const cookies = cookieString.split('; '); // Tách chuỗi cookie thành mảng các cookie
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i]; // Lưu trữ chuỗi cookie tại vị trí hiện tại
+            // Tìm vị trí của dấu '=' đầu tiên trong cookie
+            const indexOfFirstEquals = cookie.indexOf('=');
+            // Lấy tên cookie (phần trước dấu '=' đầu tiên)
+            const cookieNameFromCookie = cookie.substring(0, indexOfFirstEquals);
+            // Nếu tên cookie trùng với tên được yêu cầu
+            if (cookieNameFromCookie === cookieName) {
+                // Lấy giá trị của cookie (phần sau dấu '=' đầu tiên)
+                const cookieValue = cookie.substring(indexOfFirstEquals + 1);
+                return decodeURIComponent(cookieValue);
+            }
+        }
+        return null;
+    }
+    // Usage example
+    const username = getCookieValue('username');
+    const avatarUrl = getCookieValue('avatarUrl');
+    console.log(avatarUrl)
+    document.getElementById('username').textContent =  username;
+    document.getElementById('avatarUrl').src = avatarUrl;
 </script>
 </body>
 </html>

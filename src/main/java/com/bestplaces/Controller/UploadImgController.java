@@ -1,6 +1,7 @@
 package com.bestplaces.Controller;
 
 import com.bestplaces.Dto.Res;
+import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Entity.User;
 import com.bestplaces.Service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +26,17 @@ public class UploadImgController {
         return "TestUploadImg";
     }
 
-    @ResponseBody
-    @PostMapping("/uploadToGoogleDrive")
-    public Object handleFileUpload(@RequestParam("image") MultipartFile file) throws IOException, GeneralSecurityException {
-        if (file.isEmpty()) {
-            return "File is empty";
-        }
-        File tempFile = File.createTempFile("temp", null);
-        file.transferTo(tempFile);
-        Res res = service.uploadImageToDrive(tempFile);
-        return res;
-    }
+//    @ResponseBody
+//    @PostMapping("/uploadToGoogleDrive")
+//    public Object handleFileUpload(@RequestParam("image") MultipartFile file,  @RequestParam("postId") RentalPost postId) throws IOException, GeneralSecurityException {
+//        if (file.isEmpty()) {
+//            return "File is empty";
+//        }
+//        File tempFile = File.createTempFile("temp", null);
+//        file.transferTo(tempFile);
+//        Res res = service.uploadImageToDrive(tempFile);
+//
+//        service.saveImagePathForUser(res.getUrl(), postId);
+//        return res;
+//    }
 }

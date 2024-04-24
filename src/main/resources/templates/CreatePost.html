@@ -29,7 +29,7 @@
     <div class="col-md-3">
         <div class="form-group">
             <label>Title</label><br>
-            <input type="text" th:field="*{title}" required><br>
+            <input type="text" th:field="*{title}" ><br>
         </div>
     </div>
     <div class="col-md-3">
@@ -73,23 +73,19 @@
     <input type="text" th:field="*{numberHouse}"><br>
 
     <label>Giá:</label><br>
-    <input type="number" th:field="*{price}" value="0" required><br>
+    <input type="text" th:field="*{price}" th:value="1" value="1"><br>
 
     <label>Diện Tích:</label><br>
-    <input type="number" th:field="*{area}" required><br>
+    <input type="text" th:field="*{area}"><br>
 
     <label >Mô Tả:</label><br>
-    <textarea th:field="*{description}" required></textarea><br>
+    <textarea th:field="*{description}" ></textarea><br>
 
     <label for="imageInput">Đường dẫn Ảnh:</label><br>
-    <input type="file" id="imageInput" name="image" required accept="image/*" multiple onchange="previewImage(event)"><br>
-
+    <input type="file" id="imageInput" name="files" accept="image/*" onchange="previewImage(event)" multiple><br>
     <div id="preview-box"></div>
-
-    <button type="submit" onclick="handleUpload()">Submit</button>
+    <button type="submit">Submit</button>
 </form>
-<div id="resultMessage"></div>
-
 <script>
     function previewImage(event) {
         var input = event.target;
@@ -260,67 +256,66 @@
     }
 </script>
 <script>
-    const fileList = [];
+    // const fileList = [];
+    //
+    // document.getElementById('imageInput').addEventListener('change', function(event) {
+    //     const selectedFiles = event.target.files;
+    //     const uploadButton = document.querySelector('button');
+    //     // uploadButton.disabled = !selectedFiles;
+    //     uploadButton.disabled = selectedFiles.length === 0;
+    //
+    //     for (const file of selectedFiles) {
+    //         const formData = new FormData();
+    //         formData.append('image', file);
+    //         fileList.push(formData);
+    //     }
+    // });
 
-    document.getElementById('imageInput').addEventListener('change', function(event) {
-        const selectedFiles = event.target.files;
-        const uploadButton = document.querySelector('button');
-        // uploadButton.disabled = !selectedFiles;
-        uploadButton.disabled = selectedFiles.length === 0;
-
-        for (const file of selectedFiles) {
-            const formData = new FormData();
-            formData.append('image', file);
-            fileList.push(formData);
-        }
-    });
-
-    async function handleUpload() {
-        // Kiểm tra xem tất cả các trường thông tin đã được điền đầy đủ hay không
-        const type = document.querySelector('select[name="Type"]').value;
-        const city = document.querySelector('input[name="city"]').value;
-        const district = document.querySelector('input[name="district"]').value;
-        const price = document.querySelector('input[name="price"]').value;
-        const area = document.querySelector('input[name="area"]').value;
-        const description = document.querySelector('textarea[name="description"]').value;
-
-        if (type.trim() === '' || city.trim() === '' || district.trim() === '' ||
-            price.trim() === '' || area.trim() === '' || description.trim() === '') {
-            alert("Vui lòng nhập đầy đủ thông tin trước khi tải lên ảnh!");
-            return;
-        }
-        try {
-            // Sử dụng Promise.all để gửi tất cả các request fetch cùng một lúc
-            const responses = await Promise.all(fileList.map(async formData => {
-                const response = await fetch('http://localhost:8080/uploadToGoogleDrive', {
-                    method: 'POST',
-                    body: formData
-                });
-                return response.json();
-            }));
-
-            responses.forEach((response, index) => {
-                const resultMessage = document.getElementById('resultMessage');
-                const urlInput = document.getElementById('imageUrlInput');
-
-                if (response.status === 200) {
-                    resultMessage.innerText += `Success (${index}): ${response.message}\n`;
-
-                    const urlInput = document.createElement('input');
-                    urlInput.setAttribute('type', 'text');
-                    urlInput.setAttribute('value', response.url);
-                    // Thêm thẻ input vào DOM
-                    document.body.appendChild(urlInput);
-                } else {
-                    resultMessage.innerText += `Error (${index}): ${response.message}\n`;
-                }
-            });
-            // Xóa fileList sau khi đã xử lý xong
-            fileList.length = 0;
-        } catch (error) {
-            console.error('Error uploading images:', error.message);
-        }
-    }
+    // async function handleUpload() {
+    //
+    //     await new Promise(resolve => setTimeout(resolve, 5000));
+    //
+    //     // Kiểm tra xem tất cả các trường thông tin đã được điền đầy đủ hay không
+    //     const type = document.querySelector('select[name="Type"]').value;
+    //     const city = document.querySelector('input[name="city"]').value;
+    //     const district = document.querySelector('input[name="district"]').value;
+    //     const price = document.querySelector('input[name="price"]').value;
+    //     const area = document.querySelector('input[name="area"]').value;
+    //     const description = document.querySelector('textarea[name="description"]').value;
+    //
+    //     if (type.trim() === '' || city.trim() === '' || district.trim() === '' ||
+    //         price.trim() === '' || area.trim() === '' || description.trim() === '') {
+    //         alert("Vui lòng nhập đầy đủ thông tin trước khi tải lên ảnh!");
+    //         return;
+    //     }
+    //     await new Promise(resolve => setTimeout(resolve, 5000));
+    //
+    //     try {
+    //         const responses = await Promise.all(fileList.map(async formData => {
+    //             const response = await fetch('http://localhost:8080/uploadToGoogleDrive', {
+    //                 method: 'POST',
+    //                 body: formData
+    //             });
+    //             return response.json();
+    //         }));
+    //
+    //         responses.forEach((response, index) => {
+    //             const resultMessage = document.getElementById('resultMessage');
+    //             const urlInput = document.getElementById('imageUrlInput');
+    //
+    //             if (response.status === 200) {
+    //                 resultMessage.innerText += `Success (${index}): ${response.message}\n`;;
+    //             } else {
+    //                 resultMessage.innerText += `Error (${index}): ${response.message}\n`;
+    //             }
+    //         }
+    //         );
+    //         // Xóa fileList sau khi đã xử lý xong
+    //         fileList.length = 0;
+    //     } catch (error) {
+    //         console.error('Error uploading images:', error.message);
+    //     }
+    // }
 
 
 </script>

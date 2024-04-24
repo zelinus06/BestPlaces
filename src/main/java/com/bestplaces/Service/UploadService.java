@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.Optional;
 
 
 @Service
@@ -59,7 +60,7 @@ public class UploadService {
             com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
                     .setFields("id").execute();
             String imageUrl = "https://drive.google.com/thumbnail?id="+uploadedFile.getId();
-            saveImagePathForUser(imageUrl);
+//            saveImagePathForUser(imageUrl);
             file.delete();
             res.setStatus(200);
             res.setMessage("Image successfully Uploaded To Drive");
@@ -82,22 +83,14 @@ public class UploadService {
                 .build();
     }
 
-    public void saveImagePathForUser(String imagePath) {
-        //Kiểm tra xem bài post nào có imagepath = false;
-        RentalPost rentalPost = postRepository.findByUserId(userService.getUserIdByUsernames());
-//        ImageUrl imageUrl = postRepository.findByUserId();
+    public void saveImagePathForUser(String imagePath, RentalPost rentalPost) {
+                ImageUrl imageUrl = new ImageUrl();
+                imageUrl.setImageUrl(imagePath);
+                imageUrl.setId_post(rentalPost);
+                imageUrlRepository.save(imageUrl);
 
         if (rentalPost != null) {
-            ImageUrl imageUrl = new ImageUrl();
-            imageUrl.setImageUrl(imagePath);
-            imageUrl.setId_post(rentalPost);
-        } else {
-            System.out.println("Khong tim thay");
-        }
-
-        if (rentalPost != null) {
-            rentalPost.setImagePath(imagePath);
-            postRepository.save(rentalPost);
+            System.out.println("da dien");
         } else {
             System.out.println("Không tìm thấy bài đăng thuê tương ứng với người dùng");
         }

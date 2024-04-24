@@ -15,8 +15,6 @@ public class RentalPostDto {
     @Getter
     private String commune;
     @Getter
-    private String imagePath;
-    @Getter
     private int price;
     @Getter
     private int area;
@@ -38,12 +36,11 @@ public class RentalPostDto {
 
     public RentalPostDto() {};
 
-    public RentalPostDto(User id, String title, String city, String district, String commune, String imagePath, int price, int area, Type type, String description, String phoneNumber, String street, String numberHouse) {
+    public RentalPostDto(User id, String title, String city, String district, String commune, int price, int area, Type type, String description, String phoneNumber, String street, String numberHouse) {
         this.id = id;
         this.city = city;
         this.district = district;
         this.commune = commune;
-        this.imagePath = imagePath;
         this.price = price;
         this.area = area;
         this.type = type;
@@ -51,6 +48,20 @@ public class RentalPostDto {
         this.phoneNumber = phoneNumber;
         this.street = street;
         this.title = title;
+        this.numberHouse = numberHouse;
+    }
+
+    public RentalPostDto(User id, String city, String district, String commune, Type type, String phoneNumber, String street, String numberHouse) {
+        this.id = id;
+        this.city = city;
+        this.district = district;
+        this.commune = commune;
+
+        this.type = type;
+
+        this.phoneNumber = phoneNumber;
+        this.street = street;
+
         this.numberHouse = numberHouse;
     }
 
@@ -70,9 +81,6 @@ public class RentalPostDto {
         this.commune = commune;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
 
     public void setPrice(int price) {
         this.price = price;

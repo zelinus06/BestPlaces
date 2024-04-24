@@ -1,6 +1,8 @@
 package com.bestplaces.Controller;
 
+import com.bestplaces.Dto.PostDto;
 import com.bestplaces.Entity.RentalPost;
+import com.bestplaces.Repository.PostRepository;
 import com.bestplaces.Repository.UserRepository;
 import com.bestplaces.Service.FilterSearchService;
 import com.bestplaces.Service.MyUserDetailsService;
@@ -10,47 +12,29 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Controller
 public class HomeController {
-//    private User user;
     @Autowired
     private RentalPostService rentalPostService;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private MyUserDetailsService userDetailsService;
     @Autowired
     private FilterSearchService filterSearch;
 
     @GetMapping("/home")
-    public String Home(HttpServletRequest request, Model model) {
-
-        // Lấy thông tin người dùng từ cookies
-        Cookie[] cookies = request.getCookies();
-        String username = null;
-        String avatarUrl = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("username")) {
-                    username = cookie.getValue();
-                } else if (cookie.getName().equals("avatarUrl")) {
-                    avatarUrl = cookie.getValue();
-                }
-            }
-        }
-
-        // Thêm thông tin người dùng vào model để sử dụng trong template
+    public String Home(Model model, @CookieValue("username")String username, @CookieValue("avatarUrl")String avatarUrl) {
         model.addAttribute("username", username);
         model.addAttribute("avatarUrl", avatarUrl);
         model.addAttribute("showSearchResults", false);
-        List<RentalPost> posts = rentalPostService.getAllPosts();
+        List<RentalPost> list = rentalPostService.getAllPosts();
+        List<PostDto> posts = rentalPostService.getPosts(list);
         model.addAttribute("posts", posts);
         return "home";
     }
@@ -90,11 +74,11 @@ public String filterSearch(@RequestParam(required = false, value = "priceRange")
         minArea = Integer.parseInt(areaParts[0]);
         maxArea = Integer.parseInt(areaParts[1]);
     }
-
+//    List<PostDto> posts = rentalPostService.getAllPosts();
     List<RentalPost> rentalPosts = filterSearch.searchPost(minPrice, maxPrice, minArea, maxArea, type, city, district, commune);
-    model.addAttribute("rentalPosts", rentalPosts);
+    List<PostDto> postDTOs = rentalPostService.getPosts(rentalPosts);
+    model.addAttribute("rentalPosts", postDTOs);
     model.addAttribute("showSearchResults", true);
     return "home";
 }
-
 }

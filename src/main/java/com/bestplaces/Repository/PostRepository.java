@@ -12,6 +12,6 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<RentalPost, Long> {
-    @Query("SELECT p FROM RentalPost p WHERE p.userId.id = :userId AND p.imagepath IS NULL ")
-    RentalPost findByUserId(Long userId);
+//    @Query("SELECT p FROM RentalPost p WHERE p.userId.id = :userId AND p.imagepath IS NULL ")
+//    RentalPost findByUserId(Long userId);
 }
