@@ -73,8 +73,10 @@
                     <div class="form-group">
                         <select name="priceRange" class="form-control">
                             <option selected th:value="${0}">Giá cả</option>
-                            <option th:value="${700 + '-' + 1500}">Từ 700 nghìn - 1,5 triệu đồng</option>
+                            <option th:value="${700 + '-' + 1500}">Dưới 1,5 triệu đồng</option>
                             <option th:value="${1500 + '-' +2500}">Từ 1,5 - 2,5 triệu đồng</option>
+                            <option th:value="${2500 + '-' +4000}">Từ 2,5 - 4 triệu đồng</option>
+                            <option th:value="${4000 + '-' +100000}">Từ 4 triệu đồng trở lên</option>
                         </select>
                     </div>
                 </div>
@@ -84,6 +86,8 @@
                             <option selected th:value="${0}">Diện tích</option>
                             <option th:value="${0 + '-' + 20}">Dưới 20m²</option>
                             <option th:value="${21 + '-' + 30}">Từ 20m² đến 30m²</option>
+                            <option th:value="${31 + '-' + 40}">Từ 30m² đến 40m²</option>
+                            <option th:value="${41 + '-' + 200}">Từ 40m² trở lên</option>
                             <!-- Thêm các option khác nếu cần -->
                         </select>
                     </div>

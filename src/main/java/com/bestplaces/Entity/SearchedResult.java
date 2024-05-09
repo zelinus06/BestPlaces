@@ -7,13 +7,13 @@ import lombok.Setter;
 
 @Getter
 @Entity
-public class ExpectedResult {
+public class SearchedResult {
     @Id
     @Setter
     private Long id;
     @Setter
     @OneToOne
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @Setter
     private int minArea;
@@ -23,7 +23,6 @@ public class ExpectedResult {
     private int minPrice;
     @Setter
     private int maxPrice;
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Type type;
+    @Setter
+    private String type;
 }

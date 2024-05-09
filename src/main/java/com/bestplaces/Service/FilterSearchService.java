@@ -1,14 +1,7 @@
 package com.bestplaces.Service;
 
-import com.bestplaces.Entity.ExpectedResult;
-import com.bestplaces.Entity.ListLocation;
 import com.bestplaces.Entity.RentalPost;
-import com.bestplaces.Entity.User;
-import com.bestplaces.Repository.ExpectedResultRepository;
-import com.bestplaces.Repository.ListLocationRepository;
-import com.bestplaces.Repository.UserRepository;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.jdi.IntegerValue;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -18,10 +11,12 @@ import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Transactional
@@ -29,12 +24,9 @@ public class FilterSearchService {
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
-    private GetExpectedResult getExpectedResult;
-    @Async
-    public void saveSearchResultAsync(String location) {
-        getExpectedResult.saveSearchResult(location);
-    }
-
+    private GetExpectedLocation getExpectedResult;
+    @Autowired
+    private GetExpectedSearch getExpectedSearch;
     public List<RentalPost> searchPost(Double minPrice, Double maxPrice, Integer minArea, Integer maxArea, String type, String city, String district, String commune) {
         String location = null;
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -71,8 +63,16 @@ public class FilterSearchService {
                 }
             }
         }
-        saveSearchResultAsync(location);
-        // Kết hợp tất cả các điều kiện với AND
+        Integer minPriceInt = null;
+        Integer maxPriceInt = null;
+        if (minPrice != null) {
+              minPriceInt = (int) Math.round(minPrice);
+        }
+        if (maxPrice != null) {
+             maxPriceInt = (int) Math.round(maxPrice);
+        }
+        getExpectedSearch.updateAllCount(minArea, maxArea, minPriceInt, maxPriceInt, type);
+        getExpectedResult.saveSearchResult(location);
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(criteriaQuery).getResultList();
     }

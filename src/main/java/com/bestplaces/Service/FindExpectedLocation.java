@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class FindExpectedResult {
+public class FindExpectedLocation {
     @Autowired
     private ListLocationRepository listLocationRepository;
     @Autowired
@@ -24,19 +24,24 @@ public class FindExpectedResult {
         Optional<User> userOptional = userRepository.findByUsername(username);
         User user = userOptional.get();
 
-        List<Double> list = listLocationRepository.findAllByUserId(user.getId());
+        List<Object[]> list = listLocationRepository.findAllByUserId(user.getId());
 
         double[][] earthPoints = new double[list.size()][2];
 
         for (int i = 0; i < list.size(); i++) {
-            earthPoints[i][0] = list.get(i * 2);         // Kinh độ
-            earthPoints[i][1] = list.get(i * 2 + 1);     // Vĩ độ
+            Object[] location = list.get(i);
+            if (location.length >= 2) {
+                earthPoints[i][0] = (double) location[0];
+                earthPoints[i][1] = (double) location[1];
+            } else {
+                // Xử lý trường hợp không hợp lệ (nếu cần)
+            }
         }
 
         double[] circle = findCircle(earthPoints);
         System.out.println("Tâm của đường tròn: (" + circle[0] + ", " + circle[1] + ")");
         System.out.println("Bán kính của đường tròn: " + circle[2]);
-        String result = circle[0] + ", " + circle[1];
+        String result = circle[0] + "," + circle[1] + ";" + circle[2];
         return result;
     }
 

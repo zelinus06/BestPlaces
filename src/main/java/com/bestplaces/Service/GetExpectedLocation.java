@@ -7,13 +7,16 @@ import com.bestplaces.Repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
 @Service
-public class GetExpectedResult {
+public class GetExpectedLocation {
     @Autowired
     private ListLocationRepository listLocationRepository;
     @Autowired
@@ -25,10 +28,9 @@ public class GetExpectedResult {
 
     ArrayList<String> list = new ArrayList<>();
 
+//    @Async
     public void saveSearchResult(String location) {
-
         list.add(location);
-
         List<String> duplicates = findDuplicates(list);
         try {
             for (String duplicate : duplicates) {
@@ -39,6 +41,7 @@ public class GetExpectedResult {
                     JsonNode jsonNode = objectMapper.readTree(result);
                     double latitude = jsonNode.get(0).get("lat").asDouble();
                     double longtitude = jsonNode.get(0).get("lon").asDouble();
+
                     Optional<User> userOptional = userRepository.findByUsername(myUserDetailsService.UserNameAtPresent());
                     ListLocation listLocation = new ListLocation();
                     if (userOptional.isPresent()) {
