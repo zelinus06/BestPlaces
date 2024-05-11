@@ -39,8 +39,6 @@ public class FindExpectedLocation {
         }
 
         double[] circle = findCircle(earthPoints);
-        System.out.println("Tâm của đường tròn: (" + circle[0] + ", " + circle[1] + ")");
-        System.out.println("Bán kính của đường tròn: " + circle[2]);
         String result = circle[0] + "," + circle[1] + ";" + circle[2];
         return result;
     }

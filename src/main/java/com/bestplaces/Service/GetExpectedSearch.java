@@ -38,12 +38,15 @@ public class GetExpectedSearch {
         if (maxPrice != null) {
             maxPriceSearchCount.put(maxPrice, maxPriceSearchCount.getOrDefault(maxPrice, 0) + 1);
         }
-        mostTypeSearchCount.put(type, mostTypeSearchCount.getOrDefault(type, 0) + 1);
+        if (type != null) {
+            mostTypeSearchCount.put(type, mostTypeSearchCount.getOrDefault(type, 0) + 1);
+        }
         Integer maxPriceWithMaxCount = getKeyWithMaxCount(maxPriceSearchCount);
         Integer maxAreaWithMaxCount = getKeyWithMaxCount(maxAreaSearchCount);
         Integer minPriceWithMaxCount = getKeyWithMaxCount(minPriceSearchCount);
         Integer minAreaWithMaxCount = getKeyWithMaxCount(minAreaSearchCount);
         String mostTypeMaxCount = getKeyWithMaxCount(mostTypeSearchCount);
+        System.out.println("ketqua"+ mostTypeMaxCount);
 
         Optional<User> userOptional = userRepository.findByUsername(myUserDetailsService.UserNameAtPresent());
         SearchedResult searchedResult = new SearchedResult();
@@ -63,7 +66,9 @@ public class GetExpectedSearch {
             if (minPrice != null){
                 searchedResult.setMinPrice(minPriceWithMaxCount);
             }
-            searchedResult.setType(mostTypeMaxCount);
+            if (type != null) {
+                searchedResult.setType(mostTypeMaxCount);
+            }
             saveOrUpdateSearchedResult(searchedResult);
         }
 
@@ -97,11 +102,21 @@ public class GetExpectedSearch {
             } else {
                 // Nếu đã có record cho user, thì cập nhật thông tin của record đầu tiên trong danh sách
                 SearchedResult existingResult = existingResults.get(0);
-                existingResult.setMinArea(searchedResult.getMinArea());
-                existingResult.setMaxArea(searchedResult.getMaxArea());
-                existingResult.setMinPrice(searchedResult.getMinPrice());
-                existingResult.setMaxPrice(searchedResult.getMaxPrice());
-                existingResult.setType(searchedResult.getType());
+                if (searchedResult.getMinArea() != 0) {
+                    existingResult.setMinArea(searchedResult.getMinArea());
+                }
+                if (searchedResult.getMaxArea() != 0) {
+                    existingResult.setMaxArea(searchedResult.getMaxArea());
+                }
+                if (searchedResult.getMinPrice() != 0) {
+                    existingResult.setMinPrice(searchedResult.getMinPrice());
+                }
+                if (searchedResult.getMaxPrice() != 0) {
+                    existingResult.setMaxPrice(searchedResult.getMaxPrice());
+                }
+                if (searchedResult.getType() != null) {
+                    existingResult.setType(searchedResult.getType());
+                }
                 entityManager.merge(existingResult);
             }
     }

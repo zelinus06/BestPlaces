@@ -84,11 +84,12 @@ public class HomeController {
         return "home";
     }
 
-
     @PostMapping("/recommend")
     public String recommendHouse(Model model) {
-        List<PostDto> postDTOs = recommenderService.recommend();
+        List<RentalPost> rentalPosts = recommenderService.recommend();
+        List<PostDto> postDTOs = rentalPostService.getPosts(rentalPosts);
         model.addAttribute("rentalPosts", postDTOs);
+        model.addAttribute("showSearchResults", true);
         return "home";
     }
 }

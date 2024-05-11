@@ -71,8 +71,11 @@ public class FilterSearchService {
         if (maxPrice != null) {
              maxPriceInt = (int) Math.round(maxPrice);
         }
+        if (location != null) {
+            System.out.println(location);
+            getExpectedResult.saveSearchResult(location);
+        }
         getExpectedSearch.updateAllCount(minArea, maxArea, minPriceInt, maxPriceInt, type);
-        getExpectedResult.saveSearchResult(location);
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(criteriaQuery).getResultList();
     }

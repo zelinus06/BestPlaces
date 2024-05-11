@@ -60,7 +60,7 @@
 
 <div class="search-filters">
     <div class="container">
-        <form th:action="@{/home}" method="post">
+        <form th:action="@{/chart}" method="post">
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
@@ -68,30 +68,6 @@
                             <option selected  th:value="${null}">Loại hình</option>
                             <option th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
                                     th:value="${type}" th:text="${type.getValue()}"></option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select name="priceRange" class="form-control">
-                            <option selected th:value="${0}">Giá cả</option>
-                            <option th:value="${700 + '-' + 1500}">Dưới 1,5 triệu đồng</option>
-                            <option th:value="${1500 + '-' +2500}">Từ 1,5 - 2,5 triệu đồng</option>
-                            <option th:value="${2500 + '-' +4000}">Từ 2,5 - 4 triệu đồng</option>
-                            <option th:value="${4000 + '-' +100000}">Từ 4 triệu đồng trở lên</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select name="areaRange" class="form-control">
-                            <option selected th:value="${0}">Diện tích</option>
-                            <option th:value="${0 + '-' + 20}">Dưới 20m²</option>
-                            <option th:value="${21 + '-' + 30}">Từ 20m² đến 30m²</option>
-                            <option th:value="${31 + '-' + 40}">Từ 30m² đến 40m²</option>
-                            <option th:value="${41 + '-' + 200}">Từ 40m² trở lên</option>
-                            <!-- Thêm các option khác nếu cần -->
                         </select>
                     </div>
                 </div>
@@ -129,97 +105,8 @@
     </div>
 </div>
 
+<img th:if="${chartAsBase64}" th:src="'data:image/png;base64,' + ${chartAsBase64}" alt="Chart">
 
-<div class="container" th:if="${not showSearchResults}">
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Danh sách cho thuê</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="postDto : ${posts}">
-                        <td class="post-title" th:text="${postDto.post.title}" >
-                        </td>
-                        <td>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <img class="img-fluid" th:src="${postDto.images[0]}" alt="Image" />
-                                </div>
-                                <div class="col-md-8">
-                                    <h5>Type:</h5>
-                                    <p th:text="${postDto.post.type.getValue()}"></p>
-
-                                    <h5>Price:</h5>
-                                    <p>
-                                        <span th:text="${postDto.post.price}"></span> VNĐ
-                                    </p>
-
-                                    <h5>Area:</h5>
-                                    <p>
-                                        <span th:text="${postDto.post.area}"></span> m<sup>2</sup>
-                                    </p>
-
-                                    <h5>Location:</h5>
-                                    <p th:text="${postDto.post.city + ', ' + postDto.post.district + ', ' + postDto.post.commune}"></p>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-
-
-<div class="container" th:if="${showSearchResults}">
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Danh sách kết quả</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="search : ${rentalPosts}">
-                    <td class="post-title" th:text="${search.post.title}" >
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <img class="img-fluid" th:src="${search.images[0]}" alt="Hình ảnh">
-                            </div>
-                            <div class="col-md-8">
-                                <h5>Type:</h5>
-                                <p th:text="${search.post.type.getValue()}"></p>
-
-                                <h5>Price:</h5>
-                                <p>
-                                    <span th:text="${search.post.price}"></span> VNĐ
-                                </p>
-
-                                <h5>Area:</h5>
-                                <p>
-                                    <span th:text="${search.post.area}"></span> m<sup>2</sup>
-                                </p>
-
-                                <h5>Location:</h5>
-                                <p th:text="${search.post.city + ', ' + search.post.district + ', ' + search.post.commune}"></p>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-        </div>
-    </div>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

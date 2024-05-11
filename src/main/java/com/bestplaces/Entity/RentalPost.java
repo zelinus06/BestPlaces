@@ -58,21 +58,6 @@ public class RentalPost {
     public RentalPost(){
     }
 
-//    public RentalPost(User userId, String title, String city, String district, String commune, String street, String numberhouse, int price, int area, Type type, String description, String phoneNumber) {
-//        this.city = city;
-//        this.district = district;
-//        this.commune = commune;
-//        this.street = street;
-//        this.numberHouse = numberhouse;
-//        this.userId = userId;
-//        this.price = price;
-//        this.area = area;
-//        this.type = type;
-//        this.description = description;
-//        this.phoneNumber = phoneNumber;
-//        this.title = title;
-//    }
-
     public RentalPost(User id, String city, String district, String commune, String street, String numberHouse, Type type, String phoneNumber) {
         this.city = city;
         this.district = district;
