@@ -2,8 +2,10 @@ package com.bestplaces.Service;
 
 import com.bestplaces.Dto.PostDto;
 import com.bestplaces.Dto.RentalPostDto;
+import com.bestplaces.Entity.ImageUrl;
 import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Entity.User;
+import com.bestplaces.Enums.Type;
 import com.bestplaces.Repository.ImageUrlRepository;
 import com.bestplaces.Repository.PostRepository;
 import com.bestplaces.Repository.UserRepository;
@@ -35,7 +37,7 @@ public class RentalPostService {
             User user = userOptional.get();
             String phoneNumber = user.getPhoneNumber();
             long postId = generateUniqueId();
-            RentalPost rentalPost = new RentalPost(rentalPostDto.getId() ,rentalPostDto.getCity(), rentalPostDto.getDistrict(), rentalPostDto.getCommune(), rentalPostDto.getStreet(), rentalPostDto.getNumberHouse(), rentalPostDto.getType(), rentalPostDto.getPhoneNumber());
+            RentalPost rentalPost = new RentalPost(rentalPostDto.getId() ,rentalPostDto.getCity(), rentalPostDto.getDistrict(), rentalPostDto.getCommune(), rentalPostDto.getStreet(), rentalPostDto.getNumberHouse(), rentalPostDto.getType(), rentalPostDto.getPhoneNumber(), rentalPostDto.getPrice(), rentalPostDto.getArea(), rentalPostDto.getTitle(), rentalPostDto.getDescription());
             rentalPost.setId_post(postId);
             rentalPost.setUser(user);
             rentalPost.setPhoneNumber(phoneNumber);
@@ -86,6 +88,87 @@ public class RentalPostService {
             postDTOs.add(new PostDto(post, images));
         }
         return postDTOs;
+    }
+
+    public List<RentalPost> getUserPost() {
+        Optional<User> userOptional = userRepository.findByUsername(myUserDetailsService.UserNameAtPresent());
+        User user = userOptional.get();
+        List<RentalPost> list = postRepository.findAllByUserId(user);
+        return list;
+    }
+
+    public void deletePost(Long idPost) {
+        Optional<RentalPost> postOptional = postRepository.findById(idPost);
+        RentalPost rentalPost = postOptional.get();
+        List<ImageUrl> imageUrl = imageUrlRepository.findAllByIdPost(rentalPost);
+        imageUrlRepository.deleteAll(imageUrl);
+        postRepository.delete(rentalPost);
+    }
+
+    public RentalPost updatePost(Long idPost, int newArea, int newPrice, String newCity, String newDistrict, String newCommune, String newStreet, String newNumberhouse, String newDescription, String newTitle, Type newType) {
+        Optional<RentalPost> postOptional = postRepository.findById(idPost);
+        if (postOptional.isPresent()) {
+            RentalPost rentalPost = postOptional.get();
+            if (newArea != rentalPost.getArea()) {
+                rentalPost.setArea(newArea);
+            }
+            if (newPrice != rentalPost.getPrice()) {
+                rentalPost.setPrice(newPrice);
+            }
+            if (!Objects.equals(newCity, rentalPost.getCity())) {
+                rentalPost.setCity(newCity);
+            }
+            if (!Objects.equals(newDistrict, rentalPost.getDistrict())) {
+                rentalPost.setDistrict(newDistrict);
+            }
+            if (!Objects.equals(newCommune, rentalPost.getCommune())) {
+                rentalPost.setCommune(newCommune);
+            }
+
+            if (!Objects.equals(newStreet, rentalPost.getStreet())) {
+                rentalPost.setStreet(newStreet);
+            }
+            if (!Objects.equals(newNumberhouse, rentalPost.getNumberHouse())) {
+                rentalPost.setNumberHouse(newNumberhouse);
+            }
+
+            String address = newCity + "," + newDistrict + "," + newCommune+ "," + newStreet + "," + newNumberhouse;
+            String apiUrl = String.format("https://nominatim.openstreetmap.org/search?q=%s&format=json", address);
+            String result = restTemplate.getForObject(apiUrl, String.class);
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(result);
+                if (jsonNode.isArray() && jsonNode.size() > 0) {
+                    double latitude = jsonNode.get(0).get("lat").asDouble();
+                    double longitude = jsonNode.get(0).get("lon").asDouble();
+                    rentalPost.setLatitude(latitude);
+                    rentalPost.setLongtitude(longitude);
+                } else {
+                    String address1 = newCity + "," + newDistrict + "," + newCommune+ "," + newStreet;
+                    String apiUrl1 = String.format("https://nominatim.openstreetmap.org/search?q=%s&format=json", address1);
+                    String result1 = restTemplate.getForObject(apiUrl1, String.class);
+                    ObjectMapper objectMapper1 = new ObjectMapper();
+                    JsonNode jsonNode1 = objectMapper1.readTree(result1);
+                    double latitude = jsonNode1.get(0).get("lat").asDouble();
+                    double longitude = jsonNode1.get(0).get("lon").asDouble();
+                    rentalPost.setLatitude(latitude);
+                    rentalPost.setLongtitude(longitude);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (!Objects.equals(newDescription, rentalPost.getDescription())) {
+                rentalPost.setDescription(newDescription);
+            }
+            if (!Objects.equals(newTitle, rentalPost.getTitle())) {
+                rentalPost.setTitle(newTitle);
+            }
+            if (!Objects.equals(newType, rentalPost.getType())) {
+                rentalPost.setType(newType);
+            }
+            return postRepository.save(rentalPost);
+        }
+        return null;
     }
 
     private long generateUniqueId() {

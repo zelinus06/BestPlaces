@@ -36,10 +36,8 @@ public class RentalPost {
     @Setter
     private String numberHouse;
     @Getter
-//    @Column(nullable = false)
     private int price;
     @Getter
-//    @Column(nullable = false)
     private int area;
     @Getter
     private String description;
@@ -54,11 +52,14 @@ public class RentalPost {
     @Getter
     @Setter
     private String title;
+    @Getter
+    @Setter
+    private double rating;
 
     public RentalPost(){
     }
 
-    public RentalPost(User id, String city, String district, String commune, String street, String numberHouse, Type type, String phoneNumber) {
+    public RentalPost(User userId, String city, String district, String commune, String street, String numberHouse, Type type, String phoneNumber, int price, int area, String title, String description) {
         this.city = city;
         this.district = district;
         this.commune = commune;
@@ -67,7 +68,10 @@ public class RentalPost {
         this.userId = userId;
         this.type = type;
         this.phoneNumber = phoneNumber;
-
+        this.area = area;
+        this.price = price;
+        this.title = title;
+        this.description = description;
     }
 
     public void setId(User userId) {
@@ -105,7 +109,6 @@ public class RentalPost {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-
 
     public void setUser(User user) {
         this.userId = user;

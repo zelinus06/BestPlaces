@@ -1,9 +1,11 @@
 package com.bestplaces.Controller;
 
+import com.bestplaces.Dto.PostDto;
 import com.bestplaces.Dto.RentalPostDto;
 import com.bestplaces.Dto.Res;
 import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Entity.User;
+import com.bestplaces.Enums.Type;
 import com.bestplaces.Repository.PostRepository;
 import com.bestplaces.Repository.UserRepository;
 import com.bestplaces.Service.RentalPostService;
@@ -34,16 +36,13 @@ public class RentalPostController {
     @Autowired
     private UploadService service;
 
-    @Autowired
-    private PostRepository postRepository;
-
     @GetMapping()
     public String showAddRentalPostForm(Model model) {
         model.addAttribute("rentalPost", new RentalPost());
         return "CreatePost";
     }
 
-    @PostMapping("")
+    @PostMapping()
     public String createRentalPost(@ModelAttribute("rentalpost") RentalPostDto rentalPostDto, @RequestParam("files")  MultipartFile[] files)throws IOException, GeneralSecurityException {
         RentalPost rentalPost = rentalPostService.saveRentalPost(rentalPostDto);
         for (MultipartFile file : files) {
@@ -58,7 +57,7 @@ public class RentalPostController {
 
             }
         }
-        return "CreatePost";
+        return "redirect:/post";
     }
 
     @ResponseBody
@@ -71,6 +70,36 @@ public class RentalPostController {
         file.transferTo(tempFile);
         Res res = service.uploadImageToDrive(tempFile);
         return res;
+    }
+
+    @GetMapping("/mypost")
+    public String showUserPost(Model model) {
+        List<RentalPost> list = rentalPostService.getUserPost();
+        List<PostDto> posts = rentalPostService.getPosts(list);
+        model.addAttribute("posts", posts);
+        return "UserPost";
+    }
+
+    @PostMapping("/update")
+    public String UpdatePost(@RequestParam(value = "idpost") Long idpost,
+                             @RequestParam(required = false, value = "newArea") int newArea,
+                             @RequestParam(required = false, value = "newPrice") int newPrice,
+                             @RequestParam(required = false, value = "newCity") String newCity,
+                             @RequestParam(required = false, value = "newDistrict") String newDistrict,
+                             @RequestParam (required = false, value = "newCommune") String newCommune,
+                             @RequestParam (required = false, value = "newStreet") String newStreet,
+                             @RequestParam (required = false, value = "newTitle") String newTitle,
+                             @RequestParam (required = false, value = "newNumberHouse") String newNumberHouse,
+                             @RequestParam (required = false, value = "newDescription") String newDescription,
+                             @RequestParam (required = false, value = "newType") Type newType) {
+        rentalPostService.updatePost(idpost, newArea, newPrice, newCity, newDistrict, newCommune, newStreet, newNumberHouse, newDescription, newTitle, newType);
+        return "UserPost";
+    }
+
+    @DeleteMapping("/delete/{idpost}")
+    public String deletePost(@PathVariable("idpost") Long postId) {
+        rentalPostService.deletePost(postId);
+        return "redirect:/user/post";
     }
 }
 

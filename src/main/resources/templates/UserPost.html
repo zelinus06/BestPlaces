@@ -58,163 +58,157 @@
     </div>
 </nav>
 
-<div class="search-filters">
-    <div class="container">
-        <form th:action="@{/home}" method="post">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select name="Type" class="form-control">
-                            <option selected  th:value="${null}">Loại hình</option>
-                            <option th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
-                                    th:value="${type}" th:text="${type.getValue()}"></option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select name="priceRange" class="form-control">
-                            <option selected th:value="${0}">Giá cả</option>
-                            <option th:value="${700 + '-' + 1500}">Dưới 1,5 triệu đồng</option>
-                            <option th:value="${1500 + '-' +2500}">Từ 1,5 - 2,5 triệu đồng</option>
-                            <option th:value="${2500 + '-' +4000}">Từ 2,5 - 4 triệu đồng</option>
-                            <option th:value="${4000 + '-' +100000}">Từ 4 triệu đồng trở lên</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select name="areaRange" class="form-control">
-                            <option selected th:value="${0}">Diện tích</option>
-                            <option th:value="${0 + '-' + 20}">Dưới 20m²</option>
-                            <option th:value="${21 + '-' + 30}">Từ 20m² đến 30m²</option>
-                            <option th:value="${31 + '-' + 40}">Từ 30m² đến 40m²</option>
-                            <option th:value="${41 + '-' + 200}">Từ 40m² trở lên</option>
-                            <!-- Thêm các option khác nếu cần -->
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select class="form-control" id="provinceDropdown">
-                            <option selected th:value="${null}">Tỉnh/Thành</option>
-                        </select>
-                        <input name="city" type="hidden" th:value="${city}"><br>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select class="form-control" id="districtDropdown">
-                            <option selected th:value="${null}">Quận/Huyện</option>
-                        </select>
-                        <input name="district" type="hidden" th:value="${district}"><br>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select class="form-control" id="communeDropdown">
-                            <option selected th:value="${null}">Phường/Thị xã</option>
-                        </select>
-                        <input name="commune" type="hidden" th:value="${commune}"><br>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-
-<div class="container" th:if="${not showSearchResults}">
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Danh sách cho thuê</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="postDto : ${posts}">
-                        <td class="post-title" th:text="${postDto.post.title}" >
-                        </td>
-                        <td>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <img class="img-fluid" th:src="${postDto.images[0]}" alt="Image" />
-                                </div>
-                                <div class="col-md-8">
-                                    <h5>Type:</h5>
-                                    <p th:text="${postDto.post.type.getValue()}"></p>
-
-                                    <h5>Price:</h5>
-                                    <p>
-                                        <span th:text="${postDto.post.price}"></span> VNĐ
-                                    </p>
-
-                                    <h5>Area:</h5>
-                                    <p>
-                                        <span th:text="${postDto.post.area}"></span> m<sup>2</sup>
-                                    </p>
-
-                                    <h5>Location:</h5>
-                                    <p th:text="${postDto.post.city + ', ' + postDto.post.district + ', ' + postDto.post.commune}"></p>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<div class="container" th:if="${showSearchResults}">
+<div class="container">
     <div class="row">
         <div class="col-md-12">
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Danh sách kết quả</th>
+                    <th>Bài đăng của tôi</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="search : ${rentalPosts}">
-                    <td class="post-title" th:text="${search.post.title}" >
+                <tr th:each="postDto : ${posts}">
+                    <td class="post-title" th:text="${postDto.post.title}" >
                     </td>
                     <td>
                         <div class="row">
                             <div class="col-md-4">
-                                <img class="img-fluid" th:src="${search.images[0]}" alt="Hình ảnh">
+                                <img class="img-fluid" th:src="${postDto.images[0]}" alt="Image" />
                             </div>
                             <div class="col-md-8">
                                 <h5>Type:</h5>
-                                <p th:text="${search.post.type.getValue()}"></p>
+                                <p th:text="${postDto.post.type.getValue()}"></p>
 
                                 <h5>Price:</h5>
                                 <p>
-                                    <span th:text="${search.post.price}"></span> VNĐ
+                                    <span th:text="${postDto.post.price}"></span> VNĐ
                                 </p>
 
                                 <h5>Area:</h5>
                                 <p>
-                                    <span th:text="${search.post.area}"></span> m<sup>2</sup>
+                                    <span th:text="${postDto.post.area}"></span> m<sup>2</sup>
                                 </p>
 
                                 <h5>Location:</h5>
-                                <p th:text="${search.post.city + ', ' + search.post.district + ', ' + search.post.commune}"></p>
+                                <p th:text="${postDto.post.city + ', ' + postDto.post.district + ', ' + postDto.post.commune}"></p>
+
+                                <!-- Add Edit Button -->
+                                <button class="btn btn-primary edit-button"
+                                        th:data-idpost="${postDto.post.id_post}" th:data-phonenumber="${postDto.post.phoneNumber}"
+                                        th:data-title="${postDto.post.title}"
+                                        th:data-area="${postDto.post.area}" th:data-price="${postDto.post.price}"
+                                        th:data-city="${postDto.post.city}" th:data-district="${postDto.post.district}"
+                                        th:data-commune="${postDto.post.commune}" th:data-street="${postDto.post.street}"
+                                        th:data-numberhouse="${postDto.post.numberHouse}" th:data-description="${postDto.post.description}"
+                                        th:data-type="${postDto.post.type}">Edit
+                                </button>
+                                <button class="btn btn-danger delete-button" th:data-idpost="${postDto.post.id_post}">Delete</button>
                             </div>
                         </div>
                     </td>
                 </tr>
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
 
+<!-- Delete Post Modal-->
+<div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="deletePostModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="deleteForm" th:action="@{/post/delete/{idpost}}" th:method="delete">
+                <input type="hidden" name="_method" value="delete" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deletePostModalLabel">Xác nhận xóa bài đăng</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa bài đăng này không?
+                    <input type="hidden" name="postId" id="postIdToDelete">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Post Modal-->
+<div class="modal fade" id="editPostModal" tabindex="-1" aria-labelledby="editPostModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{/post/update}" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPostModalLabel">Edit Post</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="Id-post">ID post</label>
+                        <input type="text" class="form-control" id="Id-post" name="idpost" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="phonenumber">Số điện thoại</label>
+                        <input type="text" class="form-control" id="phonenumber" name="phonenumber" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPostTitle">Title</label>
+                        <input type="text" class="form-control" id="editPostTitle" name="newTitle">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPostArea">Area</label>
+                        <input type="number" class="form-control" id="editPostArea" name="newArea">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPostPrice">Price</label>
+                        <input type="number" class="form-control" id="editPostPrice" name="newPrice">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPostCity">City</label>
+                        <input type="text" class="form-control" id="editPostCity" name="newCity">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPostDistrict">District</label>
+                        <input type="text" class="form-control" id="editPostDistrict" name="newDistrict">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPostCommune">Commune</label>
+                        <input type="text" class="form-control" id="editPostCommune" name="newCommune">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPostStreet">Street</label>
+                        <input type="text" class="form-control" id="editPostStreet" name="newStreet">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPostNumberHouse">Number House</label>
+                        <input type="text" class="form-control" id="editPostNumberHouse" name="newNumberHouse">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPostDescription">Description</label>
+                        <textarea class="form-control" id="editPostDescription" name="newDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPostType">Type</label>
+                        <select name="Type" class="form-control" id="editPostType">
+                            <option th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
+                                    th:value="${type}" th:text="${type.getValue()}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -222,6 +216,65 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll('.delete-button');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const postId = this.getAttribute('data-idpost');
+                deleteForm.action = `/post/delete/${postId}`;
+                $('#deletePostModal').modal('show');
+            });
+        });
+    });
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const editButtons = document.querySelectorAll('.edit-button');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const  id = this.getAttribute('data-idpost');
+                const title = this.getAttribute('data-title');
+                const area = this.getAttribute('data-area');
+                const price = this.getAttribute('data-price');
+                const city = this.getAttribute('data-city');
+                const district = this.getAttribute('data-district');
+                const commune = this.getAttribute('data-commune');
+                const street = this.getAttribute('data-street');
+                const numberHouse = this.getAttribute('data-numberhouse');
+                const description = this.getAttribute('data-description');
+                const type = this.getAttribute('data-type');
+                const phoneNumber = this.getAttribute('data-phonenumber');
+
+                document.getElementById('Id-post').value = id;
+                document.getElementById('editPostTitle').value = title;
+                document.getElementById('editPostArea').value = area;
+                document.getElementById('editPostPrice').value = price;
+                document.getElementById('editPostCity').value = city;
+                document.getElementById('editPostDistrict').value = district;
+                document.getElementById('editPostCommune').value = commune;
+                document.getElementById('editPostStreet').value = street;
+                document.getElementById('editPostNumberHouse').value = numberHouse;
+                document.getElementById('editPostDescription').value = description;
+                document.getElementById('editPostType').value = type;
+                document.getElementById('phonenumber').value = phoneNumber;
+
+                const typeDropdown = document.getElementById('editPostType');
+                const options = typeDropdown.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].value === type) {
+                        options[i].selected = true;
+                        break;
+                    }
+                }
+                $('#editPostModal').modal('show');
+            });
+        });
+    });
+</script>
 
 <script>
     // Lấy tên tỉnh/thành phố
@@ -388,5 +441,6 @@
     document.getElementById('username').textContent =  username;
     document.getElementById('avatarUrl').src = avatarUrl;
 </script>
+
 </body>
 </html>

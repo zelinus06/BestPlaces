@@ -53,14 +53,12 @@ public class UploadService {
 
             String timestamp = String.valueOf(System.currentTimeMillis());
             String fileNameWithTimestamp ="_" + timestamp + "_" + file.getName();
-
             fileMetaData.setName(fileNameWithTimestamp);
             fileMetaData.setParents(Collections.singletonList(folderId));
             FileContent mediaContent = new FileContent("image/png", file);
             com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
                     .setFields("id").execute();
             String imageUrl = "https://drive.google.com/thumbnail?id="+uploadedFile.getId();
-//            saveImagePathForUser(imageUrl);
             file.delete();
             res.setStatus(200);
             res.setMessage("Image successfully Uploaded To Drive");

@@ -27,11 +27,11 @@ public class RentalPostDto {
     @Getter
     @Setter
     private String street;
-
     @Getter
     @Setter
     private String numberHouse;
-
+    @Getter
+    @Setter
     private String title;
 
     public RentalPostDto() {};
@@ -105,11 +105,4 @@ public class RentalPostDto {
     public void setUser(User user) {
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 }
