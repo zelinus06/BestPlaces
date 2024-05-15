@@ -42,8 +42,8 @@ public class SendMailController {
         String username = userDetailsService.UserNameAtPresent();
         boolean code = verificationCodeService.verifyVerificationCode(username, verificationCode);
         if (code) {
-            return "testSucess.html";
+            return "home";
         }
-        return "testFail.html";
+        return "home";
     }
 }

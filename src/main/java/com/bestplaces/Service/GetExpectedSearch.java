@@ -46,7 +46,6 @@ public class GetExpectedSearch {
         Integer minPriceWithMaxCount = getKeyWithMaxCount(minPriceSearchCount);
         Integer minAreaWithMaxCount = getKeyWithMaxCount(minAreaSearchCount);
         String mostTypeMaxCount = getKeyWithMaxCount(mostTypeSearchCount);
-        System.out.println("ketqua"+ mostTypeMaxCount);
 
         Optional<User> userOptional = userRepository.findByUsername(myUserDetailsService.UserNameAtPresent());
         SearchedResult searchedResult = new SearchedResult();
@@ -87,7 +86,6 @@ public class GetExpectedSearch {
                 keyWithMaxCount = key;
             }
         }
-
         return keyWithMaxCount;
     }
 

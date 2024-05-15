@@ -1,31 +1,22 @@
 package com.bestplaces.Controller;
 
 import com.bestplaces.Entity.RentalPost;
-import com.bestplaces.Repository.PostRepository;
 import com.bestplaces.Service.ChartService;
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.renderer.xy.XYShapeRenderer;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.Circle;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -67,7 +58,6 @@ public class ChartController {
 
         List<RentalPost> list = chartService.createChart(type, city, district, commune);
         XYDataset dataset = createDataset(list);
-        System.out.println(dataset);
         JFreeChart chart = ChartFactory.createScatterPlot(
                 "Biểu đồ giá cả",
                 "Area (m2)", // Trục ngang
@@ -80,13 +70,9 @@ public class ChartController {
         // Đặt màu nền của Plot thành màu trắng
         plot.setBackgroundPaint(Color.WHITE);
         Ellipse2D circle = new Ellipse2D.Double(-3.0, -3.0, 6.0, 6.0);
-//        Shape cross = ShapeUtilities.createDiagonalCross(3, 1);
         XYItemRenderer renderer = plot.getRenderer();
         renderer.setSeriesShape(0, circle);
         renderer.setSeriesPaint(0, Color.red);
-
-
-
 
         // Tạo một BufferedImage từ JFreeChart
         BufferedImage chartImage = chart.createBufferedImage(800, 600);

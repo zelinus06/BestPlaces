@@ -74,23 +74,40 @@
 
                 <div class="col-md-3">
                     <div class="form-group">
-                        <select name="priceRange" class="form-control">
-                            <option selected th:value="${0}">Giá cả</option>
-                            <option th:value="${700 + '-' + 1500}">Dưới 1,5 triệu đồng</option>
-                            <option th:value="${1500 + '-' +2500}">Từ 1,5 - 2,5 triệu đồng</option>
-                            <option th:value="${2500 + '-' +4000}">Từ 2,5 - 4 triệu đồng</option>
-                            <option th:value="${4000 + '-' +100000}">Từ 4 triệu đồng trở lên</option>
+                        <select name="priceRange" class="form-control" id="priceRangeSelect">
+                            <option>Diện tích</option>
                         </select>
                     </div>
                 </div>
+                <div class="modal fade" id="priceModal" tabindex="-1" aria-labelledby="priceModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="priceModalLabel">Chọn khoảng giá</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="slider-range"></div>
+                                <p>Giá: <span id="slider-range-value"></span></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                <button type="button" class="btn btn-primary" id="savePriceRange">Lưu</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-md-3">
                     <div class="form-group">
                         <select name="areaRange" class="form-control">
                             <option selected th:value="${0}">Diện tích</option>
                             <option th:value="${0 + '-' + 20}">Dưới 20m²</option>
-                            <option th:value="${21 + '-' + 30}">Từ 20m² đến 30m²</option>
-                            <option th:value="${31 + '-' + 40}">Từ 30m² đến 40m²</option>
-                            <option th:value="${41 + '-' + 200}">Từ 40m² trở lên</option>
+                            <option th:value="${20 + '-' + 30}">Từ 20m² đến 30m²</option>
+                            <option th:value="${30 + '-' + 40}">Từ 30m² đến 40m²</option>
+                            <option th:value="${40 + '-' + 200}">Từ 40m² trở lên</option>
                             <!-- Thêm các option khác nếu cần -->
                         </select>
                     </div>
@@ -222,6 +239,72 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- noUiSlider CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.css">
+<!-- noUiSlider JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var slider = document.getElementById('slider-range');
+        var valueSpan = document.getElementById('slider-range-value');
+        var priceRangeSelect = document.getElementById('priceRangeSelect');
+
+        noUiSlider.create(slider, {
+            start: [500, 20000], // Giá trị khởi đầu của thanh kéo trượt
+            connect: true,
+            range: {
+                'min': 500,
+                'max': 20000
+            },
+            step: 500,
+            format: {
+                to: function (value) {
+                    return Math.round(value);
+                },
+                from: function (value) {
+                    return Number(value);
+                }
+            }
+        });
+
+        slider.noUiSlider.on('update', function (values, handle) {
+            valueSpan.innerHTML = values.join(' - ') + '  ngàn đồng';
+        });
+
+        // Khi nhấn vào select, mở modal
+        priceRangeSelect.addEventListener('mousedown', function (e) {
+            e.preventDefault(); // Chặn sự kiện mặc định để không mở dropdown
+            $('#priceModal').modal('show');
+        });
+
+        // Khi nhấn nút Lưu trong modal
+        document.getElementById('savePriceRange').addEventListener('click', function () {
+            var values = slider.noUiSlider.get();
+            var minPrice = values[0];
+            var maxPrice = values[1];
+
+            // Remove existing option except the first one
+            while (priceRangeSelect.options.length > 1) {
+                priceRangeSelect.remove(1);
+            }
+
+            // Add the new selected range as an option
+            var option = document.createElement('option');
+            option.value = minPrice + '-' + maxPrice;
+            option.text = 'Khoảng giá từ ' + minPrice + ' đến ' + maxPrice + ' đồng';
+            priceRangeSelect.add(option);
+
+            // Select the new option
+            priceRangeSelect.selectedIndex = 1;
+
+            // Close the modal
+            $('#priceModal').modal('hide');
+        });
+    });
+</script>
+
+
 
 <script>
     // Lấy tên tỉnh/thành phố

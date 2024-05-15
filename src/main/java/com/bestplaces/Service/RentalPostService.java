@@ -3,15 +3,19 @@ package com.bestplaces.Service;
 import com.bestplaces.Dto.PostDto;
 import com.bestplaces.Dto.RentalPostDto;
 import com.bestplaces.Entity.ImageUrl;
+import com.bestplaces.Entity.Comment;
 import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Entity.User;
 import com.bestplaces.Enums.Type;
 import com.bestplaces.Repository.ImageUrlRepository;
 import com.bestplaces.Repository.PostRepository;
+import com.bestplaces.Repository.CommentRepository;
 import com.bestplaces.Repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,6 +34,8 @@ public class RentalPostService {
     private MyUserDetailsService myUserDetailsService;
     @Autowired
     private ImageUrlRepository imageUrlRepository;
+    @Autowired
+    private CommentRepository commentRepository;
 
     public RentalPost saveRentalPost(RentalPostDto rentalPostDto) {
         Optional<User> userOptional = userRepository.findByUsername(myUserDetailsService.UserNameAtPresent());
@@ -176,6 +182,18 @@ public class RentalPostService {
         Random random = new Random();
         long randomLong = random.nextLong() & Long.MAX_VALUE;
         return currentTime + randomLong;
+    }
+
+    public void comment(long postId, String comments) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+        Optional<User> users = userRepository.findByUsername(username);
+        Comment comment = new Comment();
+        Optional<RentalPost> rentalPost = postRepository.findById(postId);
+        comment.setComment(comments);
+        comment.setId_user(users.get());
+        comment.setId_post(rentalPost.get());
+        commentRepository.save(comment);
     }
 }
 

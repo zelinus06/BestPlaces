@@ -4,14 +4,11 @@ import com.bestplaces.Dto.PostDto;
 import com.bestplaces.Dto.RentalPostDto;
 import com.bestplaces.Dto.Res;
 import com.bestplaces.Entity.RentalPost;
-import com.bestplaces.Entity.User;
 import com.bestplaces.Enums.Type;
-import com.bestplaces.Repository.PostRepository;
 import com.bestplaces.Repository.UserRepository;
 import com.bestplaces.Service.RentalPostService;
 import com.bestplaces.Service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,19 +17,15 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Controller
 @RequestMapping("/post")
 public class RentalPostController {
     @Autowired
     private RentalPostService rentalPostService;
-
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     private UploadService service;
 
@@ -97,9 +90,17 @@ public class RentalPostController {
     }
 
     @DeleteMapping("/delete/{idpost}")
-    public String deletePost(@PathVariable("idpost") Long postId) {
+    public String DeletePost(@PathVariable("idpost") Long postId) {
         rentalPostService.deletePost(postId);
         return "redirect:/user/post";
+    }
+
+    @PostMapping("/comment")
+    @ResponseBody
+    public String RatePost(@RequestParam("idpost") long postId,
+                           @RequestParam(value = "Comment") String comment) {
+        rentalPostService.comment(postId, comment);
+        return "redirect:/home";
     }
 }
 

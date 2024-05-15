@@ -28,9 +28,10 @@ public class RecommenderService {
     private UserRepository userRepository;
     @Autowired
     private FindExpectedLocation findExpectedLocation;
-    @Autowired
-    private ImageUrlRepository imageUrlRepository;
 
+    private double weightPrice = 0.5;
+    private double weightArea = 0.2;
+    private double weightDistance = 0.3;
     public List<RentalPost> recommend() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
@@ -49,6 +50,9 @@ public class RecommenderService {
             String result = findExpectedLocation.FindExResult();
             double[] result1 = parseCircle(result);
             double radius = result1[0];
+            if (radius < 15.0) {
+                radius = 15.0;
+            }
             List<RentalPost> list = new ArrayList<>();
             for (RentalPost rentalPost : rentalPosts) {
                 int price = rentalPost.getPrice();
@@ -60,7 +64,7 @@ public class RecommenderService {
                 double distance = haversine(result1[1], result1[2], latitude, longtitude);
                 double normalizeDistance = normalizeDistance(distance, radius);
                 double[] vector1 = {1, 1, 1};
-                double [] vector2 = new double [3];
+                double [] vector2 = new double[3];
                 vector2 = new double[]{normalizePrice, normalizeArea, normalizeDistance};
                 if (maxPrice == 0) {
                     vector2 = new double[]{1.0, normalizeArea, normalizeDistance};
@@ -80,12 +84,11 @@ public class RecommenderService {
             return list;
         } else {
             return null;
-//            throw new IllegalArgumentException("Type cannot be null");
         }
     }
     public double normalizeDistance(double distance, double radius) {
         if (distance == radius) {
-            return 1.0;
+            return 0.5;
         } else if(distance == 0) {
             return 1.0;
         }
@@ -156,9 +159,21 @@ public class RecommenderService {
         double sumSquaredDiff = 0.0;
         for (int i = 0; i < vector1.length; i++) {
             double diff = vector1[i] - vector2[i];
-            sumSquaredDiff += diff * diff;
+            if (i == 0) {
+                sumSquaredDiff += diff * diff * weightPrice;
+            }
+            if (i == 1) {
+                sumSquaredDiff += diff * diff * weightArea;
+            }
+            if (i == 2) {
+                sumSquaredDiff += diff * diff * weightDistance;
+            }
         }
         return Math.sqrt(sumSquaredDiff);
     }
 
+    public double findWeight() {
+
+        return 0.0;
+    }
 }

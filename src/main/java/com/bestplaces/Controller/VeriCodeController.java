@@ -38,7 +38,7 @@ public class VeriCodeController {
         if (number != null)
             myTelegramBot.sendVerificationCode(number);
         else {
-            return "testFail";
+            return "redirect:/testVeriCode";
         }
             return "testVeriCode";
     }
@@ -57,9 +57,9 @@ public class VeriCodeController {
         String username = userDetailsService.UserNameAtPresent();
         boolean code = verificationCodeService.verifyVerificationCode(username, verificationCode, phoneNumber);
         if (code) {
-            return "testSucess.html";
+            return "home";
         }
-        return "testFail.html";
+        return "home";
     }
     public String formatPhoneNumber(String phoneNumber) {
         if (phoneNumber.startsWith("0")) {

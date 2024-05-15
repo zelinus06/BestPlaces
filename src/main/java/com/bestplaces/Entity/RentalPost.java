@@ -52,9 +52,6 @@ public class RentalPost {
     @Getter
     @Setter
     private String title;
-    @Getter
-    @Setter
-    private double rating;
 
     public RentalPost(){
     }
