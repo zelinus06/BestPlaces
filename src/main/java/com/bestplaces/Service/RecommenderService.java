@@ -50,9 +50,9 @@ public class RecommenderService {
             String result = findExpectedLocation.FindExResult();
             double[] result1 = parseCircle(result);
             double radius = result1[0];
-            if (radius < 15.0) {
-                radius = 15.0;
-            }
+//            if (radius < 5.0) {
+//                radius = 5.0;
+//            }
             List<RentalPost> list = new ArrayList<>();
             for (RentalPost rentalPost : rentalPosts) {
                 int price = rentalPost.getPrice();

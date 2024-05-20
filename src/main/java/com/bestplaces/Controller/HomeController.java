@@ -54,6 +54,11 @@ public class HomeController {
         Double maxPrice = null;
         Integer minArea = null;
         Integer maxArea = null;
+        if (!"0".equals(priceRange)) {
+                    String[] priceParts = priceRange.split("-");
+                    minPrice = Double.parseDouble(priceParts[0]);
+                    maxPrice = Double.parseDouble(priceParts[1]);
+        }
         if (Objects.equals(type, "")) {
             type = null;
         }
@@ -66,17 +71,12 @@ public class HomeController {
         if (Objects.equals(commune, "")) {
             commune = null;
         }
-        if (!"0".equals(priceRange)) {
-            String[] priceParts = priceRange.split("-");
-            minPrice = Double.parseDouble(priceParts[0]);
-            maxPrice = Double.parseDouble(priceParts[1]);
-        }
 
-        if (!"0".equals(areaRange)) {
-            String[] areaParts = areaRange.split("-");
-            minArea = Integer.parseInt(areaParts[0]);
-            maxArea = Integer.parseInt(areaParts[1]);
-        }
+            if (!"0".equals(areaRange)) {
+                String[] areaParts = areaRange.split("-");
+                minArea = Integer.parseInt(areaParts[0]);
+                maxArea = Integer.parseInt(areaParts[1]);
+            }
         List<RentalPost> rentalPosts = filterSearch.searchPost(minPrice, maxPrice, minArea, maxArea, type, city, district, commune);
         List<PostDto> postDTOs = rentalPostService.getPosts(rentalPosts);
         model.addAttribute("rentalPosts", postDTOs);

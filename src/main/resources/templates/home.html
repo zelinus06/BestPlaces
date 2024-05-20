@@ -75,7 +75,7 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <select name="priceRange" class="form-control" id="priceRangeSelect">
-                            <option>Diện tích</option>
+                            <option th:value="${0}">Giá cả</option>
                         </select>
                     </div>
                 </div>
@@ -171,7 +171,7 @@
 
                                     <h5>Price:</h5>
                                     <p>
-                                        <span th:text="${postDto.post.price}"></span> VNĐ
+                                        <span th:text="${postDto.post.price}"></span> 000 VNĐ
                                     </p>
 
                                     <h5>Area:</h5>
@@ -215,7 +215,7 @@
 
                                 <h5>Price:</h5>
                                 <p>
-                                    <span th:text="${search.post.price}"></span> VNĐ
+                                    <span th:text="${search.post.price}"></span> 000 VNĐ
                                 </p>
 
                                 <h5>Area:</h5>
@@ -244,67 +244,126 @@
 <!-- noUiSlider JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var slider = document.getElementById('slider-range');
-        var valueSpan = document.getElementById('slider-range-value');
-        var priceRangeSelect = document.getElementById('priceRangeSelect');
+<!--<script>-->
+<!--    document.addEventListener('DOMContentLoaded', function () {-->
+<!--        var slider = document.getElementById('slider-range');-->
+<!--        var valueSpan = document.getElementById('slider-range-value');-->
+<!--        var priceRangeSelect = document.getElementById('priceRangeSelect');-->
 
-        noUiSlider.create(slider, {
-            start: [500, 20000], // Giá trị khởi đầu của thanh kéo trượt
-            connect: true,
-            range: {
-                'min': 500,
-                'max': 20000
+<!--        noUiSlider.create(slider, {-->
+<!--            start: [500, 20000], // Giá trị khởi đầu của thanh kéo trượt-->
+<!--            connect: true,-->
+<!--            range: {-->
+<!--                'min': 500,-->
+<!--                'max': 20000-->
+<!--            },-->
+<!--            step: 500,-->
+<!--            format: {-->
+<!--                to: function (value) {-->
+<!--                    // return Math.round(value);-->
+<!--                    return (value / 1000).toFixed(1);-->
+<!--                },-->
+<!--                from: function (value) {-->
+<!--                    // return Number(value);-->
+<!--                    return value * 1000;-->
+<!--                }-->
+<!--            }-->
+<!--        });-->
+
+<!--        slider.noUiSlider.on('update', function (values, handle) {-->
+<!--            valueSpan.innerHTML = values.join(' - ') + '  triệu đồng';-->
+<!--        });-->
+
+<!--        // Khi nhấn vào select, mở modal-->
+<!--        priceRangeSelect.addEventListener('mousedown', function (e) {-->
+<!--            e.preventDefault(); // Chặn sự kiện mặc định để không mở dropdown-->
+<!--            $('#priceModal').modal('show');-->
+<!--        });-->
+
+<!--        // Khi nhấn nút Lưu trong modal-->
+<!--        document.getElementById('savePriceRange').addEventListener('click', function () {-->
+<!--            var values = slider.noUiSlider.get();-->
+<!--            var minPrice = values[0];-->
+<!--            var maxPrice = values[1];-->
+
+<!--            // Remove existing option except the first one-->
+<!--            while (priceRangeSelect.options.length > 1) {-->
+<!--                priceRangeSelect.remove(1);-->
+<!--            }-->
+
+<!--            // Add the new selected range as an option-->
+<!--            var option = document.createElement('option');-->
+<!--            option.value = minPrice + '-' + maxPrice;-->
+<!--            option.text = 'Khoảng giá từ ' + minPrice + ' đến ' + maxPrice + ' đồng';-->
+<!--            priceRangeSelect.add(option);-->
+
+<!--            // Select the new option-->
+<!--            priceRangeSelect.selectedIndex = 1;-->
+
+<!--            // Close the modal-->
+<!--            $('#priceModal').modal('hide');-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+
+<script>document.addEventListener('DOMContentLoaded', function () {
+    var slider = document.getElementById('slider-range');
+    var valueSpan = document.getElementById('slider-range-value');
+    var priceRangeSelect = document.getElementById('priceRangeSelect');
+
+    noUiSlider.create(slider, {
+        start: [500, 20000], // Giá trị khởi đầu của thanh kéo trượt
+        connect: true,
+        range: {
+            'min': 500,
+            'max': 20000
+        },
+        step: 500,
+        format: {
+            to: function (value) {
+                return (value / 1000).toFixed(1); // Chuyển đổi giá trị thành ngàn đồng
             },
-            step: 500,
-            format: {
-                to: function (value) {
-                    return Math.round(value);
-                },
-                from: function (value) {
-                    return Number(value);
-                }
+            from: function (value) {
+                return Math.round(value * 1000); // Chuyển đổi ngược lại thành đồng
             }
-        });
-
-        slider.noUiSlider.on('update', function (values, handle) {
-            valueSpan.innerHTML = values.join(' - ') + '  ngàn đồng';
-        });
-
-        // Khi nhấn vào select, mở modal
-        priceRangeSelect.addEventListener('mousedown', function (e) {
-            e.preventDefault(); // Chặn sự kiện mặc định để không mở dropdown
-            $('#priceModal').modal('show');
-        });
-
-        // Khi nhấn nút Lưu trong modal
-        document.getElementById('savePriceRange').addEventListener('click', function () {
-            var values = slider.noUiSlider.get();
-            var minPrice = values[0];
-            var maxPrice = values[1];
-
-            // Remove existing option except the first one
-            while (priceRangeSelect.options.length > 1) {
-                priceRangeSelect.remove(1);
-            }
-
-            // Add the new selected range as an option
-            var option = document.createElement('option');
-            option.value = minPrice + '-' + maxPrice;
-            option.text = 'Khoảng giá từ ' + minPrice + ' đến ' + maxPrice + ' đồng';
-            priceRangeSelect.add(option);
-
-            // Select the new option
-            priceRangeSelect.selectedIndex = 1;
-
-            // Close the modal
-            $('#priceModal').modal('hide');
-        });
+        }
     });
+
+    slider.noUiSlider.on('update', function (values, handle) {
+        valueSpan.innerHTML = values.join(' - ') + ' triệu đồng';
+    });
+
+    // Khi nhấn vào select, mở modal
+    priceRangeSelect.addEventListener('mousedown', function (e) {
+        e.preventDefault(); // Chặn sự kiện mặc định để không mở dropdown
+        $('#priceModal').modal('show');
+    });
+
+    // Khi nhấn nút Lưu trong modal
+    document.getElementById('savePriceRange').addEventListener('click', function () {
+        var values = slider.noUiSlider.get(true); // Lấy giá trị thật (500-20000)
+        var minPrice = Math.round(values[0]);
+        var maxPrice = Math.round(values[1]);
+
+        // Remove existing option except the first one
+        while (priceRangeSelect.options.length > 1) {
+            priceRangeSelect.remove(1);
+        }
+
+        // Add the new selected range as an option
+        var option = document.createElement('option');
+        option.value = minPrice + '-' + maxPrice;
+        option.text = 'Khoảng giá từ ' + (minPrice / 1000).toFixed(1) + ' đến ' + (maxPrice / 1000).toFixed(1) + ' triệu đồng';
+        priceRangeSelect.add(option);
+
+        // Select the new option
+        priceRangeSelect.selectedIndex = 1;
+
+        // Close the modal
+        $('#priceModal').modal('hide');
+    });
+});
 </script>
-
-
 
 <script>
     // Lấy tên tỉnh/thành phố
