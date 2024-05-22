@@ -1,5 +1,6 @@
 package com.bestplaces.Service;
 
+import com.bestplaces.Dto.CommentDto;
 import com.bestplaces.Dto.PostDto;
 import com.bestplaces.Dto.RentalPostDto;
 import com.bestplaces.Entity.ImageUrl;
@@ -94,6 +95,29 @@ public class RentalPostService {
             postDTOs.add(new PostDto(post, images));
         }
         return postDTOs;
+    }
+
+    public PostDto getDetailPost(Long idPost) {
+        Optional<RentalPost> postOptional = postRepository.findById(idPost);
+        RentalPost rentalPost = postOptional.get();
+        List<String> images = imageUrlRepository.findByPostId(rentalPost);
+        PostDto postDto = new PostDto(rentalPost, images);
+        return postDto;
+    }
+
+    public List<CommentDto> showComment(Long idPost) {
+        List<CommentDto> comments = new ArrayList<>() ;
+        Optional<RentalPost> postOptional = postRepository.findById(idPost);
+        RentalPost rentalPost = postOptional.get();
+        List<Comment> comment = commentRepository.showAllComment(rentalPost);
+        for (Comment comment1 : comment) {
+            User user = comment1.getId_user();
+            String username = user.getUsername();
+            String avatarUrl = user.getAvatar();
+            CommentDto commentDto = new CommentDto(comment1, username, avatarUrl);
+            comments.add(commentDto);
+        }
+        return comments;
     }
 
     public List<RentalPost> getUserPost() {
@@ -195,5 +219,7 @@ public class RentalPostService {
         comment.setId_post(rentalPost.get());
         commentRepository.save(comment);
     }
+
+
 }
 

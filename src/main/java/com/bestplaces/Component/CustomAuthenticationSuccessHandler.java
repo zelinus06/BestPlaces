@@ -64,7 +64,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         // Kiểm tra vai trò của người dùng
         boolean isNonUser = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_NONUSER"));
-
         String redirectUrl = "/home";
         if (isNonUser) {
             redirectUrl = "/mail";

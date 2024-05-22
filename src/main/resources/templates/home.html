@@ -19,17 +19,26 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Logo</a>
+    <a class="navbar-brand" th:href="@{/home}">BestPlaces</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#">Thuê</a>
+                <a class="nav-link" href="#">Phòng trọ cho thuê</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Cho thuê</a>
+                <a class="nav-link" href="#">Nhà cho thuê</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Căn hộ cho thuê</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Cửa hàng cho thuê</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/chart}">Biểu đồ giá cả</a>
             </li>
             <li class="nav-item">
                 <!-- Form với nút gửi được tùy chỉnh để trông giống với liên kết -->
@@ -48,10 +57,11 @@
                     <span id="username" ></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" th:href="@{/post}">Đăng tin cho thuê</a>
+                    <a class="dropdown-item" th:href="@{/post/mypost}">Quản lý tin đăng</a>
+                    <a class="dropdown-item" th:href="@{/#}">Thông tin cá nhân</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="http://localhost:8080/logout">Logout</a>
+                    <a class="dropdown-item" th:href="@{/logout}">Logout</a>
                 </div>
             </li>
         </ul>
@@ -64,8 +74,8 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
-                        <select name="Type" class="form-control">
-                            <option selected  th:value="${null}">Loại hình</option>
+                        <select name="Type" class="form-control" id="type">
+                            <option selected th:value="${null}">Loại hình</option>
                             <option th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
                                     th:value="${type}" th:text="${type.getValue()}"></option>
                         </select>
@@ -79,30 +89,10 @@
                         </select>
                     </div>
                 </div>
-                <div class="modal fade" id="priceModal" tabindex="-1" aria-labelledby="priceModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="priceModalLabel">Chọn khoảng giá</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div id="slider-range"></div>
-                                <p>Giá: <span id="slider-range-value"></span></p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                                <button type="button" class="btn btn-primary" id="savePriceRange">Lưu</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="col-md-3">
                     <div class="form-group">
-                        <select name="areaRange" class="form-control">
+                        <select name="areaRange" class="form-control" id="areaRange">
                             <option selected th:value="${0}">Diện tích</option>
                             <option th:value="${0 + '-' + 20}">Dưới 20m²</option>
                             <option th:value="${20 + '-' + 30}">Từ 20m² đến 30m²</option>
@@ -112,33 +102,39 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary float-right">Tìm kiếm</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
                         <select class="form-control" id="provinceDropdown">
                             <option selected th:value="${null}">Tỉnh/Thành</option>
                         </select>
-                        <input name="city" type="hidden" th:value="${city}"><br>
+                        <input name="city" id="city" type="hidden" th:value="${city}"><br>
                     </div>
                 </div>
+
                 <div class="col-md-3">
                     <div class="form-group">
                         <select class="form-control" id="districtDropdown">
                             <option selected th:value="${null}">Quận/Huyện</option>
                         </select>
-                        <input name="district" type="hidden" th:value="${district}"><br>
+                        <input name="district" id="district" type="hidden" th:value="${district}"><br>
                     </div>
                 </div>
+
                 <div class="col-md-3">
                     <div class="form-group">
                         <select class="form-control" id="communeDropdown">
                             <option selected th:value="${null}">Phường/Thị xã</option>
                         </select>
-                        <input name="commune" type="hidden" th:value="${commune}"><br>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                        <input name="commune" id="commune" type="hidden" th:value="${commune}"><br>
                     </div>
                 </div>
             </div>
@@ -146,6 +142,26 @@
     </div>
 </div>
 
+<div class="modal fade" id="priceModal" tabindex="-1" aria-labelledby="priceModalLabel" aria-hidden="true">-->
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="priceModalLabel">Chọn khoảng giá</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="slider-range"></div>
+                                    <p>Giá: <span id="slider-range-value"></span></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                    <button type="button" class="btn btn-primary" id="savePriceRange">Lưu</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
 <div class="container" th:if="${not showSearchResults}">
     <div class="row">
@@ -166,6 +182,7 @@
                                     <img class="img-fluid" th:src="${postDto.images[0]}" alt="Image" />
                                 </div>
                                 <div class="col-md-8">
+                                    <a th:href="@{'/post/' + ${postDto.post.id_post}}">View Post Detail</a>
                                     <h5>Type:</h5>
                                     <p th:text="${postDto.post.type.getValue()}"></p>
 
@@ -191,14 +208,37 @@
     </div>
 </div>
 
-<div class="container" th:if="${showSearchResults}">
+<div class="container" th:if="${showSearchResults}" id="searchResult">
     <div class="row">
         <div class="col-md-12">
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Danh sách kết quả</th>
+                    <th colspan="2">Danh sách kết quả</th>
+                    <td>
+                        <div th:if="${searched != null}">
+                            <p th:if="${searched.type != null}">
+                                <span>Loại:</span>
+                                <span th:text="${searched.type}"></span>
+                            </p>
+                            <p th:if="${searched.city != null}">
+                                <span>Địa chỉ:</span>
+                                <span th:text="${searched.city}"></span>,
+                                <span th:text="${searched.district}"></span>,
+                                <span th:text="${searched.commune}"></span>
+                            </p>
+                            <p th:if="${searched.priceRange != '0'}">
+                                <span>Giá cả:</span>
+                                <span th:text="${searched.priceRange}"></span>
+                            </p>
+                            <p th:if="${searched.areaRange != '0'}">
+                                <span>Diện tích:</span>
+                                <span th:text="${searched.areaRange}"></span>
+                            </p>
+                        </div>
+                    </td>
                 </tr>
+
                 </thead>
                 <tbody>
                 <tr th:each="search : ${rentalPosts}">
@@ -231,7 +271,6 @@
                 </tr>
                 </tbody>
             </table>
-
         </div>
     </div>
 </div>
@@ -244,75 +283,13 @@
 <!-- noUiSlider JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
 
-<!--<script>-->
-<!--    document.addEventListener('DOMContentLoaded', function () {-->
-<!--        var slider = document.getElementById('slider-range');-->
-<!--        var valueSpan = document.getElementById('slider-range-value');-->
-<!--        var priceRangeSelect = document.getElementById('priceRangeSelect');-->
-
-<!--        noUiSlider.create(slider, {-->
-<!--            start: [500, 20000], // Giá trị khởi đầu của thanh kéo trượt-->
-<!--            connect: true,-->
-<!--            range: {-->
-<!--                'min': 500,-->
-<!--                'max': 20000-->
-<!--            },-->
-<!--            step: 500,-->
-<!--            format: {-->
-<!--                to: function (value) {-->
-<!--                    // return Math.round(value);-->
-<!--                    return (value / 1000).toFixed(1);-->
-<!--                },-->
-<!--                from: function (value) {-->
-<!--                    // return Number(value);-->
-<!--                    return value * 1000;-->
-<!--                }-->
-<!--            }-->
-<!--        });-->
-
-<!--        slider.noUiSlider.on('update', function (values, handle) {-->
-<!--            valueSpan.innerHTML = values.join(' - ') + '  triệu đồng';-->
-<!--        });-->
-
-<!--        // Khi nhấn vào select, mở modal-->
-<!--        priceRangeSelect.addEventListener('mousedown', function (e) {-->
-<!--            e.preventDefault(); // Chặn sự kiện mặc định để không mở dropdown-->
-<!--            $('#priceModal').modal('show');-->
-<!--        });-->
-
-<!--        // Khi nhấn nút Lưu trong modal-->
-<!--        document.getElementById('savePriceRange').addEventListener('click', function () {-->
-<!--            var values = slider.noUiSlider.get();-->
-<!--            var minPrice = values[0];-->
-<!--            var maxPrice = values[1];-->
-
-<!--            // Remove existing option except the first one-->
-<!--            while (priceRangeSelect.options.length > 1) {-->
-<!--                priceRangeSelect.remove(1);-->
-<!--            }-->
-
-<!--            // Add the new selected range as an option-->
-<!--            var option = document.createElement('option');-->
-<!--            option.value = minPrice + '-' + maxPrice;-->
-<!--            option.text = 'Khoảng giá từ ' + minPrice + ' đến ' + maxPrice + ' đồng';-->
-<!--            priceRangeSelect.add(option);-->
-
-<!--            // Select the new option-->
-<!--            priceRangeSelect.selectedIndex = 1;-->
-
-<!--            // Close the modal-->
-<!--            $('#priceModal').modal('hide');-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
-
 <script>document.addEventListener('DOMContentLoaded', function () {
     var slider = document.getElementById('slider-range');
     var valueSpan = document.getElementById('slider-range-value');
     var priceRangeSelect = document.getElementById('priceRangeSelect');
 
     noUiSlider.create(slider, {
-        start: [500, 20000], // Giá trị khởi đầu của thanh kéo trượt
+        start: [500, 20000],
         connect: true,
         range: {
             'min': 500,
@@ -321,10 +298,10 @@
         step: 500,
         format: {
             to: function (value) {
-                return (value / 1000).toFixed(1); // Chuyển đổi giá trị thành ngàn đồng
+                return (value / 1000).toFixed(1);
             },
             from: function (value) {
-                return Math.round(value * 1000); // Chuyển đổi ngược lại thành đồng
+                return Math.round(value * 1000);
             }
         }
     });
@@ -341,7 +318,7 @@
 
     // Khi nhấn nút Lưu trong modal
     document.getElementById('savePriceRange').addEventListener('click', function () {
-        var values = slider.noUiSlider.get(true); // Lấy giá trị thật (500-20000)
+        var values = slider.noUiSlider.get(true);
         var minPrice = Math.round(values[0]);
         var maxPrice = Math.round(values[1]);
 
@@ -503,7 +480,6 @@
             });
     }
 
-
     // Function to get the value of a specific cookie
     function getCookieValue(cookieName) {
         const cookieString = document.cookie; // Lấy toàn bộ chuỗi cookie
@@ -523,12 +499,12 @@
         }
         return null;
     }
-    // Usage example
     const username = getCookieValue('username');
     const avatarUrl = getCookieValue('avatarUrl');
-    console.log(avatarUrl)
     document.getElementById('username').textContent =  username;
     document.getElementById('avatarUrl').src = avatarUrl;
 </script>
+
+
 </body>
 </html>

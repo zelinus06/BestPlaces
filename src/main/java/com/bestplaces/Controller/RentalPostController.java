@@ -1,8 +1,10 @@
 package com.bestplaces.Controller;
 
+import com.bestplaces.Dto.CommentDto;
 import com.bestplaces.Dto.PostDto;
 import com.bestplaces.Dto.RentalPostDto;
 import com.bestplaces.Dto.Res;
+import com.bestplaces.Entity.Comment;
 import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Enums.Type;
 import com.bestplaces.Repository.UserRepository;
@@ -96,12 +98,21 @@ public class RentalPostController {
     }
 
     @PostMapping("/comment")
-    @ResponseBody
     public String RatePost(@RequestParam("idpost") long postId,
                            @RequestParam(value = "Comment") String comment) {
         rentalPostService.comment(postId, comment);
         return "redirect:/home";
     }
+
+    @GetMapping("/{postId}")
+    public String getPostDetail(@PathVariable Long postId, Model model) {
+        PostDto postDto = rentalPostService.getDetailPost(postId);
+        List<CommentDto> comments = rentalPostService.showComment(postId);
+        model.addAttribute("commentDto", comments);
+        model.addAttribute("postDto", postDto);
+        return "ChosenPost";
+    }
+
 }
 
 

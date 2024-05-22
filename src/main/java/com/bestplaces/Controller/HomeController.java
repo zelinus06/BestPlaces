@@ -1,6 +1,7 @@
 package com.bestplaces.Controller;
 
 import com.bestplaces.Dto.PostDto;
+import com.bestplaces.Dto.SearchResDto;
 import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Repository.PostRepository;
 import com.bestplaces.Repository.UserRepository;
@@ -10,13 +11,11 @@ import com.bestplaces.Service.RecommenderService;
 import com.bestplaces.Service.RentalPostService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +49,7 @@ public class HomeController {
                                @RequestParam(required = false, value = "district") String district,
                                @RequestParam(required = false, value = "commune") String commune,
                                Model model) {
+
         Double minPrice = null;
         Double maxPrice = null;
         Integer minArea = null;
@@ -81,6 +81,14 @@ public class HomeController {
         List<PostDto> postDTOs = rentalPostService.getPosts(rentalPosts);
         model.addAttribute("rentalPosts", postDTOs);
         model.addAttribute("showSearchResults", true);
+        SearchResDto searchResDto = new SearchResDto();
+        searchResDto.setType(type);
+        searchResDto.setCity(city);
+        searchResDto.setCommune(commune);
+        searchResDto.setDistrict(district);
+        searchResDto.setPriceRange(priceRange);
+        searchResDto.setAreaRange(areaRange);
+        model.addAttribute("searched", searchResDto);
         return "home";
     }
 

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Post Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .post-container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        .post-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .post-content {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .post-images {
+            margin-top: 20px;
+        }
+        .post-images img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="post-container">
+    <div class="post-title" th:text="${postDto.post.title}">Post Title</div>
+    <div class="post-content" th:text="${postDto.post.id_post}">Post Content</div>
+    <div class="post-images">
+        <h3>Images:</h3>
+        <div th:each="image : ${postDto.images}">
+            <img th:src="${image}" alt="Post Image"/>
+        </div>
+    </div>
+
+
+    <div class="post-comments">
+        <h3>Comments:</h3>
+        <div th:each="comment : ${commentDto}">
+            <div class="comment">
+                <div class="comment-author" th:text="${comment.username}">Author Name</div>
+                <img th:src="${comment.avatarUrl}" alt="">
+                <div class="comment-text" th:text="${comment.comment.comment}">Comment text...</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
