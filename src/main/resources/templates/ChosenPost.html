@@ -3,57 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <title>Post Details</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
         }
         .post-container {
             max-width: 800px;
-            margin: auto;
+            margin: 50px auto;
             padding: 20px;
+            background-color: #fff;
             border: 1px solid #ccc;
             border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         .post-title {
-            font-size: 24px;
+            font-size: 32px;
             font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
         }
-        .post-content {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-        .post-images {
-            margin-top: 20px;
-        }
-        .post-images img {
-            max-width: 100%;
+        .carousel-inner img {
+            width: 100%;
             height: auto;
-            margin: 10px 0;
+            border-radius: 10px;
         }
+        .post-comments {
+            margin-top: 30px;
+        }
+        .post-comments h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .comment {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .comment img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .comment-author {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        .comment-text {
+            font-size: 16px;
+            color: #555;
+            margin-top: 5px;
+        }
+        .carousel-inner img {
+            width: 100%; /* Kích thước tối đa là 100% của carousel */
+            height: 400px; /* Chiều cao cố định */
+            /*object-fit: cover; !* Đảm bảo hình ảnh không bị méo khi cố định kích thước *!*/
+            border-radius: 10px;
+        }
+        .modalImageContent {
+            background-color: transparent;
+            border: none;
+        }
+
+        .modalImageBody {
+            padding: 0;
+        }
+        #modalImage {
+            display: block;
+            margin: 0 auto; /* Canh giữa ảnh theo chiều ngang */
+            width: 300px; /* Đảm bảo không bị méo */
+            height: auto; /* Đảm bảo không bị méo */
+        }
+        .comment {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .comment-content {
+            flex-grow: 1;
+        }
+        .delete-comment-btn {
+            background: none;
+            border: none;
+            color: red;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .delete-comment-btn:hover {
+            color: darkred;
+        }
+
     </style>
 </head>
 <body>
 <div class="post-container">
     <div class="post-title" th:text="${postDto.post.title}">Post Title</div>
-    <div class="post-content" th:text="${postDto.post.id_post}">Post Content</div>
     <div class="post-images">
         <h3>Images:</h3>
-        <div th:each="image : ${postDto.images}">
-            <img th:src="${image}" alt="Post Image"/>
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div th:each="image, iterStat : ${postDto.images}" th:classappend="${iterStat.index == 0} ? 'active' : ''" class="carousel-item">
+                    <img th:src="${image}" class="d-block w-100" alt="Hình ảnh bài đăng" data-bs-toggle="modal" data-bs-target="#imageModal">
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
     </div>
 
+    <div class="post-phoneNumber" th:text="${postDto.post.phoneNumber}">Post Title</div>
+    <div class="post-type" th:text="${postDto.post.type}">Post Title</div>
+    <div class="post-price" th:text="${postDto.post.price}">Post Title</div>
+    <div class="post-area" th:text="${postDto.post.area}">Post Title</div>
+    <div class="post-description" th:text="${postDto.post.description}">Post Title</div>
 
+    <div class="post-address" th:text="${postDto.post.city + ', ' + postDto.post.district + ', ' + postDto.post.commune + ', ' + postDto.post.street + ', ' + postDto.post.numberHouse}"></div>
+    <h3>Bản đồ</h3>
+    <div class="map">
+        <iframe width="600" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" th:src="@{'https://www.openstreetmap.org/export/embed.html?bbox=' + ${postDto.post.getLongtitude()} + '%2C' + ${postDto.post.getLatitude()} + '%2C' + ${postDto.post.getLongtitude()} + '%2C' + ${postDto.post.getLatitude()} + '&amp;layer=mapnik'}"></iframe><br/>
+        <small>
+            <a th:href="@{'https://www.openstreetmap.org/?mlat=' + ${postDto.post.getLatitude()} + '&amp;mlon=' + ${postDto.post.getLongtitude()} + '#map=15/' + ${postDto.post.getLatitude()} + '/' + ${postDto.post.getLongtitude()}}"
+               target="_blank">Xem bản đồ lớn hơn</a>
+        </small>
+    </div>
     <div class="post-comments">
         <h3>Comments:</h3>
         <div th:each="comment : ${commentDto}">
             <div class="comment">
-                <div class="comment-author" th:text="${comment.username}">Author Name</div>
-                <img th:src="${comment.avatarUrl}" alt="">
-                <div class="comment-text" th:text="${comment.comment.comment}">Comment text...</div>
+                <img th:src="${comment.avatarUrl}" alt="Avatar">
+                <div class="comment-content">
+                    <div class="comment-author" th:text="${comment.username}">Author Name</div>
+                    <div class="comment-text" th:text="${comment.comment.comment}">Comment text...</div>
+                </div>
+                <div th:if="${comment.comment.id_user.getId() == currentUser.getId()}">
+                    <button class="delete-comment-btn" data-toggle="modal" th:attr="data-target='#deleteCommentModal'+${comment.comment.id}" th:data-comment-id="${comment.comment.id}">&times;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form th:action="@{/post/comment}" method="post">
+        <input type="hidden" name="idpost" th:value="${postId}">
+        <div>
+            <textarea id="comment" name="Comment" rows="4" required></textarea>
+        </div>
+        <div>
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+</div>
+
+<!-- Modal xóa comment -->
+<div th:each="comment : ${commentDto}">
+    <div class="modal fade" th:id="'deleteCommentModal'+${comment.comment.id}" tabindex="-1" role="dialog" aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/post/deleteComment/{postId}/{commentId}(postId=${comment.comment.id_post.getId_post()}, commentId=${comment.comment.id})}" method="post">
+                    <input type="hidden" name="_method" value="delete" />
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteCommentModalLabel">Xác nhận xóa bình luận</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có chắc chắn muốn xóa bình luận này không?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content modalImageContent">
+            <div class="modal-body modalImageBody">
+                <img id="modalImage" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function(){
+        $('#carouselExampleIndicators').on('click', '.carousel-item img', function(){
+            var src = $(this).attr('src');
+            $('#modalImage').attr('src', src);
+            $('#imageModal').modal('show');
+        });
+    });
+</script>
 </body>
 </html>

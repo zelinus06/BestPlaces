@@ -220,6 +220,21 @@ public class RentalPostService {
         commentRepository.save(comment);
     }
 
+    public void deleteComment(long commentId) {
+        Optional<Comment> comment = commentRepository.findById(commentId);
+        if(comment.isPresent()) {
+            Comment comment1 = comment.get();
+            commentRepository.delete(comment1);
+        }
+    }
 
+    public Comment getCommentById(Long postId) {
+        Optional<Comment> comment = commentRepository.findById(postId);
+        if(comment.isPresent()) {
+            Comment comment1 = comment.get();
+            return comment1;
+        }
+        return null;
+    }
 }
 
