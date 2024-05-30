@@ -111,7 +111,6 @@ public class RentalPostController {
 
     @GetMapping("/{postId}")
     public String getPostDetail(@PathVariable Long postId, Model model) {
-
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
         Optional<User> users = userRepository.findByUsername(username);

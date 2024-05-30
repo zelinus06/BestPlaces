@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -28,16 +29,17 @@ import java.util.*;
 import java.util.List;
 
 @Controller
+@RequestMapping("/chart")
 public class ChartController {
     @Autowired
     private ChartService chartService;
 
-    @GetMapping("/chart")
-    public String generateChart(Model model, HttpServletResponse response) throws IOException {
+    @GetMapping()
+    public String generateChart() throws IOException {
         return "chart";
     }
 
-    @PostMapping("/chart")
+    @PostMapping()
     public String CreateChart(@RequestParam(required = false, value = "Type") String type,
                               @RequestParam(required = false, value = "city") String city,
                               @RequestParam(required = false, value = "district") String district,

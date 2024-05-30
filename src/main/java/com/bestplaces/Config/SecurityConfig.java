@@ -41,16 +41,18 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/home", " /register", "mail", "registration").permitAll();
+                    registry.requestMatchers("/guest", " /register", "mail", "registration").permitAll();
                     registry.requestMatchers("/admin/**", "/test").hasRole("ADMIN");
                     registry.requestMatchers("/user/**").hasAnyRole("USER", "NONUSER", "ADMIN");
                     registry.anyRequest().authenticated();
                 })
+//                .logout((logout) -> logout.deleteCookies("avatarUrl","username"))
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .formLogin(form -> form
                         .successHandler(customAuthenticationSuccessHandler())
                         .failureUrl("/testFail"))
                 .build();
+
     }
     @Bean
     public UserDetailsService userDetailsService() {

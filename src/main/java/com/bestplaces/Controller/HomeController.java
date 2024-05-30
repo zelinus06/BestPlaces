@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Controller
+@RequestMapping("home")
 public class HomeController {
     @Autowired
     private RentalPostService rentalPostService;
@@ -30,7 +31,7 @@ public class HomeController {
     @Autowired
     private RecommenderService recommenderService;
 
-    @GetMapping("/home")
+    @GetMapping()
     public String Home(Model model, @CookieValue("username")String username, @CookieValue("avatarUrl")String avatarUrl) {
         model.addAttribute("username", username);
         model.addAttribute("avatarUrl", avatarUrl);
@@ -41,7 +42,7 @@ public class HomeController {
         return "home";
     }
 
-    @PostMapping("/home")
+    @PostMapping()
     public String filterSearch(@RequestParam(required = false, value = "priceRange") String priceRange,
                                @RequestParam(required = false, value = "areaRange") String areaRange,
                                @RequestParam(required = false, value = "Type") String type,
@@ -95,6 +96,18 @@ public class HomeController {
     @PostMapping("/recommend")
     public String recommendHouse(Model model) {
         List<RentalPost> rentalPosts = recommenderService.recommend();
+        List<PostDto> postDTOs = rentalPostService.getPosts(rentalPosts);
+        model.addAttribute("rentalPosts", postDTOs);
+        model.addAttribute("showSearchResults", true);
+        return "home";
+    }
+
+    @PostMapping("/type")
+    public String findBedsit(Model model, @RequestParam("value") String type) {
+        Double minPrice = null, maxPrice = null;
+        Integer minArea = null, maxArea = null;
+        String city = null, district = null, commune = null;
+        List<RentalPost> rentalPosts = filterSearch.searchPost(minPrice, maxPrice, minArea, maxArea, type, city, district, commune);
         List<PostDto> postDTOs = rentalPostService.getPosts(rentalPosts);
         model.addAttribute("rentalPosts", postDTOs);
         model.addAttribute("showSearchResults", true);
