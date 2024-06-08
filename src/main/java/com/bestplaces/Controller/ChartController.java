@@ -110,6 +110,8 @@ public class ChartController {
         // Chuyển đổi mảng byte thành dạng base64 để hiển thị trong HTML
         String chartAsBase64 = new String(java.util.Base64.getEncoder().encode(chartBytes));
         model.addAttribute("chartAsBase64", chartAsBase64);
+        model.addAttribute("chartType", type);
+        model.addAttribute("chartAddress", city + ' ' + district + ' ' + commune);
         return "chart";
     }
 

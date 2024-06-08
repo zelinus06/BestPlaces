@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thêm Bài Đăng</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
     <style>
         .preview-image {
             height: 50px;
@@ -21,71 +22,152 @@
             display: flex; /* Sử dụng flexbox */
             justify-content: left;
         }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .custom-form {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .container {
+            padding-top: 100px;
+        }
     </style>
 </head>
 <body>
-<h2>Thêm Bài Đăng</h2>
-<form id ="myForm" th:action="@{/post}" method="post" th:object="${rentalPost}" enctype="multipart/form-data">
-    <div class="col-md-3">
-        <div class="form-group">
-            <label>Title</label><br>
-            <input type="text" th:field="*{title}" ><br>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" th:href="@{/home}">BestPlaces</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <form th:action="@{/home/type(value='BEDSIT')}" method="post"  class="form-inline">
+                    <input type="hidden" name="params" value="bedsit"/>
+                    <button type="submit" class="nav-link btn-custom">Phòng trọ cho thuê</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <form th:action="@{/home/type(value='HOUSE')}" method="post"  class="form-inline">
+                    <input type="hidden" name="params" value="bedsit"/>
+                    <button type="submit" class="nav-link btn-custom">Nhà trọ cho thuê</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <form th:action="@{/home/type(value='APARTMENT')}" method="post"  class="form-inline">
+                    <input type="hidden" name="params" value="bedsit"/>
+                    <button type="submit" class="nav-link btn-custom">Căn hộ cho thuê</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <form th:action="@{/home/type(value='STORE')}" method="post"  class="form-inline">
+                    <input type="hidden" name="params" value="bedsit"/>
+                    <button type="submit" class="nav-link btn-custom">Cửa hàng cho thuê</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/chart}">Biểu đồ giá cả</a>
+            </li>
+            <li class="nav-item">
+                <!-- Form với nút gửi được tùy chỉnh để trông giống với liên kết -->
+                <form th:action="@{/home/recommend}" method="post" id="recommendForm" style="display: inline;">
+                    <button type="submit" class="nav-link" style="background-color: transparent; border: none; cursor: pointer;">Đề xuất</button>
+                </form>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Thông báo</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img id="avatarUrl" src="" alt="User Logo" width="30" height="30">
+                    <span id="username" ></span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" th:href="@{/post}">Đăng tin cho thuê</a>
+                    <a class="dropdown-item" th:href="@{/post/mypost}">Quản lý tin đăng</a>
+                    <a class="dropdown-item" th:href="@{/#}">Thông tin cá nhân</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" th:href="@{/logout}">Logout</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="custom-form">
+                <h2 class="mb-4 text-center">Tạo Bài Đăng Cho Thuê</h2>
+                <form id="myForm" th:action="@{/post}" method="post" th:object="${rentalPost}" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <input type="text" class="form-control" id="title" th:field="*{title}">
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Loại:</label>
+                        <select class="form-control" id="type" name="Type">
+                            <option th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
+                                    th:value="${type}" th:text="${type.getValue()}" th:required="${type}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="provinceDropdown">Tỉnh/Thành:</label>
+                        <select class="form-control" id="provinceDropdown">
+                            <option selected>Tỉnh/Thành</option>
+                        </select>
+                        <input name="city" type="hidden" th:field="*{city}" required style="">
+                    </div>
+                    <div class="form-group">
+                        <label for="districtDropdown">Quận/Huyện:</label>
+                        <select class="form-control" id="districtDropdown">
+                            <option selected>Quận/Huyện</option>
+                        </select>
+                        <input name="district" type="hidden" th:field="*{district}" required style="">
+                    </div>
+                    <div class="form-group">
+                        <label for="communeDropdown">Phường/Thị xã:</label>
+                        <select class="form-control" id="communeDropdown">
+                            <option selected>Phường/Thị xã</option>
+                        </select>
+                        <input name="commune" type="hidden" th:field="*{commune}" required style="">
+                    </div>
+                    <div class="form-group">
+                        <label for="street">Tên đường:</label>
+                        <input type="text" class="form-control" id="street" th:field="*{street}">
+                    </div>
+                    <div class="form-group">
+                        <label for="numberHouse">Số nhà:</label>
+                        <input type="text" class="form-control" id="numberHouse" th:field="*{numberHouse}">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Giá:</label>
+                        <input type="text" class="form-control" id="price" th:field="*{price}">
+                    </div>
+                    <div class="form-group">
+                        <label for="area">Diện Tích:</label>
+                        <input type="text" class="form-control" id="area" th:field="*{area}">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Mô Tả:</label>
+                        <textarea class="form-control" id="description" th:field="*{description}"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="file" class="formcontrol-file" id="imageInput" name="files" accept="image/*" onchange="previewImage(event)" multiple>
+                    </div>
+                    <div id="preview-box"></div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="form-group">
-            <label>Loại:</label><br>
-            <select name="Type">
-                <option th:field="*{type}"  th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
-                        th:value="${type}" th:text="${type.getValue()}" th:required="${type}"></option>
-            </select>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group">
-            <select class="form-control" id="provinceDropdown">
-                <option selected>Tỉnh/Thành</option>
-            </select>
-            <input name="city" type="hidden" th:field="*{city}" required style=""><br>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group">
-            <select class="form-control" id="districtDropdown">
-                <option selected>Quận/Huyện</option>
-            </select>
-            <input name="district" type="hidden" th:field="*{district}" required style=""><br>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group">
-            <select class="form-control" id="communeDropdown">
-                <option selected>Phường/Thị xã</option>
-            </select>
-            <input name="commune" type="hidden" th:field="*{commune}" required style=""><br>
-        </div>
-    </div>
+</div>
 
-    <label>Tên đường</label><br>
-    <input type="text" th:field="*{street}"><br>
-
-    <label>Số nhà</label><br>
-    <input type="text" th:field="*{numberHouse}"><br>
-
-    <label>Giá:</label><br>
-    <input type="text" th:field="*{price}" th:value="1" value="1"><br>
-
-    <label>Diện Tích:</label><br>
-    <input type="text" th:field="*{area}"><br>
-
-    <label >Mô Tả:</label><br>
-    <textarea th:field="*{description}" ></textarea><br>
-
-    <label for="imageInput">Đường dẫn Ảnh:</label><br>
-    <input type="file" id="imageInput" name="files" accept="image/*" onchange="previewImage(event)" multiple><br>
-    <div id="preview-box"></div>
-    <button type="submit">Submit</button>
-</form>
 <script>
     function previewImage(event) {
         var input = event.target;
@@ -116,144 +198,29 @@
     }
 </script>
 <script>
-    // Lấy tên tỉnh/thành phố
-    fetch('https://api.mysupership.vn/v1/partner/areas/province', {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'Success') {
-                // Xử lý dữ liệu từ phản hồi
-                data.results.forEach(province => {
-                    // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
-                    const option = document.createElement('option');
-                    option.value = province.code; // Mã tỉnh/thành phố
-                    option.textContent = province.name; // Tên tỉnh/thành phố
-                    provinceDropdown.appendChild(option);
-                });
-            } else {
-                // Xử lý lỗi nếu có
-                console.error('Lỗi:', data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Lỗi khi gọi API:', error);
-        });
-
-    // Lắng nghe việc chọn thành phố
-    provinceDropdown.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const selectedProvinceCode = selectedOption.value;
-        const selectedProvinceName = selectedOption.textContent;
-        getDistrictsByProvince(selectedProvinceCode);
-        var cityInput = document.querySelector('input[name="city"]');
-        cityInput.value = selectedProvinceName;
-    });
-
-    // Lắng nghe việc chọn quận huyện
-    districtDropdown.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const selectedDistrictCode = selectedOption.value;
-        const selectedDistrictName = selectedOption.textContent;
-        getCommuneByDistrict(selectedDistrictCode);
-        var cityInput = document.querySelector('input[name="district"]');
-        cityInput.value = selectedDistrictName;
-    });
-
-    communeDropdown.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const selectedCommuneName = selectedOption.textContent;
-        const communeInput = document.querySelector('input[name="commune"]');
-        communeInput.value = selectedCommuneName;
-    });
-
-    // In ra danh sách các quận/huyện
-    function getDistrictsByProvince(selectedProvinceCode) {
-        const url = `https://api.mysupership.vn/v1/partner/areas/district?province=${selectedProvinceCode}`;
-        fetch(url, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.status === 'Success') {
-                    // Xử lý dữ liệu từ phản hồi
-                    const districts = data.results;
-                    districtDropdown.innerHTML = '';
-                    const defaultOption = document.createElement('option');
-                    defaultOption.text = "Quận/Huyện";
-                    defaultOption.disabled = true;
-                    defaultOption.selected = true;
-                    districtDropdown.appendChild(defaultOption);
-                    districts.forEach(district => {
-                        // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
-                        const option = document.createElement('option');
-                        option.value = district.code; // Mã tỉnh/thành phố
-                        option.textContent = district.name; // Tên tỉnh/thành phố
-                        districtDropdown.appendChild(option);
-                    });
-                } else {
-                    console.error('Lỗi:', data.message);
-                }
-            })
-            .catch(error => {
-                console.error('There was a problem with your fetch operation:', error);
-            });
+        // Function to get the value of a specific cookie
+        function getCookieValue(cookieName) {
+        const cookieString = document.cookie; // Lấy toàn bộ chuỗi cookie
+        const cookies = cookieString.split('; '); // Tách chuỗi cookie thành mảng các cookie
+        for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i]; // Lưu trữ chuỗi cookie tại vị trí hiện tại
+        // Tìm vị trí của dấu '=' đầu tiên trong cookie
+        const indexOfFirstEquals = cookie.indexOf('=');
+        // Lấy tên cookie (phần trước dấu '=' đầu tiên)
+        const cookieNameFromCookie = cookie.substring(0, indexOfFirstEquals);
+        // Nếu tên cookie trùng với tên được yêu cầu
+        if (cookieNameFromCookie === cookieName) {
+        // Lấy giá trị của cookie (phần sau dấu '=' đầu tiên)
+        const cookieValue = cookie.substring(indexOfFirstEquals + 1);
+        return decodeURIComponent(cookieValue);
     }
-
-    // In ra danh sách các phường/thị xã
-    function getCommuneByDistrict(selectedDistrictCode) {
-        const url = `https://api.mysupership.vn/v1/partner/areas/commune?district=${selectedDistrictCode}`;
-        fetch(url, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.status === 'Success') {
-                    // Xử lý dữ liệu từ phản hồi
-                    const communes = data.results;
-                    communeDropdown.innerHTML = '';
-                    const defaultOption = document.createElement('option');
-                    defaultOption.text = "Phường/Thị xã";
-                    // defaultOption.disabled = true;
-                    defaultOption.selected = true;
-                    communeDropdown.appendChild(defaultOption);
-                    communes.forEach(commune => {
-                        // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
-                        const option = document.createElement('option');
-                        option.value = commune.code; // Mã tỉnh/thành phố
-                        option.textContent = commune.name; // Tên tỉnh/thành phố
-                        communeDropdown.appendChild(option);
-                    });
-                } else {
-                    console.error('Lỗi:', data.message);
-                }
-            })
-            .catch(error => {
-                console.error('There was a problem with your fetch operation:', error);
-            });
     }
+        return null;
+    }
+        const username = getCookieValue('username');
+        const avatarUrl = getCookieValue('avatarUrl');
+        document.getElementById('username').textContent =  username;
+        document.getElementById('avatarUrl').src = avatarUrl;
 </script>
 <script>
     // const fileList = [];

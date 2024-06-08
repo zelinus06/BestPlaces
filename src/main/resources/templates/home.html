@@ -5,101 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Navbar with Search Filters</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        /* Custom CSS for search filters */
-        .search-filters .form-group {
-            margin-bottom: 0;
-        }
-
-        .search-filters {
-            background-color: #f2f2f2;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        .search-filters .btn {
-            margin-right: 20px; /* Adjust this value as needed */
-        }
-         .navbar {
-             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-             background-color: #ffffff;
-         }
-        .navbar-brand {
-            font-weight: bold;
-            color: #4a4a4a;
-        }
-        .navbar-nav .nav-link {
-            color: #4a4a4a;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        .navbar-nav .nav-link:hover {
-            color: #007bff;
-        }
-        .navbar-toggler-icon {
-            background-image: url('data:image/svg+xml;charset=utf8,%3Csvg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath stroke="rgba%28134, 134, 134, 0.7%29" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
-        }
-        .dropdown-menu {
-            border-radius: 0.5rem;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
-        }
-        .nav-link.btn-custom {
-            background-color: transparent;
-            border: none;
-            color: inherit;
-            cursor: pointer;
-            padding-top: 8px;
-        }
-        .form-inline {
-            display: inline;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .row {
-            margin-bottom: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 0;
-        }
-
-        .form-control {
-            width: 100%;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        .float-right {
-            float: right;
-        }
-
-        /* Adjustments for smaller screens */
-        @media (max-width: 768px) {
-            .col-md-3 {
-                flex: 0 0 100%;
-                max-width: 100%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
 </head>
 <body>
 
@@ -263,21 +169,27 @@
         <div class="col-md-12">
             <table class="table">
                 <thead>
-                    <tr>
-                        <th>Danh sách cho thuê</th>
-                    </tr>
+                <th colspan="2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            Danh sách kết quả
+                        </div>
+                    </div>
+                </th>
                 </thead>
                 <tbody>
                     <tr th:each="postDto : ${posts}">
-                        <td class="post-title" th:text="${postDto.post.title}" >
+                        <td>
+                            <div class="post-title" th:text="${postDto.post.title}" >
+                            </div>
                         </td>
                         <td>
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-4 d-flex justify-content-center align-items-center">
                                     <img class="img-fluid" th:src="${postDto.images[0]}" alt="Image" />
                                 </div>
                                 <div class="col-md-8">
-                                    <a th:href="@{'/post/' + ${postDto.post.id_post}}">View Post Detail</a>
+                                    <a th:href="@{'/post/' + ${postDto.post.id_post}}">Detail</a>
                                     <h5>Type:</h5>
                                     <p th:text="${postDto.post.type.getValue()}"></p>
 
@@ -309,42 +221,56 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th colspan="2">Danh sách kết quả</th>
-                    <td>
-                        <div th:if="${searched != null}">
-                            <p th:if="${searched.type != null}">
-                                <span>Loại:</span>
-                                <span th:text="${searched.type}"></span>
-                            </p>
-                            <p th:if="${searched.city != null}">
-                                <span>Địa chỉ:</span>
-                                <span th:text="${searched.city}"></span>,
-                                <span th:text="${searched.district}"></span>,
-                                <span th:text="${searched.commune}"></span>
-                            </p>
-                            <p th:if="${searched.priceRange != '0'}">
-                                <span>Giá cả:</span>
-                                <span th:text="${searched.priceRange}"></span>
-                            </p>
-                            <p th:if="${searched.areaRange != '0'}">
-                                <span>Diện tích:</span>
-                                <span th:text="${searched.areaRange}"></span>
-                            </p>
-                        </div>
-                    </td>
-                </tr>
+                    <th colspan="2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                Danh sách kết quả
+                            </div>
+                            <div class="d-flex flex-column">
+                                <div th:if="${searched != null}">
+                                    <p th:if="${searched.type != null}" class="mb-1">
+                                        <span>Loại:</span>
+<!--                                        <span th:text="${searched.type}"></span>-->
+                                        <span th:if="${searched.type == 'BEDSIT'}">Phòng trọ</span>
+                                        <span th:if="${searched.type == 'HOUSE'}">Nhà trọ</span>
+                                        <span th:if="${searched.type == 'APARTMENT'}">Căn hộ</span>
+                                        <span th:if="${searched.type == 'STORE'}">Cửa hàng</span>
 
+                                    </p>
+                                    <p th:if="${searched.city != null}" class="mb-1">
+                                        <span>Địa chỉ:</span>
+                                        <span th:text="${searched.city}"></span>,
+                                        <span th:text="${searched.district}"></span>,
+                                        <span th:text="${searched.commune}"></span>
+                                    </p>
+                                    <p th:if="${searched.priceRange != '0'}" class="mb-1">
+                                        <span>Giá cả:</span>
+                                        <span th:text="${searched.priceRange}"></span>
+                                    </p>
+                                    <p th:if="${searched.areaRange != '0'}" class="mb-1">
+                                        <span>Diện tích:</span>
+                                        <span th:text="${searched.areaRange}"></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
                 </thead>
+
                 <tbody>
                 <tr th:each="search : ${rentalPosts}">
-                    <td class="post-title" th:text="${search.post.title}" >
+                    <td>
+                        <div class="post-title" th:text="${search.post.title}" >
+                        </div>
                     </td>
                     <td>
                         <div class="row">
-                            <div class="col-md-4">
-                                <img class="img-fluid" th:src="${search.images[0]}" alt="Hình ảnh">
+                            <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                <img class="img-fluid" th:src="${search.images[0]}" alt="Image" />
                             </div>
                             <div class="col-md-8">
+                                <a th:href="@{'/post/' + ${search.post.id_post}}">Detail</a>
                                 <h5>Type:</h5>
                                 <p th:text="${search.post.type.getValue()}"></p>
 
@@ -377,6 +303,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.css">
 <!-- noUiSlider JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
+
 
 <script>document.addEventListener('DOMContentLoaded', function () {
     var slider = document.getElementById('slider-range');

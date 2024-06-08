@@ -47,6 +47,7 @@
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 1px solid #eee;
+
         }
         .comment img {
             width: 50px;
@@ -106,14 +107,23 @@
         .delete-comment-btn:hover {
             color: darkred;
         }
+        #comment {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            width: 100%;
+            outline: #ddd;
+        }
+        #comment:focus {
+            border-color: #ddd; /* Màu viền khi tập trung */
+        }
 
     </style>
 </head>
 <body>
+
 <div class="post-container">
     <div class="post-title" th:text="${postDto.post.title}">Post Title</div>
     <div class="post-images">
-        <h3>Images:</h3>
         <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
                 <div th:each="image, iterStat : ${postDto.images}" th:classappend="${iterStat.index == 0} ? 'active' : ''" class="carousel-item">
@@ -131,21 +141,43 @@
         </div>
     </div>
 
-    <div class="post-phoneNumber" th:text="${postDto.post.phoneNumber}">Post Title</div>
-    <div class="post-type" th:text="${postDto.post.type}">Post Title</div>
-    <div class="post-price" th:text="${postDto.post.price}">Post Title</div>
-    <div class="post-area" th:text="${postDto.post.area}">Post Title</div>
-    <div class="post-description" th:text="${postDto.post.description}">Post Title</div>
+    <div class="container mt-4">
+        <div class="row mb-2">
+            <label class="col-md-2">Số điện thoại:</label>
+            <div class="col-md-8 post-phoneNumber" th:text="${postDto.post.phoneNumber}">Phone Number</div>
+        </div>
+        <div class="row mb-2">
+            <label class="col-md-2">Loại:</label>
+            <div class="col-md-6 post-type" th:text="${postDto.post.type}">Post Type</div>
+        </div>
+        <div class="row mb-2">
+            <label class="col-md-2">Giá cả:</label>
+            <div class="col-md-6 post-price" th:text="${postDto.post.price}">Price</div>
+        </div>
+        <div class="row mb-2">
+            <label class="col-md-2">Diện tích:</label>
+            <div class="col-md-6 post-area" th:text="${postDto.post.area}">Area</div>
+        </div>
+        <div class="row mb-2">
+            <label class="col-md-2">Mô tả:</label>
+            <div class="col-md-10 post-description" th:text="${postDto.post.description}">Description</div>
+        </div>
+        <div class="row mb-2">
+            <label class="col-md-2">Địa chỉ:</label>
+            <div class="col-md-10 post-address" th:text="${postDto.post.numberHouse + ', ' + postDto.post.street  + ', ' + postDto.post.commune + ', ' + postDto.post.district+ ', ' + postDto.post.city}"></div>
+        </div>
+    </div>
 
-    <div class="post-address" th:text="${postDto.post.city + ', ' + postDto.post.district + ', ' + postDto.post.commune + ', ' + postDto.post.street + ', ' + postDto.post.numberHouse}"></div>
-    <h3>Bản đồ</h3>
-    <div class="map">
+
+    <h2>Bản đồ</h2>
+    <div class="map d-flex flex-column align-items-center">
         <iframe width="600" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" th:src="@{'https://www.openstreetmap.org/export/embed.html?bbox=' + ${postDto.post.getLongtitude()} + '%2C' + ${postDto.post.getLatitude()} + '%2C' + ${postDto.post.getLongtitude()} + '%2C' + ${postDto.post.getLatitude()} + '&amp;layer=mapnik'}"></iframe><br/>
         <small>
             <a th:href="@{'https://www.openstreetmap.org/?mlat=' + ${postDto.post.getLatitude()} + '&amp;mlon=' + ${postDto.post.getLongtitude()} + '#map=15/' + ${postDto.post.getLatitude()} + '/' + ${postDto.post.getLongtitude()}}"
                target="_blank">Xem bản đồ lớn hơn</a>
         </small>
     </div>
+
     <div class="post-comments">
         <h3>Comments:</h3>
         <div th:each="comment : ${commentDto}">
@@ -172,6 +204,8 @@
         </div>
     </form>
 </div>
+
+
 
 <!-- Modal xóa comment -->
 <div th:each="comment : ${commentDto}">

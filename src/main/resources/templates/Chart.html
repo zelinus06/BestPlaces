@@ -5,36 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Navbar with Search Filters</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
     <style>
         /* Custom CSS for search filters */
         .search-filters {
             background-color: #f8f9fa;
-            padding: 10px 0;
+            padding-top: 110px;
         }
         .search-filters .form-group {
             margin-bottom: 0;
+        }
+        .edit-chart {
+            display: block; /* Đảm bảo ảnh hiển thị là một khối, không phải một phần của dòng */
+            margin: 0 auto; /* Canh chỉnh ảnh theo chiều ngang, tự động căn giữa */
         }
     </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Logo</a>
+    <a class="navbar-brand" th:href="@{/home}">BestPlaces</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#">Thuê</a>
+                <form th:action="@{/home/type(value='BEDSIT')}" method="post"  class="form-inline">
+                    <input type="hidden" name="params" value="bedsit"/>
+                    <button type="submit" class="nav-link btn-custom">Phòng trọ cho thuê</button>
+                </form>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Cho thuê</a>
+                <form th:action="@{/home/type(value='HOUSE')}" method="post"  class="form-inline">
+                    <input type="hidden" name="params" value="bedsit"/>
+                    <button type="submit" class="nav-link btn-custom">Nhà trọ cho thuê</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <form th:action="@{/home/type(value='APARTMENT')}" method="post"  class="form-inline">
+                    <input type="hidden" name="params" value="bedsit"/>
+                    <button type="submit" class="nav-link btn-custom">Căn hộ cho thuê</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <form th:action="@{/home/type(value='STORE')}" method="post"  class="form-inline">
+                    <input type="hidden" name="params" value="bedsit"/>
+                    <button type="submit" class="nav-link btn-custom">Cửa hàng cho thuê</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/chart}">Biểu đồ giá cả</a>
             </li>
             <li class="nav-item">
                 <!-- Form với nút gửi được tùy chỉnh để trông giống với liên kết -->
-                <form th:action="@{/recommend}" method="post" id="recommendForm" style="display: inline;">
-                    <button type="submit" class="nav-link" style="background-color: transparent; border: none; color: inherit; cursor: pointer;">Đề xuất</button>
+                <form th:action="@{/home/recommend}" method="post" id="recommendForm" style="display: inline;">
+                    <button type="submit" class="nav-link" style="background-color: transparent; border: none; cursor: pointer;">Đề xuất</button>
                 </form>
             </li>
         </ul>
@@ -48,10 +74,11 @@
                     <span id="username" ></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" th:href="@{/post}">Đăng tin cho thuê</a>
+                    <a class="dropdown-item" th:href="@{/post/mypost}">Quản lý tin đăng</a>
+                    <a class="dropdown-item" th:href="@{/#}">Thông tin cá nhân</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="http://localhost:8080/logout">Logout</a>
+                    <a class="dropdown-item" th:href="@{/logout}">Logout</a>
                 </div>
             </li>
         </ul>
@@ -62,7 +89,7 @@
     <div class="container">
         <form th:action="@{/chart}" method="post">
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <select name="Type" class="form-control">
                             <option selected  th:value="${null}">Loại hình</option>
@@ -71,7 +98,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <select class="form-control" id="provinceDropdown">
                             <option selected th:value="${null}">Tỉnh/Thành</option>
@@ -79,7 +106,7 @@
                         <input name="city" type="hidden" th:value="${city}"><br>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <select class="form-control" id="districtDropdown">
                             <option selected th:value="${null}">Quận/Huyện</option>
@@ -87,7 +114,7 @@
                         <input name="district" type="hidden" th:value="${district}"><br>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <select class="form-control" id="communeDropdown">
                             <option selected th:value="${null}">Phường/Thị xã</option>
@@ -95,7 +122,7 @@
                         <input name="commune" type="hidden" th:value="${commune}"><br>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                     </div>
@@ -105,7 +132,17 @@
     </div>
 </div>
 
-<img th:if="${chartAsBase64}" th:src="'data:image/png;base64,' + ${chartAsBase64}" alt="Chart">
+<div th:if="${chartAsBase64}">
+<!--    <p>-->
+<!--    Biểu đồ giá cả-->
+<!--    </p>-->
+<!--    <span th:text="${' ' + chartType}"></span>-->
+<!--    <span th:text="${'tại' + ' ' + chartAddress}"></span>-->
+    <img class="edit-chart" th:if="${chartAsBase64}" th:src="'data:image/png;base64,' + ${chartAsBase64}" alt="Chart">
+</div>
+
+
+
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
