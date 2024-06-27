@@ -41,9 +41,9 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/guest", " /register", "mail", "registration","login", "/login-form-20/**").permitAll();
-                    registry.requestMatchers("/admin/**", "/test").hasRole("ADMIN");
-                    registry.requestMatchers("/user/**").hasAnyRole("USER", "NONUSER", "ADMIN");
+                    registry.requestMatchers("/forgot/**","/guest"," /register","registration","login","/login-form-20/**","/home/**","/chart/**","/mail/**").permitAll();
+                    registry.requestMatchers("/admin/**","/test").hasRole("ADMIN");
+                    registry.requestMatchers("/user/**","/recommend/**").hasAnyRole("USER", "ADMIN");
                     registry.anyRequest().authenticated();
                 })
 //                .logout((logout) ->
@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .permitAll()
                         .successHandler(customAuthenticationSuccessHandler())
-                        .failureUrl("/testFail"))
+                        .failureUrl("/login?error=true"))
                 .build();
 
     }

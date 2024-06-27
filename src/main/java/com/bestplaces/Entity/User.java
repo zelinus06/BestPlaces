@@ -39,7 +39,6 @@ public class User {
     @Setter
     private String avatar;
 
-    private boolean authenticated = false;
 
     public User() {
     }
@@ -67,7 +66,4 @@ public class User {
         this.password = password;
     }
 
-    public void setAuthenticated(boolean authenticated) {
-        this.authenticated = authenticated;
-    }
 }

@@ -66,10 +66,10 @@
             margin-top: 5px;
         }
         .carousel-inner img {
-            width: 100%; /* Kích thước tối đa là 100% của carousel */
             height: 400px; /* Chiều cao cố định */
-            /*object-fit: cover; !* Đảm bảo hình ảnh không bị méo khi cố định kích thước *!*/
+            object-fit: contain;
             border-radius: 10px;
+            image-rendering: crisp-edges
         }
         .modalImageContent {
             background-color: transparent;
@@ -127,7 +127,7 @@
         <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
                 <div th:each="image, iterStat : ${postDto.images}" th:classappend="${iterStat.index == 0} ? 'active' : ''" class="carousel-item">
-                    <img th:src="${image}" class="d-block w-100" alt="Hình ảnh bài đăng" data-bs-toggle="modal" data-bs-target="#imageModal">
+                    <img th:src="${image}" class="d-block w-100 carousel-image" alt="Hình ảnh bài đăng" data-bs-toggle="modal" data-bs-target="#imageModal">
                 </div>
             </div>
             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -205,8 +205,6 @@
     </form>
 </div>
 
-
-
 <!-- Modal xóa comment -->
 <div th:each="comment : ${commentDto}">
     <div class="modal fade" th:id="'deleteCommentModal'+${comment.comment.id}" tabindex="-1" role="dialog" aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
@@ -256,5 +254,6 @@
         });
     });
 </script>
+
 </body>
 </html>

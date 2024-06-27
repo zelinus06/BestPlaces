@@ -20,7 +20,6 @@ public class VerificationCodeService {
     private UserRepository userRepository;
     @Autowired
     private MyUserDetailsService userDetailsService;
-    private User user;
 
     private final Map<String, VerificationCode> verificationCodes = new ConcurrentHashMap<>();
     public String generateVerificationCode(String username) {

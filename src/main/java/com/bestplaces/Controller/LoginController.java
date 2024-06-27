@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class LoginController {
     @GetMapping("/login")
     public String login() {
-        return "login"; // Trả về tên của view (login.html)
+        return "login";
     }
 }

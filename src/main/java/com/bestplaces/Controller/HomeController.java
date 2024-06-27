@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Controller
-@RequestMapping("home")
+@RequestMapping("/home")
 public class HomeController {
     @Autowired
     private RentalPostService rentalPostService;

@@ -138,7 +138,6 @@ public class RecommenderService {
         double centerX = Double.parseDouble(centerCoords[0]);
         double centerY = Double.parseDouble(centerCoords[1]);
         double radius = Double.parseDouble(parts[1]);
-
         return new double[]{radius, centerX, centerY};
     }
 
@@ -173,7 +172,6 @@ public class RecommenderService {
     }
 
     public double findWeight() {
-
         return 0.0;
     }
 }

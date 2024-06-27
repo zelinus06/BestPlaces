@@ -38,12 +38,13 @@ public class SendMailController {
         return "mail";
     }
     @PostMapping("/verify-code")
-    public String VerifyCode(@RequestParam("verificationCode") String verificationCode) {
+    public String VerifyCode(@RequestParam("verificationCode") String verificationCode, Model model) {
         String username = userDetailsService.UserNameAtPresent();
         boolean code = verificationCodeService.verifyVerificationCode(username, verificationCode);
         if (code) {
-            return "home";
+            return "redirect:/home";
         }
-        return "home";
+        model.addAttribute("errors", "Invalid verification code");
+        return "mail";
     }
 }

@@ -2,7 +2,7 @@ package com.bestplaces.Controller;
 
 import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Service.ChartService;
-import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -78,27 +78,21 @@ public class ChartController {
         renderer.setSeriesShape(0, circle);
         renderer.setSeriesPaint(0, Color.blue);
 
-//        // Tạo một series mới cho đường hồi quy spline
-//        XYSeries splineTrendSeries = createSplineTrendSeries((XYSeriesCollection) dataset);
-//        XYSeriesCollection splineTrendDataset = new XYSeriesCollection();
-//        splineTrendDataset.addSeries(splineTrendSeries);
-//
-//        // Thêm đường hồi quy spline vào plot
-//        plot.setDataset(1, splineTrendDataset);
+////         Tạo một series mới cho đường line dựa trên dữ liệu
+//        XYSeries lineSeries = createLineSeries(list);
+//        XYSeriesCollection lineDataset = new XYSeriesCollection();
+//        lineDataset.addSeries(lineSeries);
+
+//        // Thêm đường line vào plot
+//        plot.setDataset(1, lineDataset);
 //        XYLineAndShapeRenderer splineTrendRenderer = new XYLineAndShapeRenderer(true, false);
-//        splineTrendRenderer.setSeriesPaint(0, Color.RED);
+//        splineTrendRenderer.setSeriesPaint(0, Color.BLUE);
 //        plot.setRenderer(1, splineTrendRenderer);
 
-        // Tạo một series mới cho đường line dựa trên dữ liệu
-        XYSeries lineSeries = createLineSeries(list);
-        XYSeriesCollection lineDataset = new XYSeriesCollection();
-        lineDataset.addSeries(lineSeries);
 
-        // Thêm đường line vào plot
-        plot.setDataset(1, lineDataset);
-        XYLineAndShapeRenderer splineTrendRenderer = new XYLineAndShapeRenderer(true, false);
-        splineTrendRenderer.setSeriesPaint(0, Color.BLUE);
-        plot.setRenderer(1, splineTrendRenderer);
+
+        // Thêm đường hồi quy tuyến tính vào biểu đồ
+        addLinearRegressionLine(plot, list);
 
         // Tạo một BufferedImage từ JFreeChart
         BufferedImage chartImage = chart.createBufferedImage(800, 600);
@@ -129,87 +123,75 @@ public class ChartController {
         return dataset;
     }
 
-//    private XYSeries createSplineTrendSeries(XYSeriesCollection dataset) {
-//        XYSeries originalSeries = dataset.getSeries(0); // Lấy series gốc từ dataset
-//        XYSeries splineTrendSeries = new XYSeries("Spline Trend Line"); // Tạo một series mới cho đường hồi quy spline
-//
-//        // Lấy dữ liệu từ series gốc và loại bỏ các giá trị x trùng lặp
-//        Map<Double, Double> uniqueData = new HashMap<>();
-//        for (int i = 0; i < originalSeries.getItemCount(); i++) {
-//            double x = originalSeries.getX(i).doubleValue();
-//            double y = originalSeries.getY(i).doubleValue();
-//            uniqueData.put(x, y); // Lưu giá trị y cuối cùng cho mỗi x
-//        }
-//
-//        // Chuyển dữ liệu đã lọc thành mảng xData và yData
-//        double[] xData = new double[uniqueData.size()];
-//        double[] yData = new double[uniqueData.size()];
-//        int index = 0;
-//        for (Map.Entry<Double, Double> entry : uniqueData.entrySet()) {
-//            xData[index] = entry.getKey();
-//            yData[index] = entry.getValue();
-//            index++;
-//        }
-//
-////        // Sắp xếp dữ liệu trước khi tạo hàm spline
-////        Arrays.sort(xData);
-////        Arrays.sort(yData);
-//
-//        // Tạo hàm spline từ dữ liệu đã lọc
-//        SplineInterpolator splineInterpolator = new SplineInterpolator();
-//        PolynomialSplineFunction splineFunction = splineInterpolator.interpolate(xData, yData);
-//
-//        // Tạo dữ liệu cho đường trendline spline
-//        for (double x = originalSeries.getMinX(); x <= originalSeries.getMaxX(); x += 1) {
-//            double y = splineFunction.value(x);
-//            splineTrendSeries.add(x, y); // Thêm điểm (x, y) vào series
-//        }
-//
-//        return splineTrendSeries; // Trả về series cho đường hồi quy spline
-//    }
+    private void addLinearRegressionLine(XYPlot plot, List<RentalPost> chartData) {
+        double[] areas = chartData.stream().mapToDouble(RentalPost::getArea).toArray();
+        double[] prices = chartData.stream().mapToDouble(RentalPost::getPrice).toArray();
 
-    public XYSeries createLineSeries(List<RentalPost> chartData) {
-        XYSeries lineSeries = new XYSeries("Line");
-
-        Set<Integer> areas = new HashSet<>();
-        for (RentalPost data : chartData) {
-            areas.add(data.getArea());
+        // Tính toán các hệ số hồi quy tuyến tính
+        SimpleRegression regression = new SimpleRegression();
+        for (int i = 0; i < areas.length; i++) {
+            regression.addData(areas[i], prices[i]);
         }
 
+        double intercept = regression.getIntercept();
+        double slope = regression.getSlope();
 
+        // Tạo một series mới cho đường hồi quy tuyến tính
+        XYSeries regressionSeries = new XYSeries("Regression Line");
+        double minX = Arrays.stream(areas).min().getAsDouble();
+        double maxX = Arrays.stream(areas).max().getAsDouble();
+        regressionSeries.add(minX, intercept + slope * minX);
+        regressionSeries.add(maxX, intercept + slope * maxX);
 
-        for (Integer area : areas) {
-            // Tạo một bản đếm cho các khoảng giá trong giá trị trục ngang hiện tại (area)
-            Map<Integer, Integer> priceCounts = new HashMap<>();
-            // Lặp qua dữ liệu RentalPost và tính số lượng điểm trong mỗi khoảng giá trong giá trị trục ngang hiện tại (area)
-            for (RentalPost data : chartData) {
-                if (data.getArea() == (area)) {
-                    Integer price = data.getPrice();
-                    priceCounts.put(price, priceCounts.getOrDefault(price, 0) + 1);
-                }
-            }
+        XYSeriesCollection regressionDataset = new XYSeriesCollection();
+        regressionDataset.addSeries(regressionSeries);
 
-            List<Map.Entry<Integer, Integer>> sortedPriceCounts = new ArrayList<>(priceCounts.entrySet());
-            sortedPriceCounts.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
-
-            // Lấy ra top 3 giá trị và tính giá trị trung bình của khoảng giá đó
-            int count = 0;
-            double totalAveragePrice = 0;
-            for (Map.Entry<Integer, Integer> entry : sortedPriceCounts) {
-                if (count >= 3) {
-                    break;
-                }
-                Integer price = entry.getKey();
-                totalAveragePrice += price;
-                count++;
-            }
-            double averagePrice = totalAveragePrice / count;
-
-            // Thêm điểm trung bình của khoảng giá vào đường line
-            lineSeries.add((double) area, averagePrice);
-        }
-        return lineSeries;
+        plot.setDataset(1, regressionDataset);
+        XYLineAndShapeRenderer regressionRenderer = new XYLineAndShapeRenderer(true, false);
+        regressionRenderer.setSeriesPaint(0, Color.RED);
+        plot.setRenderer(1, regressionRenderer);
     }
+
+//    public XYSeries createLineSeries(List<RentalPost> chartData) {
+//        XYSeries lineSeries = new XYSeries("Line");
+//
+//        Set<Integer> areas = new HashSet<>();
+//        for (RentalPost data : chartData) {
+//            areas.add(data.getArea());
+//        }
+//
+//        for (Integer area : areas) {
+//            // Tạo một bản đếm cho các khoảng giá trong giá trị trục ngang hiện tại (area)
+//            Map<Integer, Integer> priceCounts = new HashMap<>();
+//            // Lặp qua dữ liệu RentalPost và tính số lượng điểm trong mỗi khoảng giá trong giá trị trục ngang hiện tại (area)
+//            for (RentalPost data : chartData) {
+//                if (data.getArea() == (area)) {
+//                    Integer price = data.getPrice();
+//                    priceCounts.put(price, priceCounts.getOrDefault(price, 0) + 1);
+//                }
+//            }
+//
+//            List<Map.Entry<Integer, Integer>> sortedPriceCounts = new ArrayList<>(priceCounts.entrySet());
+//            sortedPriceCounts.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
+//
+//            // Lấy ra top 3 giá trị và tính giá trị trung bình của khoảng giá đó
+//            int count = 0;
+//            double totalAveragePrice = 0;
+//            for (Map.Entry<Integer, Integer> entry : sortedPriceCounts) {
+//                if (count >= 3) {
+//                    break;
+//                }
+//                Integer price = entry.getKey();
+//                totalAveragePrice += price;
+//                count++;
+//            }
+//            double averagePrice = totalAveragePrice / count;
+//
+//            // Thêm điểm trung bình của khoảng giá vào đường line
+//            lineSeries.add((double) area, averagePrice);
+//        }
+//        return lineSeries;
+//    }
 
 
 }

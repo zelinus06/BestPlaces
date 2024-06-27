@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Optional;
 
 @Controller
@@ -58,7 +59,8 @@ public class UserRegistrationController {
             else{
             registrationDto.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
             userService.save(registrationDto);
-            return "redirect:/registration?success";
+//            model.addAttribute("success", "Đăng ký thành công");
+            return "mail";
             }
         }
     }

@@ -170,33 +170,67 @@
 
 <script>
     function previewImage(event) {
-        var input = event.target;
-        var previewContainer = document.getElementById('preview-box');
-        for (const file of input.files) {
+        var files = event.target.files;
+        var previewBox = document.getElementById('preview-box');
+        previewBox.innerHTML = ''; // Xóa các hình ảnh đã hiển thị trước đó
+
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
             var reader = new FileReader();
-            reader.onload = function(){
-                var div = document.createElement('div');
-                div.classList.add('image-preview-container');
-                var img = document.createElement('img');
-                img.src = reader.result;
-                img.classList.add('preview-image');
-                div.appendChild(img);
 
-                // Tạo nút "Hủy" và đặt sự kiện click
-                var cancelButton = document.createElement('button');
-                cancelButton.textContent = 'x';
-                cancelButton.addEventListener('click', function() {
-                    div.remove();
-                });
+            reader.onload = function(e) {
+                var img = new Image();
+                img.src = e.target.result;
 
-                div.appendChild(cancelButton);
-
-                previewContainer.appendChild(div);
+                img.onload = function() {
+                    if (this.width === 750 && this.height === 400) {
+                        var imgElement = document.createElement('img');
+                        imgElement.src = this.src;
+                        imgElement.className = 'preview-image';
+                        previewBox.appendChild(imgElement);
+                    } else {
+                        alert('Ảnh bạn chọn không đạt kích thước 750x400. Vui lòng chọn lại.');
+                        event.target.value = null; // Xóa tệp đã chọn để ngăn người dùng tiếp tục với tệp không phù hợp
+                    }
+                };
             };
+
             reader.readAsDataURL(file);
         }
     }
 </script>
+
+
+<!--<script>-->
+<!--    function previewImage(event) {-->
+<!--        var input = event.target;-->
+<!--        var previewContainer = document.getElementById('preview-box');-->
+<!--        for (const file of input.files) {-->
+<!--            var reader = new FileReader();-->
+<!--            reader.onload = function(){-->
+<!--                var div = document.createElement('div');-->
+<!--                div.classList.add('image-preview-container');-->
+<!--                var img = document.createElement('img');-->
+<!--                img.src = reader.result;-->
+<!--                img.classList.add('preview-image');-->
+<!--                div.appendChild(img);-->
+
+<!--                // Tạo nút "Hủy" và đặt sự kiện click-->
+<!--                var cancelButton = document.createElement('button');-->
+<!--                cancelButton.textContent = 'x';-->
+<!--                cancelButton.addEventListener('click', function() {-->
+<!--                    div.remove();-->
+<!--                });-->
+
+<!--                div.appendChild(cancelButton);-->
+
+<!--                previewContainer.appendChild(div);-->
+<!--            };-->
+<!--            reader.readAsDataURL(file);-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+
 <script>
         // Function to get the value of a specific cookie
         function getCookieValue(cookieName) {
@@ -222,6 +256,7 @@
         document.getElementById('username').textContent =  username;
         document.getElementById('avatarUrl').src = avatarUrl;
 </script>
+
 <script>
     // const fileList = [];
     //
@@ -285,6 +320,169 @@
     // }
 
 
+</script>
+
+<script>
+    // Lấy tên tỉnh/thành phố
+    fetch('https://api.mysupership.vn/v1/partner/areas/province', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'Success') {
+                // Xử lý dữ liệu từ phản hồi
+                data.results.forEach(province => {
+                    // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
+                    const option = document.createElement('option');
+                    option.value = province.code; // Mã tỉnh/thành phố
+                    option.textContent = province.name; // Tên tỉnh/thành phố
+                    provinceDropdown.appendChild(option);
+                });
+            } else {
+                // Xử lý lỗi nếu có
+                console.error('Lỗi:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi gọi API:', error);
+        });
+
+    // Lắng nghe việc chọn thành phố
+    provinceDropdown.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedProvinceCode = selectedOption.value;
+        const selectedProvinceName = selectedOption.textContent;
+        getDistrictsByProvince(selectedProvinceCode);
+        var cityInput = document.querySelector('input[name="city"]');
+        cityInput.value = selectedProvinceName;
+    });
+    // Lắng nghe việc chọn quận huyện
+    districtDropdown.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedDistrictCode = selectedOption.value;
+        const selectedDistrictName = selectedOption.textContent;
+        getCommuneByDistrict(selectedDistrictCode);
+        var cityInput = document.querySelector('input[name="district"]');
+        cityInput.value = selectedDistrictName;
+    });
+    // Lắng nghe việc chọn thị x
+    communeDropdown.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedCommuneName = selectedOption.textContent;
+        const communeInput = document.querySelector('input[name="commune"]');
+        communeInput.value = selectedCommuneName;
+    });
+    // In ra danh sách các quận/huyện
+    function getDistrictsByProvince(selectedProvinceCode) {
+        const url = `https://api.mysupership.vn/v1/partner/areas/district?province=${selectedProvinceCode}`;
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'Success') {
+                    // Xử lý dữ liệu từ phản hồi
+                    const districts = data.results;
+                    districtDropdown.innerHTML = '';
+                    const defaultOption = document.createElement('option');
+                    defaultOption.text = "Quận/Huyện";
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    districtDropdown.appendChild(defaultOption);
+                    districts.forEach(district => {
+                        // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
+                        const option = document.createElement('option');
+                        option.value = district.code; // Mã tỉnh/thành phố
+                        option.textContent = district.name; // Tên tỉnh/thành phố
+                        districtDropdown.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    }
+
+    // In ra danh sách các phường/thị xã
+    function getCommuneByDistrict(selectedDistrictCode) {
+        const url = `https://api.mysupership.vn/v1/partner/areas/commune?district=${selectedDistrictCode}`;
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'Success') {
+                    // Xử lý dữ liệu từ phản hồi
+                    const communes = data.results;
+                    communeDropdown.innerHTML = '';
+                    const defaultOption = document.createElement('option');
+                    defaultOption.text = "Phường/Thị xã";
+                    // defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    communeDropdown.appendChild(defaultOption);
+                    communes.forEach(commune => {
+                        // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
+                        const option = document.createElement('option');
+                        option.value = commune.code; // Mã tỉnh/thành phố
+                        option.textContent = commune.name; // Tên tỉnh/thành phố
+                        communeDropdown.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    }
+
+    // // Function to get the value of a specific cookie
+    // function getCookieValue(cookieName) {
+    //     const cookieString = document.cookie; // Lấy toàn bộ chuỗi cookie
+    //     const cookies = cookieString.split('; '); // Tách chuỗi cookie thành mảng các cookie
+    //     for (let i = 0; i < cookies.length; i++) {
+    //         let cookie = cookies[i]; // Lưu trữ chuỗi cookie tại vị trí hiện tại
+    //         // Tìm vị trí của dấu '=' đầu tiên trong cookie
+    //         const indexOfFirstEquals = cookie.indexOf('=');
+    //         // Lấy tên cookie (phần trước dấu '=' đầu tiên)
+    //         const cookieNameFromCookie = cookie.substring(0, indexOfFirstEquals);
+    //         // Nếu tên cookie trùng với tên được yêu cầu
+    //         if (cookieNameFromCookie === cookieName) {
+    //             // Lấy giá trị của cookie (phần sau dấu '=' đầu tiên)
+    //             const cookieValue = cookie.substring(indexOfFirstEquals + 1);
+    //             return decodeURIComponent(cookieValue);
+    //         }
+    //     }
+    //     return null;
+    // }
+    // const username = getCookieValue('username');
+    // const avatarUrl = getCookieValue('avatarUrl');
+    // document.getElementById('username').textContent =  username;
+    // document.getElementById('avatarUrl').src = avatarUrl;
 </script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

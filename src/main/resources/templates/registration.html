@@ -6,7 +6,31 @@
     <title>Registration</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Add custom styles here */
+        body {
+            background-color: #f8f9fa;
+        }
+        .registration-form {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        .registration-form h2 {
+            margin-bottom: 20px;
+        }
+        .navbar {
+            margin-bottom: 50px;
+        }
+         .custom-alert {
+             margin-top: 20px;
+             font-size: 1.2rem;
+             font-weight: bold;
+             text-align: center;
+             border: 2px solid #28a745;
+             border-radius: 5px;
+             background-color: #d4edda;
+             color: #155724;
+         }
     </style>
 </head>
 <body>
@@ -28,31 +52,39 @@
     </div>
 </nav>
 
+<!-- Check if success message is present -->
+<div th:if="${success}" class="custom-alert alert alert-success" role="alert">
+    <p th:text="${success}"></p>
+</div>
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <h2 class="mb-4">Registration</h2>
-            <form id="registrationForm" th:action="@{/registration}" method="post" th:object="${user}" onsubmit="return validateForm()">
-                <div class="form-group">
-                    <label for="name">Username</label>
-                    <input type="text" class="form-control" id="name" th:field="*{username}" required autofocus>
-                    <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
-                    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" th:field="*{password}" required>
-                </div>
-                <div class="form-group">
-                    <label for="rePassword">Confirm Password</label>
-                    <input type="password" class="form-control" id="rePassword" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Register</button>
-            </form>
+            <div class="registration-form">
+                <h2 class="mb-4">Register</h2>
+                <form id="registrationForm" th:action="@{/registration}" method="post" th:object="${user}" onsubmit="return validateForm()">
+                    <div class="form-group">
+                        <label for="name">Username</label>
+                        <input type="text" class="form-control" id="name" th:field="*{username}" required autofocus>
+                        <span class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                        <span class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rePassword">Confirm Password</label>
+                        <input type="password" class="form-control" id="rePassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Register</button>
+                </form>
+
+            </div>
         </div>
     </div>
 </div>
@@ -79,3 +111,4 @@
 </script>
 </body>
 </html>
+
