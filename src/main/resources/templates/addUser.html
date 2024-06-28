@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add User</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+</head>
+<body>
+<div class="container mt-5">
+    <a href="/admin" class="btn btn-secondary mt-3"> Back </a>
+    <h1 class="text-center mb-4">Add User</h1>
+    <form action="#" th:action="@{/admin/add-user}" th:object="${user}" method="post">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" class="form-control" th:field="*{username}" />
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" class="form-control" th:field="*{email}" />
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" class="form-control" th:field="*{password}" />
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="role">Role:</label>
+            <select class="form-control" id="role" name="selectedRole">
+                <option th:each="role: ${T(com.bestplaces.Enums.Role).values()}"
+                        th:value="${role}" th:text="${role}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="PhoneNumber">PhoneNumber:</label>
+            <input type="text" id="PhoneNumber" class="form-control" th:field="*{phoneNumber}" />
+        </div>
+        <div class="form-group">
+            <input type="hidden" id="avatar" name="avatar" class="form-control" th:value="'http://drive.google.com/thumbnail?id=15-wqnyhbS9Pp3hRudqoQw1swnFsKyzDM'" />
+        </div>
+        <button type="submit" class="btn btn-primary">Add User</button>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    // Lắng nghe sự kiện khi form được submit
+    document.querySelector('form').addEventListener('submit', function(event) {
+        // Lấy giá trị của hai trường password và confirm password
+        var password = document.getElementById('password').value;
+        var confirmPassword = document.getElementById('confirmPassword').value;
+
+        // Kiểm tra nếu hai trường không trùng khớp
+        if (password !== confirmPassword) {
+            // Ngăn không submit form
+            event.preventDefault();
+            // Hiển thị thông báo lỗi (có thể thay đổi theo ý của bạn)
+            alert('Passwords do not match. Please try again.');
+        }
+    });
+</script>
+
+</body>
+</html>

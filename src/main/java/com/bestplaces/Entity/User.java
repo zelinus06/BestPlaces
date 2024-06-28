@@ -2,6 +2,7 @@ package com.bestplaces.Entity;
 
 import com.bestplaces.Enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,13 +33,13 @@ public class User {
     private String phoneNumber;
 
     @Getter
+    @Setter
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @Getter
     @Setter
     private String avatar;
-
 
     public User() {
     }

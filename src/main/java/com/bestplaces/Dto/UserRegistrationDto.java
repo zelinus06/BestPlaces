@@ -9,7 +9,9 @@ public class UserRegistrationDto {
     private String email;
     @Getter
     private String password;
+
     private String phoneNumber;
+
     public UserRegistrationDto(){
     }
     public UserRegistrationDto(String username, String email, String password) {

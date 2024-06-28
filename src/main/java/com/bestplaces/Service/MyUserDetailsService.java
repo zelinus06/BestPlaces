@@ -34,7 +34,8 @@ public class MyUserDetailsService implements UserDetailsService {
         if (user.getRole() == null) {
             return "NONUSER";
         }
-        return user.getRole().toString();
+//        return user.getRole().toString();
+        return user.getRole().getValue();
     }
     public String UserNameAtPresent() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

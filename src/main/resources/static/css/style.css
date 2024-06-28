@@ -1,0 +1,23 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 800px;
+}
+
+h1 {
+    color: #343a40;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.btn {
+    margin-right: 5px;
+}
+
+.btn-primary, .btn-warning, .btn-danger, .btn-secondary {
+    margin-bottom: 5px;
+}

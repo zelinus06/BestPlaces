@@ -13,6 +13,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,14 +34,21 @@ public class HomeController {
     @Autowired
     private RecommenderService recommenderService;
 
-    @GetMapping()
-    public String Home(Model model, @CookieValue("username")String username, @CookieValue("avatarUrl")String avatarUrl) {
+    @GetMapping("/")
+    public String Home(Model model, @CookieValue("username")String username, @CookieValue("avatarUrl")String avatarUrl,
+                       @RequestParam(name = "page", defaultValue = "1") int page) {
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+        Page<RentalPost> postPage = rentalPostService.getAllPosts(pageable);
+        // Chuyển đổi danh sách bài đăng sang đối tượng DTO để hiển thị trên view
+        List<PostDto> posts = rentalPostService.getPosts(postPage.getContent());
+        // Đưa danh sách bài đăng và thông tin phân trang vào model
+        model.addAttribute("posts", posts);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postPage.getTotalPages());
         model.addAttribute("username", username);
         model.addAttribute("avatarUrl", avatarUrl);
         model.addAttribute("showSearchResults", false);
-        List<RentalPost> list = rentalPostService.getAllPosts();
-        List<PostDto> posts = rentalPostService.getPosts(list);
-        model.addAttribute("posts", posts);
         return "home";
     }
 

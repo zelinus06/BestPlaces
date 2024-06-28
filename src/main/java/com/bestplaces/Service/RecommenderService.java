@@ -105,11 +105,9 @@ public class RecommenderService {
             return 0.5;
         }
         else if (value < expectedValue && value > minValue) {
-            // Ánh xạ giá thuê vào phạm vi từ 0.5 đến 1
             return 0.5 + 0.5 * (expectedValue - value) / (expectedValue - (minValue*2 - expectedValue));
         }
         else if (value > expectedValue && value < maxValue) {
-            // Ánh xạ giá thuê vào phạm vi từ 1 đến 0.5
             return 1.0 - 1.0*(value - expectedValue) / ((maxValue*2 - expectedValue)- expectedValue);
         }
         else if (value < minValue && value > (minValue*2 - expectedValue) ) {
