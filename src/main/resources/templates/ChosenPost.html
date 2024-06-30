@@ -116,12 +116,25 @@
         #comment:focus {
             border-color: #ddd; /* Màu viền khi tập trung */
         }
-
+         .back-button {
+             background-color: transparent; /* Nền trong suốt */
+             color: #007bff; /* Màu văn bản ban đầu */
+             border: none; /* Không có đường viền */
+             font-size: 16px; /* Cỡ chữ */
+             opacity: 0.7; /* Mờ đi khi không hover */
+             transition: opacity 0.3s, color 0.3s;
+         }
+        .back-button:hover {
+            opacity: 1;
+            color: #0056b3; /* Màu văn bản sáng hơn khi hover */
+         }
+    </style>
     </style>
 </head>
 <body>
 
 <div class="post-container">
+    <a href="#" onclick="history.back();" class="btn btn-outline-primary mb-2 back-button"> Back </a>
     <div class="post-title" th:text="${postDto.post.title}">Post Title</div>
     <div class="post-images">
         <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -148,15 +161,17 @@
         </div>
         <div class="row mb-2">
             <label class="col-md-2">Loại:</label>
-            <div class="col-md-6 post-type" th:text="${postDto.post.type}">Post Type</div>
+            <div class="col-md-6 post-type" th:text="${postDto.post.type.value}">Post Type</div>
         </div>
         <div class="row mb-2">
             <label class="col-md-2">Giá cả:</label>
-            <div class="col-md-6 post-price" th:text="${postDto.post.price}">Price</div>
+            <div class="col-md-6 post-price" th:text="${postDto.post.price + ' 000 VNĐ'}">
+                <span>000 VNĐ</span>
+            </div>
         </div>
         <div class="row mb-2">
             <label class="col-md-2">Diện tích:</label>
-            <div class="col-md-6 post-area" th:text="${postDto.post.area}">Area</div>
+            <div class="col-md-6 post-area" th:text="${postDto.post.area + ' m2'}">Area</div>
         </div>
         <div class="row mb-2">
             <label class="col-md-2">Mô tả:</label>

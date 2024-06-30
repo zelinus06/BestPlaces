@@ -1,12 +1,12 @@
 version: '3'
 services:
   app:
-    image: bestplaces-image
+#    image: bestplaces-image
+    image: thaidh0610/besplaces:v1.0
     container_name: bestplaces-container
     restart: always
-    build: .
     ports:
-      - "8080:8080"
+      - "80:80"
     environment:
       MYSQL_HOST: mysqldb
       MYSQL_USER: root
@@ -14,13 +14,12 @@ services:
       MYSQL_PORT: 3306
   mysqldb:
     container_name: mysqldb
-    image: mysql
+    image: mysql:8.0.32-oracle
+    restart: always
     ports:
       - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: 1234567
       MYSQL_DATABASE: bestplaces
     volumes:
-        - C:\Users\thai0\Documents\dumps:/docker-entrypoint-initdb.d
-
-
+        - ./data:/docker-entrypoint-initdb.d
