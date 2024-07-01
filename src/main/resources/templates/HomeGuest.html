@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar with Search Filters</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" th:href="@{/home/?page=1}">BestPlaces</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <form th:action="@{/home/type(value='BEDSIT')}" method="post"  class="form-inline">
+                    <input type="hidden" name="params" value="bedsit"/>
+                    <button type="submit" class="nav-link btn-custom">Phòng trọ cho thuê</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <form th:action="@{/home/type(value='HOUSE')}" method="post"  class="form-inline">
+                    <input type="hidden" name="params" value="bedsit"/>
+                    <button type="submit" class="nav-link btn-custom">Nhà trọ cho thuê</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <form th:action="@{/home/type(value='APARTMENT')}" method="post"  class="form-inline">
+                    <input type="hidden" name="params" value="bedsit"/>
+                    <button type="submit" class="nav-link btn-custom">Căn hộ cho thuê</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <form th:action="@{/home/type(value='STORE')}" method="post"  class="form-inline">
+                    <input type="hidden" name="params" value="bedsit"/>
+                    <button type="submit" class="nav-link btn-custom">Cửa hàng cho thuê</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/chart}">Biểu đồ giá cả</a>
+            </li>
+            <li class="nav-item">
+                <!-- Form với nút gửi được tùy chỉnh để trông giống với liên kết -->
+                <form th:action="@{/home/recommend}" method="post" id="recommendForm" style="display: inline;">
+                    <button type="submit" class="nav-link" style="background-color: transparent; border: none; cursor: pointer;">Đề xuất</button>
+                </form>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Thông báo</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img id="avatarUrl" src="" width="30" height="30">
+                    <span id="username" ></span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" th:href="@{/post}">Đăng tin cho thuê</a>
+                    <a class="dropdown-item" th:href="@{/post/mypost}">Quản lý tin đăng</a>
+                    <a class="dropdown-item" th:href="@{/#}">Thông tin cá nhân</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" th:href="@{/logout}">Logout</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="search-filters">
+    <div class="container">
+        <form th:action="@{/home}" id="searchForm" method="post">
+            <div class=" offset-md-1 row">
+                <div class=" col-md-3">
+                    <div class="form-group">
+                        <select name="Type" class="form-control" id="type">
+                            <option selected th:value="${null}">Loại hình</option>
+                            <option th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
+                                    th:value="${type}" th:text="${type.getValue()}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select name="priceRange" class="form-control" id="priceRangeSelect">
+                            <option th:value="${0}">Giá cả</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select name="areaRange" class="form-control" id="areaRange">
+                            <option selected th:value="${0}">Diện tích</option>
+                            <option th:value="${0 + '-' + 20}">Dưới 20m²</option>
+                            <option th:value="${20 + '-' + 30}">Từ 20m² đến 30m²</option>
+                            <option th:value="${30 + '-' + 40}">Từ 30m² đến 40m²</option>
+                            <option th:value="${40 + '-' + 200}">Từ 40m² trở lên</option>
+                            <!-- Thêm các option khác nếu cần -->
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                </div>
+            </div>
+            <div class="offset-md-1 row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select class="form-control" id="provinceDropdown">
+                            <option selected th:value="${null}">Tỉnh/Thành</option>
+                        </select>
+                        <input name="city" id="city" type="hidden" th:value="${city}"><br>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select class="form-control" id="districtDropdown">
+                            <option selected th:value="${null}">Quận/Huyện</option>
+                        </select>
+                        <input name="district" id="district" type="hidden" th:value="${district}"><br>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <select class="form-control" id="communeDropdown">
+                            <option selected th:value="${null}">Phường/Thị xã</option>
+                        </select>
+                        <input name="commune" id="commune" type="hidden" th:value="${commune}"><br>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button type="reset" class="btn btn-primary" style="padding-left: 39px;
+    padding-right: 39px;" >Xóa</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="priceModal" tabindex="-1" aria-labelledby="priceModalLabel" aria-hidden="true">-->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="priceModalLabel">Chọn khoảng giá</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="slider-range"></div>
+                <p>Giá: <span id="slider-range-value"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="savePriceRange">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container" th:if="${not showSearchResults}">
+    <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+            <div th:each="postDto : ${posts}" class="post-item mb-4">
+                <div class="border rounded p-8">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6 d-flex justify-content-center align-items-center">
+                            <img class="img-fluid" th:src="${postDto.images[0]}" alt="Image" />
+                        </div>
+                        <div class="col-md-8 col-sm-6 text-left">
+                            <div class="post-title mb-2" th:text="${postDto.post.title}" style="font-weight: bold; font-size: 1.2em; color: lightseagreen;">
+                            </div>
+                            <div>Loại: <span th:text="${postDto.post.type.getValue()}"></span></div>
+                            <div>Giá cả: <span th:text="${postDto.post.price}"></span> 000 VNĐ</div>
+                            <div>Diện tích: <span th:text="${postDto.post.area}"></span> m<sup>2</sup></div>
+                            <div>Địa điểm: <span th:text="${postDto.post.city + ', ' + postDto.post.district + ', ' + postDto.post.commune}"></span></div>
+                            <a th:href="@{'/post/' + ${postDto.post.id_post}}" class="mt-2">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+
+            <li th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" th:href="@{/home/(page=1)}" aria-label="First">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">First</span>
+                </a>
+            </li>
+
+            <!-- Nút Previous -->
+            <li th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" th:href="@{/home/(page=${currentPage - 1})}">Previous</a>
+            </li>
+
+            <!-- Các nút số trang -->
+            <th:block th:if="${totalPages <= 10}">
+                <li th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
+                    th:class="${pageNum == currentPage} ? 'page-item active' : 'page-item'">
+                    <a class="page-link" th:href="@{/home/(page=${pageNum})}">[[${pageNum}]]</a>
+                </li>
+            </th:block>
+            <th:block th:if="${totalPages > 10}">
+                <li th:each="pageNum : ${#numbers.sequence(currentPage - 2, currentPage + 2)}"
+                    th:class="${pageNum == currentPage} ? 'page-item active' : 'page-item'"
+                    th:if="${pageNum >= 1 and pageNum <= totalPages}">
+                    <a class="page-link" th:href="@{/home/(page=${pageNum})}">[[${pageNum}]]</a>
+                </li>
+                <li class="page-item disabled"><a class="page-link">...</a></li>
+            </th:block>
+
+            <!-- Nút Next -->
+            <li th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" th:href="@{/home/(page=${currentPage + 1})}">Next</a>
+            </li>
+
+            <li th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" th:href="@{/home/(page=${totalPages})}" aria-label="Last">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Last</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="container" th:if="${showSearchResults}" id="searchResult">
+    <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+            <div class="">
+                <strong style="color: lightseagreen;">Danh sách kết quả</strong>
+                <div class="d-flex flex-column">
+                    <div th:if="${searched != null}">
+                        <p th:if="${searched.type != null}" class="mb-1">
+                            <span>Loại:</span>
+                            <span th:if="${searched.type == 'BEDSIT'}">Phòng trọ</span>
+                            <span th:if="${searched.type == 'HOUSE'}">Nhà trọ</span>
+                            <span th:if="${searched.type == 'APARTMENT'}">Căn hộ</span>
+                            <span th:if="${searched.type == 'STORE'}">Cửa hàng</span>
+                        </p>
+                        <p th:if="${searched.city != null}" class="mb-1">
+                            <span>Địa chỉ:</span>
+                            <span th:text="${searched.commune}"></span>
+                            <span th:text="${searched.district}"></span>
+                            <span th:text="${searched.city}"></span>
+                        </p>
+                        <p th:if="${searched.priceRange != '0'}" class="mb-1">
+                            <span>Giá cả:</span>
+                            <span th:text="${searched.priceRange}"></span>
+                            kVNĐ
+                        </p>
+                        <p th:if="${searched.areaRange != '0'}" class="mb-1">
+                            <span>Diện tích:</span>
+                            <span th:text="${searched.areaRange}"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+            <div th:each="search : ${rentalPosts}" class="post-item mb-4">
+                <div class="border rounded p-3">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6 d-flex justify-content-center align-items-center">
+                            <img class="img-fluid" th:src="${search.images[0]}" alt="Image" />
+                        </div>
+                        <div class="col-md-8 col-sm-6 text-left">
+                            <div class="post-title mb-2" th:text="${search.post.title}" style="font-weight: bold; font-size: 1.2em; color: lightseagreen;">
+                            </div>
+                            <div>Loại: <span th:text="${search.post.type.getValue()}"></span></div>
+                            <div>Giá cả: <span th:text="${search.post.price}"></span> 000 VNĐ</div>
+                            <div>Diện tích: <span th:text="${search.post.area}"></span> m<sup>2</sup></div>
+                            <div>Địa điểm: <span th:text="${search.post.city + ', ' + search.post.district + ', ' + search.post.commune}"></span></div>
+                            <a th:href="@{'/post/' + ${search.post.id_post}}" class="mt-2">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- noUiSlider CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.css">
+<!-- noUiSlider JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.js"></script>
+
+<script>document.addEventListener('DOMContentLoaded', function () {
+    var slider = document.getElementById('slider-range');
+    var valueSpan = document.getElementById('slider-range-value');
+    var priceRangeSelect = document.getElementById('priceRangeSelect');
+
+    noUiSlider.create(slider, {
+        start: [500, 20000],
+        connect: true,
+        range: {
+            'min': 500,
+            'max': 20000
+        },
+        step: 500,
+        format: {
+            to: function (value) {
+                return (value / 1000).toFixed(1);
+            },
+            from: function (value) {
+                return Math.round(value * 1000);
+            }
+        }
+    });
+
+    slider.noUiSlider.on('update', function (values, handle) {
+        valueSpan.innerHTML = values.join(' - ') + ' triệu đồng';
+    });
+
+    // Khi nhấn vào select, mở modal
+    priceRangeSelect.addEventListener('mousedown', function (e) {
+        e.preventDefault(); // Chặn sự kiện mặc định để không mở dropdown
+        $('#priceModal').modal('show');
+    });
+
+    // Khi nhấn nút Lưu trong modal
+    document.getElementById('savePriceRange').addEventListener('click', function () {
+        var values = slider.noUiSlider.get(true);
+        var minPrice = Math.round(values[0]);
+        var maxPrice = Math.round(values[1]);
+
+        // Remove existing option except the first one
+        while (priceRangeSelect.options.length > 1) {
+            priceRangeSelect.remove(1);
+        }
+
+        // Add the new selected range as an option
+        var option = document.createElement('option');
+        option.value = minPrice + '-' + maxPrice;
+        option.text = 'Khoảng giá từ ' + (minPrice / 1000).toFixed(1) + ' đến ' + (maxPrice / 1000).toFixed(1) + ' triệu đồng';
+        priceRangeSelect.add(option);
+
+        // Select the new option
+        priceRangeSelect.selectedIndex = 1;
+
+        // Close the modal
+        $('#priceModal').modal('hide');
+    });
+});
+</script>
+<script>
+    // Lấy tên tỉnh/thành phố
+    fetch('https://api.mysupership.vn/v1/partner/areas/province', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'Success') {
+                // Xử lý dữ liệu từ phản hồi
+                data.results.forEach(province => {
+                    // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
+                    const option = document.createElement('option');
+                    option.value = province.code; // Mã tỉnh/thành phố
+                    option.textContent = province.name; // Tên tỉnh/thành phố
+                    provinceDropdown.appendChild(option);
+                });
+            } else {
+                // Xử lý lỗi nếu có
+                console.error('Lỗi:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi gọi API:', error);
+        });
+
+    // Lắng nghe việc chọn thành phố
+    provinceDropdown.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedProvinceCode = selectedOption.value;
+        const selectedProvinceName = selectedOption.textContent;
+        getDistrictsByProvince(selectedProvinceCode);
+        var cityInput = document.querySelector('input[name="city"]');
+        cityInput.value = selectedProvinceName;
+    });
+    // Lắng nghe việc chọn quận huyện
+    districtDropdown.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedDistrictCode = selectedOption.value;
+        const selectedDistrictName = selectedOption.textContent;
+        getCommuneByDistrict(selectedDistrictCode);
+        var cityInput = document.querySelector('input[name="district"]');
+        cityInput.value = selectedDistrictName;
+    });
+    // Lắng nghe việc chọn thị x
+    communeDropdown.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const selectedCommuneName = selectedOption.textContent;
+        const communeInput = document.querySelector('input[name="commune"]');
+        communeInput.value = selectedCommuneName;
+    });
+    // In ra danh sách các quận/huyện
+    function getDistrictsByProvince(selectedProvinceCode) {
+        const url = `https://api.mysupership.vn/v1/partner/areas/district?province=${selectedProvinceCode}`;
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'Success') {
+                    // Xử lý dữ liệu từ phản hồi
+                    const districts = data.results;
+                    districtDropdown.innerHTML = '';
+                    const defaultOption = document.createElement('option');
+                    defaultOption.text = "Quận/Huyện";
+                    // defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    districtDropdown.appendChild(defaultOption);
+                    districts.forEach(district => {
+                        // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
+                        const option = document.createElement('option');
+                        option.value = district.code; // Mã tỉnh/thành phố
+                        option.textContent = district.name; // Tên tỉnh/thành phố
+                        districtDropdown.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    }
+
+    // In ra danh sách các phường/thị xã
+    function getCommuneByDistrict(selectedDistrictCode) {
+        const url = `https://api.mysupership.vn/v1/partner/areas/commune?district=${selectedDistrictCode}`;
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'Success') {
+                    // Xử lý dữ liệu từ phản hồi
+                    const communes = data.results;
+                    communeDropdown.innerHTML = '';
+                    const defaultOption = document.createElement('option');
+                    defaultOption.text = "Phường/Thị xã";
+                    // defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    communeDropdown.appendChild(defaultOption);
+                    communes.forEach(commune => {
+                        // Tạo một option mới cho mỗi tỉnh/thành phố và thêm vào dropdown
+                        const option = document.createElement('option');
+                        option.value = commune.code; // Mã tỉnh/thành phố
+                        option.textContent = commune.name; // Tên tỉnh/thành phố
+                        communeDropdown.appendChild(option);
+                    });
+                } else {
+                    console.error('Lỗi:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    }
+
+    // Function to get the value of a specific cookie
+    function getCookieValue(cookieName) {
+        const cookieString = document.cookie; // Lấy toàn bộ chuỗi cookie
+        const cookies = cookieString.split('; '); // Tách chuỗi cookie thành mảng các cookie
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i]; // Lưu trữ chuỗi cookie tại vị trí hiện tại
+            // Tìm vị trí của dấu '=' đầu tiên trong cookie
+            const indexOfFirstEquals = cookie.indexOf('=');
+            // Lấy tên cookie (phần trước dấu '=' đầu tiên)
+            const cookieNameFromCookie = cookie.substring(0, indexOfFirstEquals);
+            // Nếu tên cookie trùng với tên được yêu cầu
+            if (cookieNameFromCookie === cookieName) {
+                // Lấy giá trị của cookie (phần sau dấu '=' đầu tiên)
+                const cookieValue = cookie.substring(indexOfFirstEquals + 1);
+                return decodeURIComponent(cookieValue);
+            }
+        }
+        return null;
+    }
+    const username = getCookieValue('username');
+    const avatarUrl = getCookieValue('avatarUrl');
+    document.getElementById('username').textContent =  username;
+    document.getElementById('avatarUrl').src = avatarUrl;
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('searchForm');
+        var resetButton = form.querySelector('button[type="reset"]');
+
+        resetButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            form.reset();
+        });
+    });
+</script>
+
+<footer class="footer bg-dark text-light py-5" style="margin-top: 60px;">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <h5>Thông tin liên hệ</h5>
+                <p>Địa chỉ: Số 1 Đại Cồ Việt, Hai Bà Trưng, Thành Phố Hà Nội</p>
+                <p>Email: thai06102001@gmail.com</p>
+                <p>Điện thoại: 0123456789</p>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <h5>Liên kết nhanh</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#">Trang chủ</a></li>
+                    <li><a href="#">Dịch vụ</a></li>
+                    <li><a href="#">Bài viết</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <h5>Theo dõi chúng tôi</h5>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <p>&copy; 2024 Tất cả quyền được bảo lưu | Designed by Thai</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

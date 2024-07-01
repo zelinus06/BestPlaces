@@ -1,6 +1,4 @@
 package com.bestplaces.Config;
-
-
 import com.bestplaces.Component.CustomAuthenticationSuccessHandler;
 import com.bestplaces.Service.MyUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,13 +39,12 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/forgot/**","/guest"," /register","registration","login","/login-form-20/**","/home/**","/chart/**","/mail/**").permitAll();
+                    registry.requestMatchers("/forgot/**","/guest","/register","registration","login","/login-form-20/**","/home/**","/chart/**","/mail/**").permitAll();
+                    registry.requestMatchers("/css/**", "/js/**").permitAll(); // Thêm tài nguyên tĩnh
                     registry.requestMatchers("/admin/**","/test").hasRole("ADMIN");
                     registry.requestMatchers("/user/**","/recommend/**").hasAnyRole("USER", "ADMIN");
                     registry.anyRequest().authenticated();
                 })
-//                .logout((logout) ->
-//                        logout.deleteCookies("avatarUrl","username"))
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .formLogin(form -> form
                         .loginPage("/login")

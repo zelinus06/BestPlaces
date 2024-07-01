@@ -11,6 +11,7 @@ import com.bestplaces.Enums.Type;
 import com.bestplaces.Repository.UserRepository;
 import com.bestplaces.Service.RentalPostService;
 import com.bestplaces.Service.UploadService;
+import com.bestplaces.Service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,10 +36,14 @@ public class RentalPostController {
     UserRepository userRepository;
     @Autowired
     private UploadService service;
+    @Autowired
+    private UsersService usersService;
 
     @GetMapping()
     public String showAddRentalPostForm(Model model) {
         model.addAttribute("rentalPost", new RentalPost());
+        User currentUser = usersService.getCurrentUser();
+        model.addAttribute("currentUser", currentUser);
         return "CreatePost";
     }
 
@@ -76,6 +81,8 @@ public class RentalPostController {
     public String showUserPost(Model model) {
         List<RentalPost> list = rentalPostService.getUserPost();
         List<PostDto> posts = rentalPostService.getPosts(list);
+        User currentUser = usersService.getCurrentUser();
+        model.addAttribute("currentUser", currentUser);
         model.addAttribute("posts", posts);
         return "UserPost";
     }

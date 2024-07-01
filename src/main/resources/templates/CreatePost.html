@@ -84,8 +84,8 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img id="avatarUrl" src="" alt="User Logo" width="30" height="30">
-                    <span id="username" ></span>
+                    <img  th:src="${currentUser.avatar}" width="30" height="30">
+                    <span th:text="${currentUser.username}" ></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" th:href="@{/post}">Đăng tin cho thuê</a>

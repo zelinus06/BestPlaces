@@ -1,7 +1,9 @@
 package com.bestplaces.Controller;
 
 import com.bestplaces.Entity.RentalPost;
+import com.bestplaces.Entity.User;
 import com.bestplaces.Service.ChartService;
+import com.bestplaces.Service.UsersService;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -33,9 +35,13 @@ import java.util.List;
 public class ChartController {
     @Autowired
     private ChartService chartService;
+    @Autowired
+    private UsersService usersService;
 
     @GetMapping()
-    public String generateChart() throws IOException {
+    public String generateChart(Model model) throws IOException {
+        User currentUser = usersService.getCurrentUser();
+        model.addAttribute("currentUser", currentUser);
         return "chart";
     }
 
@@ -77,19 +83,6 @@ public class ChartController {
         XYItemRenderer renderer = plot.getRenderer();
         renderer.setSeriesShape(0, circle);
         renderer.setSeriesPaint(0, Color.blue);
-
-////         Tạo một series mới cho đường line dựa trên dữ liệu
-//        XYSeries lineSeries = createLineSeries(list);
-//        XYSeriesCollection lineDataset = new XYSeriesCollection();
-//        lineDataset.addSeries(lineSeries);
-
-//        // Thêm đường line vào plot
-//        plot.setDataset(1, lineDataset);
-//        XYLineAndShapeRenderer splineTrendRenderer = new XYLineAndShapeRenderer(true, false);
-//        splineTrendRenderer.setSeriesPaint(0, Color.BLUE);
-//        plot.setRenderer(1, splineTrendRenderer);
-
-
 
         // Thêm đường hồi quy tuyến tính vào biểu đồ
         addLinearRegressionLine(plot, list);
@@ -151,49 +144,6 @@ public class ChartController {
         regressionRenderer.setSeriesPaint(0, Color.RED);
         plot.setRenderer(1, regressionRenderer);
     }
-
-//    public XYSeries createLineSeries(List<RentalPost> chartData) {
-//        XYSeries lineSeries = new XYSeries("Line");
-//
-//        Set<Integer> areas = new HashSet<>();
-//        for (RentalPost data : chartData) {
-//            areas.add(data.getArea());
-//        }
-//
-//        for (Integer area : areas) {
-//            // Tạo một bản đếm cho các khoảng giá trong giá trị trục ngang hiện tại (area)
-//            Map<Integer, Integer> priceCounts = new HashMap<>();
-//            // Lặp qua dữ liệu RentalPost và tính số lượng điểm trong mỗi khoảng giá trong giá trị trục ngang hiện tại (area)
-//            for (RentalPost data : chartData) {
-//                if (data.getArea() == (area)) {
-//                    Integer price = data.getPrice();
-//                    priceCounts.put(price, priceCounts.getOrDefault(price, 0) + 1);
-//                }
-//            }
-//
-//            List<Map.Entry<Integer, Integer>> sortedPriceCounts = new ArrayList<>(priceCounts.entrySet());
-//            sortedPriceCounts.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
-//
-//            // Lấy ra top 3 giá trị và tính giá trị trung bình của khoảng giá đó
-//            int count = 0;
-//            double totalAveragePrice = 0;
-//            for (Map.Entry<Integer, Integer> entry : sortedPriceCounts) {
-//                if (count >= 3) {
-//                    break;
-//                }
-//                Integer price = entry.getKey();
-//                totalAveragePrice += price;
-//                count++;
-//            }
-//            double averagePrice = totalAveragePrice / count;
-//
-//            // Thêm điểm trung bình của khoảng giá vào đường line
-//            lineSeries.add((double) area, averagePrice);
-//        }
-//        return lineSeries;
-//    }
-
-
 }
 
 

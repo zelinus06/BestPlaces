@@ -37,5 +37,4 @@ public class ChartService {
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
-
 }

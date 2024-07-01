@@ -70,8 +70,8 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img id="avatarUrl" src="" alt="User Logo" width="30" height="30">
-                    <span id="username" ></span>
+                    <img  th:src="${currentUser.avatar}" width="30" height="30">
+                    <span th:text="${currentUser.username}" ></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" th:href="@{/post}">Đăng tin cho thuê</a>
@@ -285,33 +285,6 @@
                 console.error('There was a problem with your fetch operation:', error);
             });
     }
-
-
-    // Function to get the value of a specific cookie
-    function getCookieValue(cookieName) {
-        const cookieString = document.cookie; // Lấy toàn bộ chuỗi cookie
-        const cookies = cookieString.split('; '); // Tách chuỗi cookie thành mảng các cookie
-        for (let i = 0; i < cookies.length; i++) {
-            let cookie = cookies[i]; // Lưu trữ chuỗi cookie tại vị trí hiện tại
-            // Tìm vị trí của dấu '=' đầu tiên trong cookie
-            const indexOfFirstEquals = cookie.indexOf('=');
-            // Lấy tên cookie (phần trước dấu '=' đầu tiên)
-            const cookieNameFromCookie = cookie.substring(0, indexOfFirstEquals);
-            // Nếu tên cookie trùng với tên được yêu cầu
-            if (cookieNameFromCookie === cookieName) {
-                // Lấy giá trị của cookie (phần sau dấu '=' đầu tiên)
-                const cookieValue = cookie.substring(indexOfFirstEquals + 1);
-                return decodeURIComponent(cookieValue);
-            }
-        }
-        return null;
-    }
-    // Usage example
-    const username = getCookieValue('username');
-    const avatarUrl = getCookieValue('avatarUrl');
-    console.log(avatarUrl)
-    document.getElementById('username').textContent =  username;
-    document.getElementById('avatarUrl').src = avatarUrl;
 </script>
 </body>
 </html>

@@ -4,12 +4,17 @@ import com.bestplaces.Entity.RentalPost;
 import com.sun.jdi.IntegerValue;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,62 +26,79 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @Transactional
 public class FilterSearchService {
-    @PersistenceContext
-    private EntityManager entityManager;
-    @Autowired
-    private GetExpectedLocation getExpectedResult;
-    @Autowired
-    private GetExpectedSearch getExpectedSearch;
-    public List<RentalPost> searchPost(Double minPrice, Double maxPrice, Integer minArea, Integer maxArea, String type, String city, String district, String commune) {
-        String location = null;
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<RentalPost> criteriaQuery = criteriaBuilder.createQuery(RentalPost.class);
-        Root<RentalPost> rentalPost = criteriaQuery.from(RentalPost.class);
-        List<Predicate> predicates = new ArrayList<>();
-        if (minPrice != null && maxPrice != null) {
-            predicates.add(criteriaBuilder.between(rentalPost.get("price"), minPrice, maxPrice));
-        } else if (minPrice != null) {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(rentalPost.get("price"), minPrice));
-        } else if (maxPrice != null) {
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(rentalPost.get("price"), maxPrice));
-        }
+        @PersistenceContext
+        private EntityManager entityManager;
+        @Autowired
+        private GetExpectedLocation getExpectedResult;
+        @Autowired
+        private GetExpectedSearch getExpectedSearch;
 
-        if (minArea != null && maxArea != null) {
-            predicates.add(criteriaBuilder.between(rentalPost.get("area"), minArea, maxArea));
-        } else if (minArea != null) {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(rentalPost.get("area"), minArea));
-        } else if (maxArea != null) {
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(rentalPost.get("area"), maxArea));
-        }
-        if (type != null) {
-            predicates.add(criteriaBuilder.equal(rentalPost.get("type"), type));
-        }
-        if ( city != null) {
-            predicates.add(criteriaBuilder.equal(rentalPost.get("city"), city));
-            location = city;
-            if ( district != null) {
-                predicates.add(criteriaBuilder.equal(rentalPost.get("district"), district));
-                location = location + "," + district;
-                if ( commune != null) {
-                    predicates.add(criteriaBuilder.equal(rentalPost.get("commune"), commune));
-                    location = location + "," + commune;
+        public List<RentalPost> searchPost(Double minPrice, Double maxPrice, Integer minArea, Integer maxArea, String type, String city, String district, String commune) {
+            String location = null;
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<RentalPost> criteriaQuery = criteriaBuilder.createQuery(RentalPost.class);
+            Root<RentalPost> rentalPost = criteriaQuery.from(RentalPost.class);
+            List<Predicate> predicates = new ArrayList<>();
+            if (minPrice != null && maxPrice != null) {
+                predicates.add(criteriaBuilder.between(rentalPost.get("price"), minPrice, maxPrice));
+            } else if (minPrice != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(rentalPost.get("price"), minPrice));
+            } else if (maxPrice != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(rentalPost.get("price"), maxPrice));
+            }
+
+            if (minArea != null && maxArea != null) {
+                predicates.add(criteriaBuilder.between(rentalPost.get("area"), minArea, maxArea));
+            } else if (minArea != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(rentalPost.get("area"), minArea));
+            } else if (maxArea != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(rentalPost.get("area"), maxArea));
+            }
+            if (type != null) {
+                predicates.add(criteriaBuilder.equal(rentalPost.get("type"), type));
+            }
+            if (city != null) {
+                predicates.add(criteriaBuilder.equal(rentalPost.get("city"), city));
+                location = city;
+                if (district != null) {
+                    predicates.add(criteriaBuilder.equal(rentalPost.get("district"), district));
+                    location = location + "," + district;
+                    if (commune != null) {
+                        predicates.add(criteriaBuilder.equal(rentalPost.get("commune"), commune));
+                        location = location + "," + commune;
+                    }
                 }
             }
+            Integer minPriceInt = null;
+            Integer maxPriceInt = null;
+            if (minPrice != null) {
+                minPriceInt = (int) Math.round(minPrice);
+            }
+            if (maxPrice != null) {
+                maxPriceInt = (int) Math.round(maxPrice);
+            }
+            if (location != null) {
+                System.out.println(location);
+                getExpectedResult.saveSearchResult(location);
+            }
+            getExpectedSearch.updateAllCount(minArea, maxArea, minPriceInt, maxPriceInt, type);
+            criteriaQuery.where(predicates.toArray(new Predicate[0]));
+            TypedQuery<RentalPost> query = entityManager.createQuery(criteriaQuery);
+            return query.getResultList();
         }
-        Integer minPriceInt = null;
-        Integer maxPriceInt = null;
-        if (minPrice != null) {
-              minPriceInt = (int) Math.round(minPrice);
+
+        public Page<RentalPost> pageSearchPost(Double minPrice, Double maxPrice, Integer minArea, Integer maxArea,
+                                               String type, String city, String district, String commune,
+                                               Pageable pageable) {
+            // Perform the search using searchPost method
+            List<RentalPost> resultList = searchPost(minPrice, maxPrice, minArea, maxArea, type, city, district, commune);
+            // Calculate total count of results
+            long total = resultList.size();
+            // Paginate the resultList based on the pageable object
+            int start = (int) pageable.getOffset();
+            int end = (int) ((start + pageable.getPageSize()) > total ? total : (start + pageable.getPageSize()));
+            List<RentalPost> subList = resultList.subList(start, end);
+            // Return as a Page object
+            return new PageImpl<>(subList, pageable, total);
         }
-        if (maxPrice != null) {
-             maxPriceInt = (int) Math.round(maxPrice);
-        }
-        if (location != null) {
-            System.out.println(location);
-            getExpectedResult.saveSearchResult(location);
-        }
-        getExpectedSearch.updateAllCount(minArea, maxArea, minPriceInt, maxPriceInt, type);
-        criteriaQuery.where(predicates.toArray(new Predicate[0]));
-        return entityManager.createQuery(criteriaQuery).getResultList();
     }
-}

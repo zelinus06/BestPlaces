@@ -26,45 +26,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         this.userDetailsService = userDetailsService;
     }
 
-    @Autowired
-    private UserRepository userRepository;
-
-    private User user;
-
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        // Lấy thông tin người dùng từ UserDetails
-        UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
-        Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
-        String imageUrl = null;
-        if(user.isPresent()) {
-            User users = user.get();
-            imageUrl = users.getAvatar();
-        } else {
-            System.out.println("no");
-        }
-
-        // Tạo cookie để lưu thông tin người dùng
-        Cookie usernameCookie = new Cookie("username", userDetails.getUsername());
-        Cookie avatarUrlCookie = new Cookie("avatarUrl", imageUrl);
-
-        // Đặt thời gian sống của cookie (ví dụ: 30 ngày)
-        int cookieMaxAge = 30 * 24 * 60 * 60; // 30 days
-        usernameCookie.setMaxAge(cookieMaxAge);
-        avatarUrlCookie.setMaxAge(cookieMaxAge);
-
-        // Đặt đường dẫn của cookie
-        usernameCookie.setPath("/");
-        avatarUrlCookie.setPath("/");
-
-        // Thêm cookie vào response
-        response.addCookie(usernameCookie);
-        response.addCookie(avatarUrlCookie);
-
-        // Kiểm tra vai trò của người dùng
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException{
+        String redirectUrl = "/home?page=1";
         boolean isNonUser = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_NONUSER"));
-        String redirectUrl = "/login";
         if (isNonUser) {
             redirectUrl = "/mail";
         }
