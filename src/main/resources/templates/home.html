@@ -61,9 +61,9 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" th:href="@{/post}">Đăng tin cho thuê</a>
                         <a class="dropdown-item" th:href="@{/post/mypost}">Quản lý tin đăng</a>
-                        <a class="dropdown-item" th:href="@{/#}">Thông tin cá nhân</a>
+                        <a class="dropdown-item" th:href="@{/user}">Thông tin cá nhân</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" th:href="@{/logout}">Logout</a>
+                        <a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a>
                     </div>
                 </li>
             </ul>
@@ -176,8 +176,8 @@
                                 <div>Loại: <span th:text="${postDto.post.type.getValue()}"></span></div>
                                 <div>Giá cả: <span th:text="${postDto.post.price}"></span> 000 VNĐ</div>
                                 <div>Diện tích: <span th:text="${postDto.post.area}"></span> m<sup>2</sup></div>
-                                <div>Địa điểm: <span th:text="${postDto.post.city + ', ' + postDto.post.district + ', ' + postDto.post.commune}"></span></div>
-                                <a th:href="@{'/post/' + ${postDto.post.id_post}}" class="mt-2">Xem chi tiết</a>
+                                <div>Địa điểm: <span th:text="${postDto.post.commune + ', ' + postDto.post.district + ', ' + postDto.post.city}"></span></div>
+                                <a th:href="@{'/detail-post/' + ${postDto.post.id_post}}" class="mt-2">Xem chi tiết</a>
                             </div>
                         </div>
                     </div>
@@ -279,17 +279,17 @@
                                 <div>Loại: <span th:text="${search.post.type.getValue()}"></span></div>
                                 <div>Giá cả: <span th:text="${search.post.price}"></span> 000 VNĐ</div>
                                 <div>Diện tích: <span th:text="${search.post.area}"></span> m<sup>2</sup></div>
-                                <div>Địa điểm: <span th:text="${search.post.city + ', ' + search.post.district + ', ' + search.post.commune}"></span></div>
-                                <a th:href="@{'/post/' + ${search.post.id_post}}" class="mt-2">Xem chi tiết</a>
+                                <div>Địa điểm: <span th:text="${search.post.commune + ', ' + search.post.district + ', ' + search.post.city}"></span></div>
+                                <a th:href="@{'/detail-post/' + ${search.post.id_post}}" class="mt-2">Xem chi tiết</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
-
                 <li th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
                     <a class="page-link" th:href="@{/home(page=1)}" aria-label="First">
                         <span aria-hidden="true">&laquo;</span>
@@ -537,6 +537,7 @@
                 });
         }
     </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var form = document.getElementById('searchForm');

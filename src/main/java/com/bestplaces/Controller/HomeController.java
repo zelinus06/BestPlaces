@@ -1,7 +1,9 @@
 package com.bestplaces.Controller;
 
+import com.bestplaces.Dto.CommentDto;
 import com.bestplaces.Dto.PostDto;
 import com.bestplaces.Dto.SearchResDto;
+import com.bestplaces.Entity.Comment;
 import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Entity.User;
 import com.bestplaces.Repository.PostRepository;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/home")

@@ -39,8 +39,8 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/forgot/**","/guest","/register","registration","login","/login-form-20/**","/home/**","/chart/**","/mail/**").permitAll();
-                    registry.requestMatchers("/css/**", "/js/**").permitAll(); // Thêm tài nguyên tĩnh
+                    registry.requestMatchers("/forgot/**","/guest","/register","registration","login","/login-form-20/**","/home/**","/chart/**","/mail/**", "/detail-post/**").permitAll();
+                    registry.requestMatchers("/css/**", "/js/**").permitAll();
                     registry.requestMatchers("/admin/**","/test").hasRole("ADMIN");
                     registry.requestMatchers("/user/**","/recommend/**").hasAnyRole("USER", "ADMIN");
                     registry.anyRequest().authenticated();

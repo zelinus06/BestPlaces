@@ -63,14 +63,6 @@ public class VerificationCodeService {
             return expirationTime;
         }
     }
-//    public String UserNameAtPresent() {
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        String username = null; // Khởi tạo biến username với giá trị mặc định là null
-//        if (principal instanceof UserDetails) {
-//            username = ((UserDetails) principal).getUsername(); // Gán giá trị cho biến username
-//        }
-//        return username;
-//    }
 }
 
 

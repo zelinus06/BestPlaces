@@ -5,6 +5,7 @@ import com.bestplaces.Entity.User;
 import com.bestplaces.Repository.UserRepository;
 import com.bestplaces.Service.EmailService;
 import com.bestplaces.Service.Impl.EmailServiceImpl;
+import com.bestplaces.Service.UsersService;
 import com.bestplaces.Service.VerificationCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,8 @@ public class UserController {
     private EmailService emailService;
     @Autowired
     private VerificationCodeService verificationCodeService;
+    @Autowired
+    private UsersService usersService;
 
     @GetMapping()
     public String InputEmail() {
@@ -67,10 +70,8 @@ public class UserController {
 
     @PostMapping("/reset-password")
     public String ChangePassword(@RequestParam("username") String username,
-                                 @RequestParam("newPassword") String newPassword,
-                                 @RequestParam("confirmPassword") String confirmPassword,
-                                 Model model) {
-
+                                 @RequestParam("newPassword") String newPassword) {
+        usersService.changePassword(username, newPassword);
         return "redirect:/login";
     }
 }

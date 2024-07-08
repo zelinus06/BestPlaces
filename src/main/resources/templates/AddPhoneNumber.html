@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Verification Code Form</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .custom-container {
+            margin-top: 50px;
+        }
+        .form-header {
+            margin-bottom: 20px;
+        }
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-section h2 {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container custom-container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 form-section">
+            <h2 class="form-header text-center">Hướng dẫn</h2>
+            <p>
+                - Người dùng tải Telegram truy cập vào @BestPlacess_bot.
+            </p>
+            <p>
+                - Nhấn vào Start để bắt đầu sử dụng bot.
+            </p>
+            <p>- Thực hiện chia sẻ số điện thoại qua nút Share Contact.</p>
+            <p>
+                - Nhập số điện thoại vào ô bên dưới và nhấn Generate Code để nhận mã xác thực trong Telegram.
+            </p>
+            <p> - Người dùng điền mã xác thực vào ô bên Verify Verification Code và nhấn Verify Code để xác thực.</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6 form-section">
+            <h2 class="form-header text-center">Generate Verification Code</h2>
+            <form action="#" th:action="@{/generate-code}" method="post">
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number:</label>
+                    <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" th:value="${phoneNumber}">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Generate Code</button>
+            </form>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-6 form-section">
+            <h2 class="form-header text-center">Verify Verification Code</h2>
+            <form action="#" th:action="@{/verify-code-phone}" method="post">
+                <div class="form-group">
+                    <label for="verificationCode">Verification Code:</label>
+                    <input type="text" class="form-control" id="verificationCode" name="verificationCode" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Verify Code</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+

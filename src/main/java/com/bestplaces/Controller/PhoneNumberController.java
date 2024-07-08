@@ -1,6 +1,5 @@
 package com.bestplaces.Controller;
 
-import com.bestplaces.Dto.UserRegistrationDto;
 import com.bestplaces.Entity.User;
 import com.bestplaces.Service.MyTelegramBot;
 import com.bestplaces.Service.MyUserDetailsService;
@@ -10,12 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
-public class VeriCodeController {
+public class PhoneNumberController {
     @Autowired
     private MyTelegramBot myTelegramBot;
     @Autowired
@@ -23,9 +20,9 @@ public class VeriCodeController {
     @Autowired
     private MyUserDetailsService userDetailsService;
 
-    @GetMapping("/testVeriCode")
-    public String showVerifyCodeForm(User user) {
-        return "testVeriCode";
+    @GetMapping("/addPhoneNumber")
+    public String showVerifyCodeForm() {
+        return "AddPhoneNumber";
     }
 
     @PostMapping("/generate-code")
@@ -38,9 +35,9 @@ public class VeriCodeController {
         if (number != null)
             myTelegramBot.sendVerificationCode(number);
         else {
-            return "redirect:/testVeriCode";
+            return "redirect:/addPhoneNumber";
         }
-            return "testVeriCode";
+            return "AddPhoneNumber";
     }
     @PostMapping("/verify-code-phone")
     public String VerifyCode(@RequestParam("verificationCode") String verificationCode, HttpServletRequest request) {
@@ -57,9 +54,10 @@ public class VeriCodeController {
         String username = userDetailsService.UserNameAtPresent();
         boolean code = verificationCodeService.verifyVerificationCode(username, verificationCode, phoneNumber);
         if (code) {
-            return "home";
+            return "redirect:/user";
+        } else {
+            return "redirect:/post";
         }
-        return "home";
     }
     public String formatPhoneNumber(String phoneNumber) {
         if (phoneNumber.startsWith("0")) {

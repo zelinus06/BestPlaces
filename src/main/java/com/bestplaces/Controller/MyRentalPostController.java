@@ -1,10 +1,8 @@
 package com.bestplaces.Controller;
 
-import com.bestplaces.Dto.CommentDto;
 import com.bestplaces.Dto.PostDto;
 import com.bestplaces.Dto.RentalPostDto;
 import com.bestplaces.Dto.Res;
-import com.bestplaces.Entity.Comment;
 import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Entity.User;
 import com.bestplaces.Enums.Type;
@@ -13,8 +11,6 @@ import com.bestplaces.Service.RentalPostService;
 import com.bestplaces.Service.UploadService;
 import com.bestplaces.Service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/post")
-public class RentalPostController {
+public class MyRentalPostController {
     @Autowired
     private RentalPostService rentalPostService;
     @Autowired
@@ -41,10 +35,15 @@ public class RentalPostController {
 
     @GetMapping()
     public String showAddRentalPostForm(Model model) {
-        model.addAttribute("rentalPost", new RentalPost());
         User currentUser = usersService.getCurrentUser();
-        model.addAttribute("currentUser", currentUser);
-        return "CreatePost";
+        System.out.println("phonenumber" + currentUser.getPhoneNumber());
+        if (currentUser.getPhoneNumber().isEmpty()) {
+            return "redirect:/addPhoneNumber";
+        } else {
+            model.addAttribute("rentalPost", new RentalPost());
+            model.addAttribute("currentUser", currentUser);
+            return "CreatePost";
+        }
     }
 
     @PostMapping()
@@ -107,41 +106,6 @@ public class RentalPostController {
     public String DeletePost(@PathVariable("idpost") Long postId) {
         rentalPostService.deletePost(postId);
         return "redirect:/user/post";
-    }
-
-    @PostMapping("/comment")
-    public String RatePost(@RequestParam("idpost") long postId,
-                           @RequestParam(value = "Comment") String comment) {
-        rentalPostService.comment(postId, comment);
-        return String.format("redirect:/post/%d", postId);
-    }
-
-    @GetMapping("/{postId}")
-    public String getPostDetail(@PathVariable Long postId, Model model) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        Optional<User> users = userRepository.findByUsername(username);
-        model.addAttribute("currentUser", users.get());
-
-        PostDto postDto = rentalPostService.getDetailPost(postId);
-        List<CommentDto> comments = rentalPostService.showComment(postId);
-        model.addAttribute("commentDto", comments);
-        model.addAttribute("postDto", postDto);
-        return "ChosenPost";
-    }
-
-    @DeleteMapping("/deleteComment/{postId}/{commentId}")
-    public String deleteComment(@PathVariable("commentId") Long commentId, @PathVariable("postId") Long postId) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        Optional<User> users = userRepository.findByUsername(username);
-        Comment comment = rentalPostService.getCommentById(commentId);
-        if(Objects.equals(comment.getId_user().getId(), users.get().getId())) {
-            rentalPostService.deleteComment(commentId);
-            return String.format("redirect:/post/%d", postId);
-        } else {
-            return String.format("redirect:/post/%d", postId);
-        }
     }
 }
 

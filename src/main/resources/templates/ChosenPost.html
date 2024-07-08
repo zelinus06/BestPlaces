@@ -134,7 +134,12 @@
 <body>
 
 <div class="post-container">
-    <a href="#" onclick="history.back();" class="btn btn-outline-primary mb-2 back-button"> Back </a>
+    <a href="#" onclick="history.back();" class="btn btn-outline-primary mb-2 back-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M3.354 7.354a.5.5 0 0 1 0-.708l5-5a.5.5 0 0 1 .708.708L4.707 7l4.707 4.707a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708z"/>
+        </svg>
+    </a>
+
     <div class="post-title" th:text="${postDto.post.title}">Post Title</div>
     <div class="post-images">
         <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -209,7 +214,7 @@
         </div>
     </div>
 
-    <form th:action="@{/post/comment}" method="post">
+    <form th:action="@{/detail-post/comment}" method="post">
         <input type="hidden" name="idpost" th:value="${postId}">
         <div>
             <textarea id="comment" name="Comment" rows="4" required></textarea>
@@ -225,7 +230,7 @@
     <div class="modal fade" th:id="'deleteCommentModal'+${comment.comment.id}" tabindex="-1" role="dialog" aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form th:action="@{/post/deleteComment/{postId}/{commentId}(postId=${comment.comment.id_post.getId_post()}, commentId=${comment.comment.id})}" method="post">
+                <form th:action="@{/detail-post/deleteComment/{postId}/{commentId}(postId=${comment.comment.id_post.getId_post()}, commentId=${comment.comment.id})}" method="post">
                     <input type="hidden" name="_method" value="delete" />
                     <div class="modal-header">
                         <h5 class="modal-title" id="deleteCommentModalLabel">Xác nhận xóa bình luận</h5>
@@ -245,16 +250,15 @@
         </div>
     </div>
 </div>
-    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content modalImageContent">
             <div class="modal-body modalImageBody">
                 <img id="modalImage" class="img-fluid">
             </div>
         </div>
     </div>
-</div>
-
 </div>
 <!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -269,6 +273,5 @@
         });
     });
 </script>
-
 </body>
 </html>

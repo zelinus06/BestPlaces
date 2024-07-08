@@ -90,9 +90,9 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" th:href="@{/post}">Đăng tin cho thuê</a>
                     <a class="dropdown-item" th:href="@{/post/mypost}">Quản lý tin đăng</a>
-                    <a class="dropdown-item" th:href="@{/#}">Thông tin cá nhân</a>
+                    <a class="dropdown-item" th:href="@{/user}">Thông tin cá nhân</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" th:href="@{/logout}">Logout</a>
+                    <a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a>
                 </div>
             </li>
         </ul>
@@ -104,7 +104,7 @@
         <div class="col-md-8">
             <div class="custom-form">
                 <h2 class="mb-4 text-center">Tạo Bài Đăng Cho Thuê</h2>
-                <form id="myForm" th:action="@{/post}" method="post" th:object="${rentalPost}" enctype="multipart/form-data">
+                <form id="myForm" th:action="@{/post}" method="post" th:object="${rentalPost}" enctype="multipart/form-data" onsubmit="return validateForm()">
                     <div class="form-group">
                         <label for="title">Title:</label>
                         <input type="text" class="form-control" id="title" th:field="*{title}">
@@ -147,15 +147,15 @@
                     </div>
                     <div class="form-group">
                         <label for="price">Giá:</label>
-                        <input type="text" class="form-control" id="price" th:field="*{price}">
+                        <input type="text" class="form-control" id="price" th:field="*{price}" required>
                     </div>
                     <div class="form-group">
                         <label for="area">Diện Tích:</label>
-                        <input type="text" class="form-control" id="area" th:field="*{area}">
+                        <input type="text" class="form-control" id="area" th:field="*{area}" required>
                     </div>
                     <div class="form-group">
                         <label for="description">Mô Tả:</label>
-                        <textarea class="form-control" id="description" th:field="*{description}"></textarea>
+                        <textarea class="form-control" id="description" th:field="*{description}" required></textarea>
                     </div>
                     <div class="form-group">
                         <input type="file" class="formcontrol-file" id="imageInput" name="files" accept="image/*" onchange="previewImage(event)" multiple>
@@ -182,144 +182,22 @@
                 var img = new Image();
                 img.src = e.target.result;
 
-                img.onload = function() {
-                    if (this.width === 750 && this.height === 400) {
-                        var imgElement = document.createElement('img');
-                        imgElement.src = this.src;
-                        imgElement.className = 'preview-image';
-                        previewBox.appendChild(imgElement);
-                    } else {
-                        alert('Ảnh bạn chọn không đạt kích thước 750x400. Vui lòng chọn lại.');
-                        event.target.value = null; // Xóa tệp đã chọn để ngăn người dùng tiếp tục với tệp không phù hợp
-                    }
-                };
+                // img.onload = function() {
+                //     if (this.width === 750 && this.height === 400) {
+                //         var imgElement = document.createElement('img');
+                //         imgElement.src = this.src;
+                //         imgElement.className = 'preview-image';
+                //         previewBox.appendChild(imgElement);
+                //     } else {
+                //         alert('Ảnh bạn chọn không đạt kích thước 750x400. Vui lòng chọn lại.');
+                //         event.target.value = null; // Xóa tệp đã chọn để ngăn người dùng tiếp tục với tệp không phù hợp
+                //     }
+                // };
             };
 
             reader.readAsDataURL(file);
         }
     }
-</script>
-
-
-<!--<script>-->
-<!--    function previewImage(event) {-->
-<!--        var input = event.target;-->
-<!--        var previewContainer = document.getElementById('preview-box');-->
-<!--        for (const file of input.files) {-->
-<!--            var reader = new FileReader();-->
-<!--            reader.onload = function(){-->
-<!--                var div = document.createElement('div');-->
-<!--                div.classList.add('image-preview-container');-->
-<!--                var img = document.createElement('img');-->
-<!--                img.src = reader.result;-->
-<!--                img.classList.add('preview-image');-->
-<!--                div.appendChild(img);-->
-
-<!--                // Tạo nút "Hủy" và đặt sự kiện click-->
-<!--                var cancelButton = document.createElement('button');-->
-<!--                cancelButton.textContent = 'x';-->
-<!--                cancelButton.addEventListener('click', function() {-->
-<!--                    div.remove();-->
-<!--                });-->
-
-<!--                div.appendChild(cancelButton);-->
-
-<!--                previewContainer.appendChild(div);-->
-<!--            };-->
-<!--            reader.readAsDataURL(file);-->
-<!--        }-->
-<!--    }-->
-<!--</script>-->
-
-<script>
-        // Function to get the value of a specific cookie
-        function getCookieValue(cookieName) {
-        const cookieString = document.cookie; // Lấy toàn bộ chuỗi cookie
-        const cookies = cookieString.split('; '); // Tách chuỗi cookie thành mảng các cookie
-        for (let i = 0; i < cookies.length; i++) {
-        let cookie = cookies[i]; // Lưu trữ chuỗi cookie tại vị trí hiện tại
-        // Tìm vị trí của dấu '=' đầu tiên trong cookie
-        const indexOfFirstEquals = cookie.indexOf('=');
-        // Lấy tên cookie (phần trước dấu '=' đầu tiên)
-        const cookieNameFromCookie = cookie.substring(0, indexOfFirstEquals);
-        // Nếu tên cookie trùng với tên được yêu cầu
-        if (cookieNameFromCookie === cookieName) {
-        // Lấy giá trị của cookie (phần sau dấu '=' đầu tiên)
-        const cookieValue = cookie.substring(indexOfFirstEquals + 1);
-        return decodeURIComponent(cookieValue);
-    }
-    }
-        return null;
-    }
-        const username = getCookieValue('username');
-        const avatarUrl = getCookieValue('avatarUrl');
-        document.getElementById('username').textContent =  username;
-        document.getElementById('avatarUrl').src = avatarUrl;
-</script>
-
-<script>
-    // const fileList = [];
-    //
-    // document.getElementById('imageInput').addEventListener('change', function(event) {
-    //     const selectedFiles = event.target.files;
-    //     const uploadButton = document.querySelector('button');
-    //     // uploadButton.disabled = !selectedFiles;
-    //     uploadButton.disabled = selectedFiles.length === 0;
-    //
-    //     for (const file of selectedFiles) {
-    //         const formData = new FormData();
-    //         formData.append('image', file);
-    //         fileList.push(formData);
-    //     }
-    // });
-
-    // async function handleUpload() {
-    //
-    //     await new Promise(resolve => setTimeout(resolve, 5000));
-    //
-    //     // Kiểm tra xem tất cả các trường thông tin đã được điền đầy đủ hay không
-    //     const type = document.querySelector('select[name="Type"]').value;
-    //     const city = document.querySelector('input[name="city"]').value;
-    //     const district = document.querySelector('input[name="district"]').value;
-    //     const price = document.querySelector('input[name="price"]').value;
-    //     const area = document.querySelector('input[name="area"]').value;
-    //     const description = document.querySelector('textarea[name="description"]').value;
-    //
-    //     if (type.trim() === '' || city.trim() === '' || district.trim() === '' ||
-    //         price.trim() === '' || area.trim() === '' || description.trim() === '') {
-    //         alert("Vui lòng nhập đầy đủ thông tin trước khi tải lên ảnh!");
-    //         return;
-    //     }
-    //     await new Promise(resolve => setTimeout(resolve, 5000));
-    //
-    //     try {
-    //         const responses = await Promise.all(fileList.map(async formData => {
-    //             const response = await fetch('http://localhost:8080/uploadToGoogleDrive', {
-    //                 method: 'POST',
-    //                 body: formData
-    //             });
-    //             return response.json();
-    //         }));
-    //
-    //         responses.forEach((response, index) => {
-    //             const resultMessage = document.getElementById('resultMessage');
-    //             const urlInput = document.getElementById('imageUrlInput');
-    //
-    //             if (response.status === 200) {
-    //                 resultMessage.innerText += `Success (${index}): ${response.message}\n`;;
-    //             } else {
-    //                 resultMessage.innerText += `Error (${index}): ${response.message}\n`;
-    //             }
-    //         }
-    //         );
-    //         // Xóa fileList sau khi đã xử lý xong
-    //         fileList.length = 0;
-    //     } catch (error) {
-    //         console.error('Error uploading images:', error.message);
-    //     }
-    // }
-
-
 </script>
 
 <script>
@@ -483,6 +361,20 @@
     // const avatarUrl = getCookieValue('avatarUrl');
     // document.getElementById('username').textContent =  username;
     // document.getElementById('avatarUrl').src = avatarUrl;
+</script>
+
+<script>
+    function validateForm() {
+        var price = document.getElementById("price").value;
+        var area = document.getElementById("area").value;
+
+        if (isNaN(price) || isNaN(area)) {
+            alert("Diện Tích và Giá phải là số.");
+            return false;
+        }
+
+        return true;
+    }
 </script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
