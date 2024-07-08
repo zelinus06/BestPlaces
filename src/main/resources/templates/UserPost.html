@@ -87,56 +87,40 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Bài đăng của tôi</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="postDto : ${posts}">
-                    <td class="post-title" th:text="${postDto.post.title}" >
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <img class="img-fluid" th:src="${postDto.images[0]}" alt="Image" />
-                            </div>
-                            <div class="col-md-8">
-                                <h5>Type:</h5>
-                                <p th:text="${postDto.post.type.getValue()}"></p>
-
-                                <h5>Price:</h5>
-                                <p>
-                                    <span th:text="${postDto.post.price}"></span> VNĐ
-                                </p>
-
-                                <h5>Area:</h5>
-                                <p>
-                                    <span th:text="${postDto.post.area}"></span> m<sup>2</sup>
-                                </p>
-
-                                <h5>Location:</h5>
-                                <p th:text="${postDto.post.city + ', ' + postDto.post.district + ', ' + postDto.post.commune}"></p>
-
-                                <!-- Add Edit Button -->
+            <div th:each="postDto : ${posts}" class="post-item mb-4">
+                <div class="border rounded p-4">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6 d-flex justify-content-center align-items-center">
+                            <img class="img-fluid" th:src="${postDto.images[0]}" alt="Image" />
+                        </div>
+                        <div class="col-md-8 col-sm-6 text-left">
+                            <div class="post-title mb-2" th:text="${postDto.post.title}" style="font-weight: bold; font-size: 1.2em; color: lightseagreen;"></div>
+                            <div>Loại: <span th:text="${postDto.post.type.getValue()}"></span></div>
+                            <div>Giá cả: <span th:text="${postDto.post.price}"></span> 000 VNĐ</div>
+                            <div>Diện tích: <span th:text="${postDto.post.area}"></span> m<sup>2</sup></div>
+                            <div>Địa điểm: <span th:text="${postDto.post.commune + ', ' + postDto.post.district + ', ' + postDto.post.city}"></span></div>
+                            <a th:href="@{'/detail-post/' + ${postDto.post.id_post}}" class="mt-2">Xem chi tiết</a>
+                            <div class="mt-2">
                                 <button class="btn btn-primary edit-button"
-                                        th:data-idpost="${postDto.post.id_post}" th:data-phonenumber="${postDto.post.phoneNumber}"
+                                        th:data-idpost="${postDto.post.id_post}"
+                                        th:data-phonenumber="${postDto.post.phoneNumber}"
                                         th:data-title="${postDto.post.title}"
-                                        th:data-area="${postDto.post.area}" th:data-price="${postDto.post.price}"
-                                        th:data-city="${postDto.post.city}" th:data-district="${postDto.post.district}"
-                                        th:data-commune="${postDto.post.commune}" th:data-street="${postDto.post.street}"
-                                        th:data-numberhouse="${postDto.post.numberHouse}" th:data-description="${postDto.post.description}"
+                                        th:data-area="${postDto.post.area}"
+                                        th:data-price="${postDto.post.price}"
+                                        th:data-city="${postDto.post.city}"
+                                        th:data-district="${postDto.post.district}"
+                                        th:data-commune="${postDto.post.commune}"
+                                        th:data-street="${postDto.post.street}"
+                                        th:data-numberhouse="${postDto.post.numberHouse}"
+                                        th:data-description="${postDto.post.description}"
                                         th:data-type="${postDto.post.type}">Edit
                                 </button>
                                 <button class="btn btn-danger delete-button" th:data-idpost="${postDto.post.id_post}">Delete</button>
                             </div>
                         </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

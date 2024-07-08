@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar with Search Filters</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
+    <style>
+        /* Custom CSS for search filters */
+        .search-filters {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+        }
+        .search-filters .form-group {
+            margin-bottom: 0;
+        }
+        .container {
+            padding-top: 100px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-6">
+    <h1 class="text-center mb-4">Danh sách bài đăng của người dùng</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div th:each="postDto : ${posts}" class="post-item mb-4">
+                    <div class="border rounded p-4">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-6 d-flex justify-content-center align-items-center">
+                            </div>
+                            <div class="col-md-8 col-sm-6 text-left">
+                                <div class="post-title mb-2" th:text="${postDto.title}" style="font-weight: bold; font-size: 1.2em; color: lightseagreen;"></div>
+                                <div>Loại: <span th:text="${postDto.type.getValue()}"></span></div>
+                                <div>Giá cả: <span th:text="${postDto.price}"></span> 000 VNĐ</div>
+                                <div>Diện tích: <span th:text="${postDto.area}"></span> m<sup>2</sup></div>
+                                <div>Địa điểm: <span th:text="${postDto.commune + ', ' + postDto.district + ', ' + postDto.city}"></span></div>
+                                <a th:href="@{'/detail-post/' + ${postDto.id_post}}" class="mt-2">Xem chi tiết</a>
+                                <div class="mt-2">
+                                    <button class="btn btn-danger delete-button" th:data-idpost="${postDto.id_post}">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Delete Post Modal-->
+    <div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="deletePostModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="deleteForm" th:action="@{/admin/delete/{idpost}}" th:method="delete">
+                    <input type="hidden" name="_method" value="delete" />
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deletePostModalLabel">Xác nhận xóa bài đăng</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có chắc chắn muốn xóa bài đăng này không?
+                        <input type="hidden" name="postId" id="postIdToDelete">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll('.delete-button');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const postId = this.getAttribute('data-idpost');
+                deleteForm.action = `/admin/delete/${postId}`;
+                $('#deletePostModal').modal('show');
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

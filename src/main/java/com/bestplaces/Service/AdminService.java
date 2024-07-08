@@ -1,5 +1,6 @@
 package com.bestplaces.Service;
 
+import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Entity.User;
 import com.bestplaces.Enums.Role;
 import com.bestplaces.Repository.UserRepository;
@@ -18,6 +19,8 @@ public class AdminService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RentalPostService rentalPostService;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 

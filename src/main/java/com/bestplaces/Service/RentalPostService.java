@@ -128,6 +128,13 @@ public class RentalPostService {
         return list;
     }
 
+    public List<RentalPost> getUserPost(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        User user = userOptional.get();
+        List<RentalPost> list = postRepository.findAllByUserId(user);
+        return list;
+    }
+
     public void deletePost(Long idPost) {
         Optional<RentalPost> postOptional = postRepository.findById(idPost);
         RentalPost rentalPost = postOptional.get();

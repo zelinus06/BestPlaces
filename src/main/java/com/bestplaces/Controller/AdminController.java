@@ -1,8 +1,10 @@
 package com.bestplaces.Controller;
 
+import com.bestplaces.Entity.RentalPost;
 import com.bestplaces.Entity.User;
 import com.bestplaces.Enums.Role;
 import com.bestplaces.Service.AdminService;
+import com.bestplaces.Service.RentalPostService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
@@ -19,6 +21,8 @@ import java.util.List;
 public class AdminController {
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private RentalPostService rentalPostService;
 
     @GetMapping
     public String showAdminPage(Model model){
@@ -29,6 +33,12 @@ public class AdminController {
 
     @GetMapping("/delete-user")
     public String deleteUser(@RequestParam("id") Long id) {
+        List<RentalPost> posts = rentalPostService.getUserPost(id);
+        if (posts != null) {
+            for (RentalPost post : posts) {
+                rentalPostService.deletePost(post.getId_post());
+            }
+        }
         adminService.deleteUserById(id);
         return "redirect:/admin";
     }
@@ -61,6 +71,19 @@ public class AdminController {
     public String addUser(@ModelAttribute("user") User user, @RequestParam("selectedRole") Role selectedRole) {
         user.setRole(selectedRole);
         adminService.saveUser(user);
+        return "redirect:/admin";
+    }
+
+    @GetMapping("/user/{id}")
+    public String showUserPost(@PathVariable("id") Long id, Model model) {
+        List<RentalPost> posts = rentalPostService.getUserPost(id);
+        model.addAttribute("posts", posts);
+        return "AdminManagePost";
+    }
+    @DeleteMapping("/delete/{idpost}")
+    public String DeletePost(@PathVariable("idpost") Long postId) {
+        rentalPostService.deletePost(postId);
+        System.out.println("Delete post id: " + postId);
         return "redirect:/admin";
     }
 }

@@ -49,15 +49,7 @@ public class PostController {
 
     @DeleteMapping("/deleteComment/{postId}/{commentId}")
     public String deleteComment(@PathVariable("commentId") Long commentId, @PathVariable("postId") Long postId) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        Optional<User> users = userRepository.findByUsername(username);
-        Comment comment = rentalPostService.getCommentById(commentId);
-        if(Objects.equals(comment.getId_user().getId(), users.get().getId())) {
             rentalPostService.deleteComment(commentId);
             return String.format("redirect:/detail-post/%d", postId);
-        } else {
-            return String.format("redirect:/detail-post/%d", postId);
-        }
     }
 }
