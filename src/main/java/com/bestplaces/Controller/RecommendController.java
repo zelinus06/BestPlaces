@@ -24,9 +24,5 @@ public class RecommendController {
     }
     @GetMapping("/recommend")
     public void showResult(Model model) {
-//        List<PostDto> postDtos = recommenderService.recommend();
-
     }
-
-
 }

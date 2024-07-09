@@ -218,14 +218,48 @@
     </div>
 
     <form th:action="@{/detail-post/comment}" method="post">
-        <input type="hidden" name="idpost" th:value="${postId}">
+        <input type="hidden" name="idpost"  th:value="${postId}">
         <div>
             <textarea id="comment" name="Comment" rows="4" required></textarea>
         </div>
         <div>
             <input type="submit" value="Submit">
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#reportModal" th:data-idpost="${postId}" >Report Post</button>
         </div>
     </form>
+
+
+    <!-- Modal Report-->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportModalLabel">Report Post</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="reportForm" th:action="@{/report}" method="post">
+                        <input type="hidden" id="postId" name="postId" th:value="${postId}">
+                        <div class="form-group">
+                            <label for="reason">Select a reason:</label>
+                            <select class="form-control" id="reason" name="reason" th:required="required">
+                                <option th:value="Spam">Spam</option>
+                                <option th:value="InappropriateContent">Inappropriate Content</option>
+                                <option th:value="Harassment">Harassment</option>
+                                <option th:value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-secondary" value="Submit">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal xóa comment -->
