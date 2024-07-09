@@ -44,7 +44,7 @@
                 </li>
                 <li class="nav-item">
                     <!-- Form với nút gửi được tùy chỉnh để trông giống với liên kết -->
-                    <form th:action="@{/home/recommend}" method="post" id="recommendForm" style="display: inline;">
+                    <form th:action="@{/recommend}" method="post" id="recommendForm" style="display: inline;">
                         <button type="submit" class="nav-link" style="background-color: transparent; border: none; cursor: pointer;">Đề xuất</button>
                     </form>
                 </li>
@@ -54,7 +54,7 @@
                     <a class="nav-link" href="#">Thông báo</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img  th:src="${currentUser.avatar}" width="30" height="30">
                         <span th:text="${currentUser.username}" ></span>
                     </a>

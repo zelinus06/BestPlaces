@@ -38,51 +38,53 @@ public class RecommenderService {
         Optional<User> userOptional = userRepository.findByUsername(username);
         User user = userOptional.get();
         Optional<SearchedResult> searchedResult = searchedResultRepository.findById(user.getId());
-        SearchedResult searchedResult1 = searchedResult.get();
-        if (searchedResult1.getType() != null) {
-            List<RentalPost> rentalPosts = postRepository.findAllByType(Type.valueOf(searchedResult1.getType()));
-            int maxPrice = searchedResult1.getMaxPrice();
-            int minPrice = searchedResult1.getMinPrice();
-            int maxArea = searchedResult1.getMaxArea();
-            int minArea = searchedResult1.getMinArea();
-            int ExpectedPrice = (maxPrice + minPrice)/2;
-            int ExpectedArea = (maxArea + minArea)/2;
-            String result = findExpectedLocation.FindExResult();
-            double[] result1 = parseCircle(result);
-            double radius = result1[0];
-//            if (radius < 5.0) {
-//                radius = 5.0;
-//            }
-            List<RentalPost> list = new ArrayList<>();
-            for (RentalPost rentalPost : rentalPosts) {
-                int price = rentalPost.getPrice();
-                double normalizePrice = normalize(price, maxPrice, minPrice, ExpectedPrice);
-                int area = rentalPost.getArea();
-                double normalizeArea = normalize(area, maxArea, minArea, ExpectedArea);
-                double latitude = rentalPost.getLatitude();
-                double longtitude = rentalPost.getLongtitude();
-                double distance = haversine(result1[1], result1[2], latitude, longtitude);
-                double normalizeDistance = normalizeDistance(distance, radius);
-                double[] vector1 = {1, 1, 1};
-                double [] vector2 = new double[3];
-                vector2 = new double[]{normalizePrice, normalizeArea, normalizeDistance};
-                if (maxPrice == 0) {
-                    vector2 = new double[]{1.0, normalizeArea, normalizeDistance};
+        if (searchedResult.isPresent()) {
+            SearchedResult searchedResult1 = searchedResult.get();
+            if (searchedResult1.getType() != null) {
+                List<RentalPost> rentalPosts = postRepository.findAllByType(Type.valueOf(searchedResult1.getType()));
+                int maxPrice = searchedResult1.getMaxPrice();
+                int minPrice = searchedResult1.getMinPrice();
+                int maxArea = searchedResult1.getMaxArea();
+                int minArea = searchedResult1.getMinArea();
+                int ExpectedPrice = (maxPrice + minPrice)/2;
+                int ExpectedArea = (maxArea + minArea)/2;
+                String result = findExpectedLocation.FindExResult();
+                double[] result1 = parseCircle(result);
+                double radius = result1[0];
+                List<RentalPost> list = new ArrayList<>();
+                for (RentalPost rentalPost : rentalPosts) {
+                    int price = rentalPost.getPrice();
+                    double normalizePrice = normalize(price, maxPrice, minPrice, ExpectedPrice);
+                    int area = rentalPost.getArea();
+                    double normalizeArea = normalize(area, maxArea, minArea, ExpectedArea);
+                    double latitude = rentalPost.getLatitude();
+                    double longtitude = rentalPost.getLongtitude();
+                    double distance = haversine(result1[1], result1[2], latitude, longtitude);
+                    double normalizeDistance = normalizeDistance(distance, radius);
+                    double[] vector1 = {1, 1, 1};
+                    double [] vector2 = new double[3];
+                    vector2 = new double[]{normalizePrice, normalizeArea, normalizeDistance};
+                    if (maxPrice == 0) {
+                        vector2 = new double[]{1.0, normalizeArea, normalizeDistance};
+                    }
+                    if (maxArea == 0) {
+                        vector2 = new double[]{normalizePrice, 1.0, normalizeDistance};
+                    }
+                    if (maxArea == 0 || maxPrice == 0) {
+                        vector2 = new double[]{1.0, 1.0, normalizeDistance};
+                    }
+                    double recommendResult = euclideanDistance(vector1, vector2);
+                    if (recommendResult < 0.86) {
+                        System.out.println(rentalPost.getId_post());
+                        list.add(rentalPost);
+                    }
                 }
-                if (maxArea == 0) {
-                    vector2 = new double[]{normalizePrice, 1.0, normalizeDistance};
-                }
-                if (maxArea == 0 || maxPrice == 0) {
-                    vector2 = new double[]{1.0, 1.0, normalizeDistance};
-                }
-                double recommendResult = euclideanDistance(vector1, vector2);
-                if (recommendResult < 0.86) {
-                    System.out.println(rentalPost.getId_post());
-                    list.add(rentalPost);
-                }
+                return list;
+            } else {
+                return null;
             }
-            return list;
-        } else {
+        }
+        else {
             return null;
         }
     }

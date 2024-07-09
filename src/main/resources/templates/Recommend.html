@@ -6,10 +6,15 @@
     <title>Navbar with Search Filters</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/home.css">
+    <style>
+        #searchResult {
+            margin-top: 100px;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" th:href="@{/home/?page=1}">BestPlaces</a>
+    <a class="navbar-brand" th:href="@{/home?page=1}">BestPlaces</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -54,9 +59,9 @@
                 <a class="nav-link" href="#">Thông báo</a>
             </li>
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img id="avatarUrl" src="" width="30" height="30">
-                    <span id="username" ></span>
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img  th:src="${currentUser.avatar}" width="30" height="30">
+                    <span th:text="${currentUser.username}" ></span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" th:href="@{/post}">Đăng tin cho thuê</a>
@@ -70,75 +75,75 @@
     </div>
 </nav>
 
-<div class="search-filters">
-    <div class="container">
-        <form th:action="@{/home}" id="searchForm" method="post">
-            <div class=" offset-md-1 row">
-                <div class=" col-md-3">
-                    <div class="form-group">
-                        <select name="Type" class="form-control" id="type">
-                            <option selected th:value="${null}">Loại hình</option>
-                            <option th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
-                                    th:value="${type}" th:text="${type.getValue()}"></option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select name="priceRange" class="form-control" id="priceRangeSelect">
-                            <option th:value="${0}">Giá cả</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select name="areaRange" class="form-control" id="areaRange">
-                            <option selected th:value="${0}">Diện tích</option>
-                            <option th:value="${0 + '-' + 20}">Dưới 20m²</option>
-                            <option th:value="${20 + '-' + 30}">Từ 20m² đến 30m²</option>
-                            <option th:value="${30 + '-' + 40}">Từ 30m² đến 40m²</option>
-                            <option th:value="${40 + '-' + 200}">Từ 40m² trở lên</option>
-                            <!-- Thêm các option khác nếu cần -->
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-                </div>
-            </div>
-            <div class="offset-md-1 row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select class="form-control" id="provinceDropdown">
-                            <option selected th:value="${null}">Tỉnh/Thành</option>
-                        </select>
-                        <input name="city" id="city" type="hidden" th:value="${city}"><br>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select class="form-control" id="districtDropdown">
-                            <option selected th:value="${null}">Quận/Huyện</option>
-                        </select>
-                        <input name="district" id="district" type="hidden" th:value="${district}"><br>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select class="form-control" id="communeDropdown">
-                            <option selected th:value="${null}">Phường/Thị xã</option>
-                        </select>
-                        <input name="commune" id="commune" type="hidden" th:value="${commune}"><br>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <button type="reset" class="btn btn-primary" style="padding-left: 39px;
-    padding-right: 39px;" >Xóa</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
+<!--<div class="search-filters">-->
+<!--    <div class="container">-->
+<!--        <form th:action="@{/home/search}" id="searchForm" method="post">-->
+<!--            <div class=" offset-md-1 row">-->
+<!--                <div class=" col-md-3">-->
+<!--                    <div class="form-group">-->
+<!--                        <select name="Type" class="form-control" id="type">-->
+<!--                            <option selected th:value="${null}">Loại hình</option>-->
+<!--                            <option th:each="type : ${T(com.bestplaces.Enums.Type).values()}"-->
+<!--                                    th:value="${type}" th:text="${type.getValue()}"></option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-md-3">-->
+<!--                    <div class="form-group">-->
+<!--                        <select name="priceRange" class="form-control" id="priceRangeSelect">-->
+<!--                            <option th:value="${0}">Giá cả</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-md-3">-->
+<!--                    <div class="form-group">-->
+<!--                        <select name="areaRange" class="form-control" id="areaRange">-->
+<!--                            <option selected th:value="${0}">Diện tích</option>-->
+<!--                            <option th:value="${0 + '-' + 20}">Dưới 20m²</option>-->
+<!--                            <option th:value="${20 + '-' + 30}">Từ 20m² đến 30m²</option>-->
+<!--                            <option th:value="${30 + '-' + 40}">Từ 30m² đến 40m²</option>-->
+<!--                            <option th:value="${40 + '-' + 200}">Từ 40m² trở lên</option>-->
+<!--                            &lt;!&ndash; Thêm các option khác nếu cần &ndash;&gt;-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-md-3">-->
+<!--                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="offset-md-1 row">-->
+<!--                <div class="col-md-3">-->
+<!--                    <div class="form-group">-->
+<!--                        <select class="form-control" id="provinceDropdown">-->
+<!--                            <option selected th:value="${null}">Tỉnh/Thành</option>-->
+<!--                        </select>-->
+<!--                        <input name="city" id="city" type="hidden" th:value="${city}"><br>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-md-3">-->
+<!--                    <div class="form-group">-->
+<!--                        <select class="form-control" id="districtDropdown">-->
+<!--                            <option selected th:value="${null}">Quận/Huyện</option>-->
+<!--                        </select>-->
+<!--                        <input name="district" id="district" type="hidden" th:value="${district}"><br>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-md-3">-->
+<!--                    <div class="form-group">-->
+<!--                        <select class="form-control" id="communeDropdown">-->
+<!--                            <option selected th:value="${null}">Phường/Thị xã</option>-->
+<!--                        </select>-->
+<!--                        <input name="commune" id="commune" type="hidden" th:value="${commune}"><br>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-md-3">-->
+<!--                    <button type="reset" class="btn btn-primary" style="padding-left: 39px;-->
+<!--    padding-right: 39px;" >Xóa</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
 
 <div class="modal fade" id="priceModal" tabindex="-1" aria-labelledby="priceModalLabel" aria-hidden="true">-->
     <div class="modal-dialog">
@@ -176,21 +181,20 @@
                             <div>Loại: <span th:text="${postDto.post.type.getValue()}"></span></div>
                             <div>Giá cả: <span th:text="${postDto.post.price}"></span> 000 VNĐ</div>
                             <div>Diện tích: <span th:text="${postDto.post.area}"></span> m<sup>2</sup></div>
-                            <div>Địa điểm: <span th:text="${postDto.post.city + ', ' + postDto.post.district + ', ' + postDto.post.commune}"></span></div>
-                            <a th:href="@{'/post/' + ${postDto.post.id_post}}" class="mt-2">Xem chi tiết</a>
+                            <div>Địa điểm: <span th:text="${postDto.post.commune + ', ' + postDto.post.district + ', ' + postDto.post.city}"></span></div>
+                            <a th:href="@{'/detail-post/' + ${postDto.post.id_post}}" class="mt-2">Xem chi tiết</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
+
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
 
             <li th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
-                <a class="page-link" th:href="@{/home/(page=1)}" aria-label="First">
+                <a class="page-link" th:href="@{/home(page=1)}" aria-label="First">
                     <span aria-hidden="true">&laquo;</span>
                     <span class="sr-only">First</span>
                 </a>
@@ -198,32 +202,32 @@
 
             <!-- Nút Previous -->
             <li th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
-                <a class="page-link" th:href="@{/home/(page=${currentPage - 1})}">Previous</a>
+                <a class="page-link" th:href="@{/home(page=${currentPage - 1})}">Previous</a>
             </li>
 
             <!-- Các nút số trang -->
             <th:block th:if="${totalPages <= 10}">
                 <li th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
                     th:class="${pageNum == currentPage} ? 'page-item active' : 'page-item'">
-                    <a class="page-link" th:href="@{/home/(page=${pageNum})}">[[${pageNum}]]</a>
+                    <a class="page-link" th:href="@{/home(page=${pageNum})}">[[${pageNum}]]</a>
                 </li>
             </th:block>
             <th:block th:if="${totalPages > 10}">
                 <li th:each="pageNum : ${#numbers.sequence(currentPage - 2, currentPage + 2)}"
                     th:class="${pageNum == currentPage} ? 'page-item active' : 'page-item'"
                     th:if="${pageNum >= 1 and pageNum <= totalPages}">
-                    <a class="page-link" th:href="@{/home/(page=${pageNum})}">[[${pageNum}]]</a>
+                    <a class="page-link" th:href="@{/home(page=${pageNum})}">[[${pageNum}]]</a>
                 </li>
                 <li class="page-item disabled"><a class="page-link">...</a></li>
             </th:block>
 
             <!-- Nút Next -->
             <li th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
-                <a class="page-link" th:href="@{/home/(page=${currentPage + 1})}">Next</a>
+                <a class="page-link" th:href="@{/home(page=${currentPage + 1})}">Next</a>
             </li>
 
             <li th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
-                <a class="page-link" th:href="@{/home/(page=${totalPages})}" aria-label="Last">
+                <a class="page-link" th:href="@{/home(page=${totalPages})}" aria-label="Last">
                     <span aria-hidden="true">&raquo;</span>
                     <span class="sr-only">Last</span>
                 </a>
@@ -281,14 +285,58 @@
                             <div>Loại: <span th:text="${search.post.type.getValue()}"></span></div>
                             <div>Giá cả: <span th:text="${search.post.price}"></span> 000 VNĐ</div>
                             <div>Diện tích: <span th:text="${search.post.area}"></span> m<sup>2</sup></div>
-                            <div>Địa điểm: <span th:text="${search.post.city + ', ' + search.post.district + ', ' + search.post.commune}"></span></div>
-                            <a th:href="@{'/post/' + ${search.post.id_post}}" class="mt-2">Xem chi tiết</a>
+                            <div>Địa điểm: <span th:text="${search.post.commune + ', ' + search.post.district + ', ' + search.post.city}"></span></div>
+                            <a th:href="@{'/detail-post/' + ${search.post.id_post}}" class="mt-2">Xem chi tiết</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" th:href="@{/home(page=1)}" aria-label="First">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">First</span>
+                </a>
+            </li>
+
+            <!-- Nút Previous -->
+            <li th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" th:href="@{/home(page=${currentPage - 1})}">Previous</a>
+            </li>
+
+            <!-- Các nút số trang -->
+            <th:block th:if="${totalPages <= 10}">
+                <li th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
+                    th:class="${pageNum == currentPage} ? 'page-item active' : 'page-item'">
+                    <a class="page-link" th:href="@{/home(page=${pageNum})}">[[${pageNum}]]</a>
+                </li>
+            </th:block>
+            <th:block th:if="${totalPages > 10}">
+                <li th:each="pageNum : ${#numbers.sequence(currentPage - 2, currentPage + 2)}"
+                    th:class="${pageNum == currentPage} ? 'page-item active' : 'page-item'"
+                    th:if="${pageNum >= 1 and pageNum <= totalPages}">
+                    <a class="page-link" th:href="@{/home(page=${pageNum})}">[[${pageNum}]]</a>
+                </li>
+                <li class="page-item disabled"><a class="page-link">...</a></li>
+            </th:block>
+
+            <!-- Nút Next -->
+            <li th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" th:href="@{/home(page=${currentPage + 1})}">Next</a>
+            </li>
+
+            <li th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" th:href="@{/home(page=${totalPages})}" aria-label="Last">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Last</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -494,31 +542,8 @@
                 console.error('There was a problem with your fetch operation:', error);
             });
     }
-
-    // Function to get the value of a specific cookie
-    function getCookieValue(cookieName) {
-        const cookieString = document.cookie; // Lấy toàn bộ chuỗi cookie
-        const cookies = cookieString.split('; '); // Tách chuỗi cookie thành mảng các cookie
-        for (let i = 0; i < cookies.length; i++) {
-            let cookie = cookies[i]; // Lưu trữ chuỗi cookie tại vị trí hiện tại
-            // Tìm vị trí của dấu '=' đầu tiên trong cookie
-            const indexOfFirstEquals = cookie.indexOf('=');
-            // Lấy tên cookie (phần trước dấu '=' đầu tiên)
-            const cookieNameFromCookie = cookie.substring(0, indexOfFirstEquals);
-            // Nếu tên cookie trùng với tên được yêu cầu
-            if (cookieNameFromCookie === cookieName) {
-                // Lấy giá trị của cookie (phần sau dấu '=' đầu tiên)
-                const cookieValue = cookie.substring(indexOfFirstEquals + 1);
-                return decodeURIComponent(cookieValue);
-            }
-        }
-        return null;
-    }
-    const username = getCookieValue('username');
-    const avatarUrl = getCookieValue('avatarUrl');
-    document.getElementById('username').textContent =  username;
-    document.getElementById('avatarUrl').src = avatarUrl;
 </script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var form = document.getElementById('searchForm');

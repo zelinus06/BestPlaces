@@ -112,17 +112,6 @@ public class HomeController {
         return "home";
     }
 
-    @PostMapping("/recommend")
-    public String recommendHouse(Model model) {
-        List<RentalPost> rentalPosts = recommenderService.recommend();
-        List<PostDto> postDTOs = rentalPostService.getPosts(rentalPosts);
-        model.addAttribute("rentalPosts", postDTOs);
-        model.addAttribute("showSearchResults", true);
-        User currentUser = usersService.getCurrentUser();
-        model.addAttribute("currentUser", currentUser);
-        return "home";
-    }
-
     @PostMapping("/type")
     public String findBedsit(Model model, @RequestParam("value") String type, @RequestParam(name = "page", defaultValue = "1") int page) {
         Double minPrice = null, maxPrice = null;
