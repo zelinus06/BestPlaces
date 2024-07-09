@@ -5,11 +5,13 @@ import com.bestplaces.Entity.User;
 import com.bestplaces.Enums.Role;
 import com.bestplaces.Service.AdminService;
 import com.bestplaces.Service.RentalPostService;
+import com.bestplaces.Service.ReportService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +25,11 @@ public class AdminController {
     private AdminService adminService;
     @Autowired
     private RentalPostService rentalPostService;
+    @Autowired
+    private ReportService reportService;
 
     @GetMapping
-    public String showAdminPage(Model model){
+    public String showAdminPage(Model model) {
         List<User> users = adminService.getAllUsers();
         model.addAttribute("users", users);
         return "admin";
@@ -80,10 +84,23 @@ public class AdminController {
         model.addAttribute("posts", posts);
         return "AdminManagePost";
     }
+
     @DeleteMapping("/delete/{idpost}")
     public String DeletePost(@PathVariable("idpost") Long postId) {
         rentalPostService.deletePost(postId);
         System.out.println("Delete post id: " + postId);
         return "redirect:/admin";
+    }
+
+    @PostMapping("/get-report")
+    public String getAllReport(Model model) {
+        List<String> reports = reportService.getAllReports();
+        model.addAttribute("reports", reports);
+        return "Report";
+    }
+
+    @GetMapping("/report")
+    public String reportPage(){
+        return "Report";
     }
 }

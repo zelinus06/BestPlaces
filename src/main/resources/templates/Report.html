@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Xem tất cả Báo cáo</h1>
+    <div class="text-right mb-3">
+    </div>
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th>STT</th>
+            <th>Post ID</th>
+            <th>Reason</th>
+            <th>Reported At</th>
+            <th>Reported By</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="report, iterStat : ${reports}">
+            <td th:text="${iterStat.count}">1</td>
+            <td>
+                <a th:href="@{/detail-post/{postId}(postId=${#strings.substring(report, #strings.indexOf(report, 'Post ID: ') + 8, #strings.indexOf(report, ', Reason:'))})}"
+                   th:text="${#strings.substring(report, #strings.indexOf(report, 'Post ID: ') + 8, #strings.indexOf(report, ', Reason:'))}">
+                </a>
+            </td>
+            <!-- Lấy Reason từ report -->
+            <td th:text="${#strings.substring(report, #strings.indexOf(report, 'Reason: ') + 8, #strings.indexOf(report, ', Reported At:'))}"></td>
+            <!-- Lấy Reported At từ report -->
+            <td th:text="${#strings.substring(report, #strings.indexOf(report, 'Reported At: ') + 13, #strings.indexOf(report, ', Reported By:'))}"></td>
+            <!-- Lấy Reported By từ report -->
+            <td th:text="${#strings.substring(report, #strings.indexOf(report, 'Reported By: ') + 12)}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+

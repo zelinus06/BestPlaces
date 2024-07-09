@@ -217,24 +217,23 @@
         </div>
     </div>
 
-    <form th:action="@{/detail-post/comment}" method="post">
+    <form th:action="@{/comment}" method="post">
         <input type="hidden" name="idpost"  th:value="${postId}">
         <div>
             <textarea id="comment" name="Comment" rows="4" required></textarea>
         </div>
-        <div>
-            <input type="submit" value="Submit">
-            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#reportModal" th:data-idpost="${postId}" >Report Post</button>
+        <div class="form-group d-flex justify-content-between">
+            <input type="submit" class="btn btn-primary" value="Submit">
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#reportModal" th:data-idpost="${postId}">Report</button>
         </div>
     </form>
-
 
     <!-- Modal Report-->
     <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="reportModalLabel">Report Post</h5>
+                    <h5 class="modal-title" id="reportModalLabel">Báo cáo</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -246,9 +245,9 @@
                             <label for="reason">Select a reason:</label>
                             <select class="form-control" id="reason" name="reason" th:required="required">
                                 <option th:value="Spam">Spam</option>
-                                <option th:value="InappropriateContent">Inappropriate Content</option>
-                                <option th:value="Harassment">Harassment</option>
-                                <option th:value="Other">Other</option>
+                                <option th:value="Thông-tin-không-phù-hợp">Thông tin không phù hợp</option>
+                                <option th:value="Lừa-đảo">Lừa đảo</option>
+                                <option th:value="Khác">Khác</option>
                             </select>
                         </div>
                         <div class="modal-footer">
@@ -267,7 +266,7 @@
     <div class="modal fade" th:id="'deleteCommentModal'+${comment.comment.id}" tabindex="-1" role="dialog" aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form th:action="@{/detail-post/deleteComment/{postId}/{commentId}(postId=${comment.comment.id_post.getId_post()}, commentId=${comment.comment.id})}" method="post">
+                <form th:action="@{/deleteComment/{postId}/{commentId}(postId=${comment.comment.id_post.getId_post()}, commentId=${comment.comment.id})}" method="post">
                     <input type="hidden" name="_method" value="delete" />
                     <div class="modal-header">
                         <h5 class="modal-title" id="deleteCommentModalLabel">Xác nhận xóa bình luận</h5>

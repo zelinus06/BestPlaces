@@ -42,7 +42,7 @@ public class SecurityConfig {
                     registry.requestMatchers("/forgot/**","/guest","/register","registration","login","/login-form-20/**","/home/**","/chart/**","/mail/**", "/detail-post/**").permitAll();
                     registry.requestMatchers("/css/**", "/js/**").permitAll();
                     registry.requestMatchers("/admin/**","/test").hasRole("ADMIN");
-                    registry.requestMatchers("/user/**","/recommend/**").hasAnyRole("USER", "ADMIN");
+                    registry.requestMatchers("/user/**","/recommend/**").hasAnyRole("USER", "ADMIN", "NONUSER");
                     registry.anyRequest().authenticated();
                 })
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
