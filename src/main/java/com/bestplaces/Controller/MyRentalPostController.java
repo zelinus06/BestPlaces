@@ -97,15 +97,19 @@ public class MyRentalPostController {
                              @RequestParam (required = false, value = "newTitle") String newTitle,
                              @RequestParam (required = false, value = "newNumberHouse") String newNumberHouse,
                              @RequestParam (required = false, value = "newDescription") String newDescription,
-                             @RequestParam (required = false, value = "newType") Type newType) {
+                             @RequestParam (required = false, value = "newType") Type newType,
+                                                                                 Model model) {
+        User currentUser = usersService.getCurrentUser();
+        model.addAttribute("currentUser", currentUser);
         rentalPostService.updatePost(idpost, newArea, newPrice, newCity, newDistrict, newCommune, newStreet, newNumberHouse, newDescription, newTitle, newType);
-        return "UserPost";
+        return "redirect:/post/mypost";
     }
 
     @DeleteMapping("/delete/{idpost}")
     public String DeletePost(@PathVariable("idpost") Long postId) {
+        rentalPostService.deleteAllComment(postId);
         rentalPostService.deletePost(postId);
-        return "redirect:/user/post";
+        return "redirect:/post/mypost";
     }
 }
 

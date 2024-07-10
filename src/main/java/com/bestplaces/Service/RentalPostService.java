@@ -14,6 +14,9 @@ import com.bestplaces.Repository.CommentRepository;
 import com.bestplaces.Repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +42,9 @@ public class RentalPostService {
     private ImageUrlRepository imageUrlRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     public RentalPost saveRentalPost(RentalPostDto rentalPostDto) {
         Optional<User> userOptional = userRepository.findByUsername(myUserDetailsService.UserNameAtPresent());
@@ -143,6 +149,7 @@ public class RentalPostService {
         postRepository.delete(rentalPost);
     }
 
+    @Transactional
     public RentalPost updatePost(Long idPost, int newArea, int newPrice, String newCity, String newDistrict, String newCommune, String newStreet, String newNumberhouse, String newDescription, String newTitle, Type newType) {
         Optional<RentalPost> postOptional = postRepository.findById(idPost);
         if (postOptional.isPresent()) {
@@ -185,8 +192,7 @@ public class RentalPostService {
                     String address1 = newCity + "," + newDistrict + "," + newCommune+ "," + newStreet;
                     String apiUrl1 = String.format("https://nominatim.openstreetmap.org/search?q=%s&format=json", address1);
                     String result1 = restTemplate.getForObject(apiUrl1, String.class);
-                    ObjectMapper objectMapper1 = new ObjectMapper();
-                    JsonNode jsonNode1 = objectMapper1.readTree(result1);
+                    JsonNode jsonNode1 = objectMapper.readTree(result1);
                     double latitude = jsonNode1.get(0).get("lat").asDouble();
                     double longitude = jsonNode1.get(0).get("lon").asDouble();
                     rentalPost.setLatitude(latitude);
@@ -204,7 +210,7 @@ public class RentalPostService {
             if (!Objects.equals(newType, rentalPost.getType())) {
                 rentalPost.setType(newType);
             }
-            return postRepository.save(rentalPost);
+            return entityManager.merge(rentalPost);
         }
         return null;
     }
@@ -243,6 +249,13 @@ public class RentalPostService {
             return comment1;
         }
         return null;
+    }
+
+    public void deleteAllComment(long postId) {
+        Optional<RentalPost> postOptional = postRepository.findById(postId);
+        RentalPost rentalPost = postOptional.get();
+        List<Comment> comment = commentRepository.showAllComment(rentalPost);
+        commentRepository.deleteAll(comment);
     }
 }
 

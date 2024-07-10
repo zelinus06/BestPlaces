@@ -208,7 +208,7 @@
                     </div>
                     <div class="form-group">
                         <label for="editPostType">Type</label>
-                        <select name="Type" class="form-control" id="editPostType">
+                        <select name="newType" class="form-control" id="editPostType">
                             <option th:each="type : ${T(com.bestplaces.Enums.Type).values()}"
                                     th:value="${type}" th:text="${type.getValue()}"></option>
                         </select>

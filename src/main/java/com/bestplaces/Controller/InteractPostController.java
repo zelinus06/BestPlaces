@@ -38,4 +38,11 @@ public class InteractPostController {
         rentalPostService.deleteComment(commentId);
         return String.format("redirect:/detail-post/%d", postId);
     }
+
+    @PostMapping("/deletePost")
+    public String deletePost(@RequestParam("postId") long postId){
+        rentalPostService.deleteAllComment(postId);
+        rentalPostService.deletePost(postId);
+        return "redirect:/admin/report";
+    }
 }
